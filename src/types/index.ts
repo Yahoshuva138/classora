@@ -1,4 +1,4 @@
-export type UserRole = 'Admin' | 'Teacher' | 'CR' | 'Student';
+export type UserRole = 'Admin' | 'Teacher' | 'CR' | 'Student' | 'Guest';
 
 export type RiskStatus = 'On Track' | 'Needs Attention' | 'At Risk';
 
@@ -226,4 +226,18 @@ export interface ActivityLog {
   category: 'attendance' | 'academic' | 'system' | 'communication';
   targetId?: string | null;
   targetName?: string | null;
+}
+
+export interface GuestVisitor {
+  id: string;
+  guestName: string;
+  guestEmail: string;
+  ipAddress?: string;
+  userAgent?: string;
+  deviceType?: 'Desktop' | 'Mobile' | 'Tablet';
+  loginTime: string;
+  lastActiveTime: string;
+  pageViewsCount: number;
+  attemptedMutationsCount: number;
+  status: 'Active' | 'Ended';
 }

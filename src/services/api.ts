@@ -9,7 +9,8 @@ import {
   AttendanceStatus,
   StudentSkillScores,
   GoogleUser,
-  ActivityLog
+  ActivityLog,
+  GuestVisitor
 } from '../types';
 
 const API_BASE = '/api';
@@ -349,6 +350,35 @@ export const api = {
     return await request<{ success: boolean; user: any; student?: any; message?: string }>(`/auth/users/${encodeURIComponent(userIdOrEmail)}/profile`, {
       method: 'PUT',
       body: JSON.stringify(profile)
+    });
+  },
+
+  // Guest Visitor & Read-Only Showcase
+  async recordGuestSession(payload?: { guestName?: string; deviceType?: string; userAgent?: string }): Promise<{ success: boolean; user: GoogleUser; visitor: GuestVisitor; message?: string }> {
+    return await request<{ success: boolean; user: GoogleUser; visitor: GuestVisitor; message?: string }>('/auth/guest-session', {
+      method: 'POST',
+      body: JSON.stringify(payload || {})
+    });
+  },
+
+  async pingGuestSession(visitorId: string): Promise<void> {
+    try {
+      await request('/auth/guest-ping', {
+        method: 'POST',
+        body: JSON.stringify({ visitorId })
+      });
+    } catch {}
+  },
+
+  // Main Admin Exclusive: Guest Visitors Registry
+  async getGuestVisitors(): Promise<GuestVisitor[]> {
+    const res = await request<{ success: boolean; count: number; data: GuestVisitor[] }>('/admin/guest-visitors');
+    return res.data || [];
+  },
+
+  async deleteGuestVisitor(visitorId: string): Promise<void> {
+    await request(`/admin/guest-visitors/${visitorId}`, {
+      method: 'DELETE'
     });
   }
 };

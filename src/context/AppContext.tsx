@@ -22,7 +22,8 @@ import {
   CRRemark,
   GoogleUser,
   ActivityLog,
-  UserSocialLinks
+  UserSocialLinks,
+  GuestVisitor
 } from '../types';
 import {
   initialStudents,
@@ -89,6 +90,12 @@ interface AppContextType {
   openPublicProfile: (targetIdOrStudent: string | Student) => void;
   closePublicProfile: () => void;
   updateUserProfile: (updates: { avatar?: string; bio?: string; headline?: string; publicLinks?: UserSocialLinks; name?: string }) => Promise<void>;
+
+  // Guest Showcase & Admin Visitors Console
+  isGuestVisitorsModalOpen: boolean;
+  setIsGuestVisitorsModalOpen: (open: boolean) => void;
+  loginAsGuest: (customName?: string) => Promise<void>;
+  currentGuestVisitor: GuestVisitor | null;
 
   // Interactivity, Audio & Guided Tour
   isOnboardingOpen: boolean;
@@ -499,6 +506,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [publicProfileTarget, setPublicProfileTarget] = useState<{ user?: GoogleUser; student?: Student } | null>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [isRoleManagementModalOpen, setIsRoleManagementModalOpen] = useState<boolean>(false);
+  const [isGuestVisitorsModalOpen, setIsGuestVisitorsModalOpen] = useState<boolean>(false);
+  const [currentGuestVisitor, setCurrentGuestVisitor] = useState<GuestVisitor | null>(() => {
+    try {
+      const saved = localStorage.getItem('classora_guest_visitor_v2');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => soundFx.enabled);
 
   // Role & Current Student State
@@ -982,6 +998,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     status: AttendanceStatus,
     remarks?: string
   ) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Attendance marking is disabled in read-only showcase.', 'info');
+      return;
+    }
     if (userRole !== 'Teacher' && userRole !== 'Admin') {
       addToast('Permission Denied: Only faculty teachers and course admins have permission to record attendance.', 'error');
       return;
@@ -1011,6 +1031,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     sessionId: string,
     records: Array<{ studentId: string; status: AttendanceStatus }>
   ) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Bulk attendance marking is disabled in read-only showcase.', 'info');
+      return;
+    }
     if (userRole !== 'Teacher' && userRole !== 'Admin') {
       addToast('Permission Denied: Only faculty teachers and course admins have permission to record attendance.', 'error');
       return;
@@ -1048,6 +1072,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [userRole, addToast]);
 
   const resetSessionAttendance = useCallback((sessionId: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Modifying attendance is disabled in read-only showcase.', 'info');
+      return;
+    }
     if (userRole !== 'Teacher' && userRole !== 'Admin') {
       addToast('Permission Denied: Only faculty teachers and course admins have permission to reset attendance.', 'error');
       return;
@@ -1075,6 +1103,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [userRole, addToast]);
 
   const addStudent = useCallback((studentData: Partial<Student> & { name: string; email: string; phone: string; batch: string }) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Student enrollment is disabled in read-only showcase.', 'info');
+      return;
+    }
     if (userRole !== 'Teacher' && userRole !== 'Admin') {
       addToast('Permission Denied: Only faculty teachers and course admins have authority to enroll students.', 'error');
       return;
@@ -1116,6 +1148,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, [userRole, students.length, addToast]);
 
   const updateUserRole = useCallback(async (userId: string, newRole: UserRole): Promise<boolean> => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Modifying user positions requires Administrative privileges.', 'error');
+      return false;
+    }
     try {
       const res = await api.updateUserRole(userId, newRole);
       if (res && res.user) {
@@ -1134,17 +1170,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       addToast(err?.message || 'Failed to update user role', 'error');
       return false;
     }
-  }, [currentUser.id, currentUser.email, addToast]);
+  }, [userRole, currentUser.id, currentUser.email, addToast]);
 
   const updateStudent = useCallback((id: string, updates: Partial<Student>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Modifying student records is disabled in read-only showcase.', 'info');
+      return;
+    }
     setStudents(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
     api.updateStudent(id, updates).catch(err => {
       console.warn('[Classora Backend] updateStudent failed:', err);
     });
     addToast('Student details updated', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const deleteStudent = useCallback((id: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Archiving students is disabled in read-only showcase.', 'info');
+      return;
+    }
     setStudents(prev => prev.filter(s => s.id !== id));
     setAttendanceRecords(prev => prev.filter(r => r.studentId !== id));
     setFollowUps(prev => prev.filter(f => f.studentId !== id));
@@ -1153,9 +1197,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] deleteStudent failed:', err);
     });
     addToast('Student record archived/removed', 'info');
-  }, [selectedStudentId, addToast]);
+  }, [userRole, selectedStudentId, addToast]);
 
   const addCRRemark = useCallback((studentId: string, text: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Adding remarks is disabled in read-only showcase.', 'info');
+      return;
+    }
     const remark = {
       id: `REM-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
@@ -1175,9 +1223,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] addCRRemark failed:', err);
     });
     addToast('CR note recorded', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const addSession = useCallback((sessionData: Omit<Session, 'id'>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Scheduling sessions is disabled in read-only showcase.', 'info');
+      return;
+    }
     const nextId = `SES-${101 + sessions.length}`;
     const newSession: Session = {
       id: nextId,
@@ -1188,26 +1240,38 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] createSession failed:', err);
     });
     addToast(`New session "${newSession.topic}" scheduled!`, 'success');
-  }, [sessions.length, addToast]);
+  }, [userRole, sessions.length, addToast]);
 
   const updateSession = useCallback((id: string, updates: Partial<Session>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Modifying sessions is disabled in read-only showcase.', 'info');
+      return;
+    }
     setSessions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
     api.updateSession(id, updates).catch(err => {
       console.warn('[Classora Backend] updateSession failed:', err);
     });
     addToast('Session updated successfully', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const deleteSession = useCallback((id: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Deleting sessions is disabled in read-only showcase.', 'info');
+      return;
+    }
     setSessions(prev => prev.filter(s => s.id !== id));
     setAttendanceRecords(prev => prev.filter(r => r.sessionId !== id));
     api.deleteSession(id).catch(err => {
       console.warn('[Classora Backend] deleteSession failed:', err);
     });
     addToast('Session removed', 'info');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const addFollowUp = useCallback((followUpData: Omit<FollowUp, 'id' | 'dateIdentified'>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Follow-up logging is disabled in read-only showcase.', 'info');
+      return;
+    }
     const newFollowUp: FollowUp = {
       id: `FLW-${Date.now().toString().slice(-4)}`,
       dateIdentified: new Date().toISOString().split('T')[0],
@@ -1218,34 +1282,50 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] createFollowUp failed:', err);
     });
     addToast(`Follow-up logged for ${newFollowUp.studentName}`, 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const updateFollowUp = useCallback((id: string, updates: Partial<FollowUp>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Updating follow-ups is disabled in read-only showcase.', 'info');
+      return;
+    }
     setFollowUps(prev => prev.map(f => f.id === id ? { ...f, ...updates } : f));
     api.updateFollowUp(id, updates).catch(err => {
       console.warn('[Classora Backend] updateFollowUp failed:', err);
     });
     addToast('Follow-up status updated', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const deleteFollowUp = useCallback((id: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Deleting follow-ups is disabled in read-only showcase.', 'info');
+      return;
+    }
     setFollowUps(prev => prev.filter(f => f.id !== id));
     api.deleteFollowUp(id).catch(err => {
       console.warn('[Classora Backend] deleteFollowUp failed:', err);
     });
     addToast('Follow-up removed', 'info');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const clearAllFollowUps = useCallback(() => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Clearing follow-ups is disabled in read-only showcase.', 'info');
+      return;
+    }
     setFollowUps([]);
     localStorage.removeItem(STORAGE_KEYS.FOLLOWUPS);
     api.clearAllFollowUps().catch(err => {
       console.warn('[Classora Backend] clearAllFollowUps failed:', err);
     });
     addToast('All follow-ups cleared successfully', 'info');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const toggleTask = useCallback((id: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Task toggling is disabled in read-only showcase.', 'info');
+      return;
+    }
     setTasks(prev => prev.map(t => {
       if (t.id === id) {
         const nextStatus = t.status === 'Completed' ? 'Pending' : 'Completed';
@@ -1256,9 +1336,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     api.toggleTask(id).catch(err => {
       console.warn('[Classora Backend] toggleTask failed:', err);
     });
-  }, []);
+  }, [userRole]);
 
   const addTask = useCallback((taskData: Omit<CRTask, 'id'>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Creating tasks is disabled in read-only showcase.', 'info');
+      return;
+    }
     const newTask: CRTask = {
       id: `TSK-${Date.now().toString().slice(-3)}`,
       ...taskData,
@@ -1268,34 +1352,50 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] createTask failed:', err);
     });
     addToast('New CR Task created', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const updateTask = useCallback((id: string, updates: Partial<CRTask>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Updating tasks is disabled in read-only showcase.', 'info');
+      return;
+    }
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
     api.updateTask(id, updates).catch(err => {
       console.warn('[Classora Backend] updateTask failed:', err);
     });
     addToast('Task updated', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const deleteTask = useCallback((id: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Deleting tasks is disabled in read-only showcase.', 'info');
+      return;
+    }
     setTasks(prev => prev.filter(t => t.id !== id));
     api.deleteTask(id).catch(err => {
       console.warn('[Classora Backend] deleteTask failed:', err);
     });
     addToast('Task deleted', 'info');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const updateSettings = useCallback((updates: Partial<AppSettings>) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Settings customization is disabled in read-only showcase.', 'info');
+      return;
+    }
     setSettings(prev => ({ ...prev, ...updates }));
     api.updateSettings(updates).catch(err => {
       console.warn('[Classora Backend] updateSettings failed:', err);
     });
     addToast('Settings saved successfully', 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   // Student Portal Request submission
   const submitStudentRequest = useCallback((req: { type: StudentRequest['type']; subject: string; message: string; studentId?: string }) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Submitting requests is disabled in read-only showcase.', 'info');
+      return;
+    }
     const targetId = req.studentId || currentStudentId;
     const targetStudent = students.find(s => s.id === targetId);
     const studentName = targetStudent ? targetStudent.name : 'Student';
@@ -1338,9 +1438,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
 
     addToast(`Request "${req.subject}" submitted to Lead CR & Noor Nigar.`, 'success');
-  }, [currentStudentId, students, addToast]);
+  }, [userRole, currentStudentId, students, addToast]);
 
   const resolveStudentRequest = useCallback((id: string, responseText: string, newStatus: 'Approved' | 'Resolved' = 'Resolved') => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Resolving requests is disabled in read-only showcase.', 'info');
+      return;
+    }
     const targetReq = studentRequests.find(r => r.id === id);
     setStudentRequests(prev => prev.map(r => r.id === id ? { ...r, status: newStatus, teacherOrCrResponse: responseText } : r));
 
@@ -1375,10 +1479,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }).catch(err => {
       console.warn('[Classora Backend] resolveStudentRequest failed:', err);
     });
-  }, [studentRequests, selectedSessionId, addToast, refreshData, refreshActivityLogs]);
+  }, [userRole, studentRequests, selectedSessionId, addToast, refreshData, refreshActivityLogs]);
 
   // Teacher grading & feedback methods with strict column limit enforcement and persistent tracking
   const updateStudentSkillScore = useCallback((studentId: string, skill: keyof StudentSkillScores, rawScore: number) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Competency evaluation is disabled in read-only showcase.', 'info');
+      return;
+    }
     const clampedScore = Math.max(0, Math.min(100, Math.round(Number(rawScore) || 0)));
     setStudents(prev => {
       const updated = prev.map(s => {
@@ -1407,9 +1515,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] updateStudentSkill failed:', err);
     });
     addToast(`Updated ${skill} competency score: ${clampedScore}/100`, 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const updateStudentAssignmentScore = useCallback((studentId: string, assignmentId: string, rawScore: number) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Grading assignments is disabled in read-only showcase.', 'info');
+      return;
+    }
     let finalClampedScore = 0;
     let colMax = 25;
     let colTitle = '';
@@ -1456,9 +1568,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     } else {
       addToast(`Assessment evaluated: ${finalClampedScore}/${colMax} saved`, 'success');
     }
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const addFacultyFeedback = useCallback((studentId: string, remarkText: string) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Adding faculty feedback is disabled in read-only showcase.', 'info');
+      return;
+    }
     const remark: CRRemark = {
       id: `FCT-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
@@ -1625,6 +1741,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     publicLinks?: UserSocialLinks;
     name?: string;
   }) => {
+    if (userRole === 'Guest') {
+      addToast('Guest Visitor Mode: Profile changes cannot be permanently saved.', 'info');
+      return;
+    }
     setCurrentUser(prev => {
       const updated: GoogleUser = {
         ...prev,
@@ -1681,7 +1801,50 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     addToast('Profile, display photo, and public links updated!', 'success');
-  }, [currentUser, addToast]);
+  }, [userRole, currentUser, addToast]);
+
+  const loginAsGuest = useCallback(async (customName?: string) => {
+    try {
+      const deviceType = window.innerWidth <= 768 ? 'Mobile' : (window.innerWidth <= 1024 ? 'Tablet' : 'Desktop');
+      const userAgent = navigator.userAgent;
+      
+      let guestUser: GoogleUser = {
+        id: `gst_${Date.now()}`,
+        name: customName?.trim() || `Guest Visitor #${Math.floor(1000 + Math.random() * 9000)}`,
+        email: `guest.${Date.now()}@classora.preview`,
+        avatar: '',
+        role: 'Guest',
+        isGoogleAuthenticated: false,
+      };
+
+      try {
+        const res = await api.recordGuestSession({
+          guestName: guestUser.name,
+          deviceType,
+          userAgent
+        });
+        if (res && res.user) {
+          guestUser = { ...res.user, isGoogleAuthenticated: false };
+          if (res.visitor) {
+            setCurrentGuestVisitor(res.visitor);
+            localStorage.setItem('classora_guest_visitor_v2', JSON.stringify(res.visitor));
+          }
+        }
+      } catch (e) {
+        console.warn('[Classora] Backend guest session record notice:', e);
+      }
+
+      setCurrentUser(guestUser);
+      localStorage.setItem(STORAGE_KEYS.GOOGLE_USER, JSON.stringify(guestUser));
+      setUserRole('Guest');
+      setActiveTab('dashboard');
+      soundFx.playCelebration();
+      addToast(`Welcome to Classora Showcase Preview, ${guestUser.name}! (Read-Only Mode)`, 'success');
+    } catch (err: any) {
+      console.error('Failed to log in as guest:', err);
+      addToast('Could not initialize guest preview session.', 'error');
+    }
+  }, [setUserRole, setActiveTab, addToast]);
 
   const signOutGoogle = useCallback(() => {
     const unauthUser: GoogleUser = {
@@ -1693,9 +1856,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       isGoogleAuthenticated: false,
     };
     setCurrentUser(unauthUser);
+    setCurrentGuestVisitor(null);
     localStorage.removeItem(STORAGE_KEYS.GOOGLE_USER);
-    addToast('Signed out of SST Google account', 'info');
+    localStorage.removeItem('classora_guest_visitor_v2');
+    addToast('Signed out of account', 'info');
   }, [addToast]);
+
+  // Periodic heartbeat ping for active guest session
+  useEffect(() => {
+    if (userRole === 'Guest' && currentGuestVisitor?.id) {
+      const interval = setInterval(() => {
+        api.pingGuestSession(currentGuestVisitor.id);
+      }, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [userRole, currentGuestVisitor?.id]);
 
   const toggleSound = useCallback(() => {
     const isEnabled = soundFx.toggle();
@@ -1843,6 +2018,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         isRoleManagementModalOpen,
         setIsRoleManagementModalOpen,
         updateUserRole,
+        isGuestVisitorsModalOpen,
+        setIsGuestVisitorsModalOpen,
+        loginAsGuest,
+        currentGuestVisitor,
       }}
     >
       {children}

@@ -156,7 +156,13 @@ const GoogleGIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }
 );
 
 export const SSTAuthGate: React.FC = () => {
-  const { signInWithGoogle } = useApp();
+  const { signInWithGoogle, loginAsGuest } = useApp();
+
+  const handleGuestLogin = async () => {
+    soundFx.playSuccess();
+    fireGrandCelebration();
+    await loginAsGuest();
+  };
 
   // Mode: 'login' ("Log in to account") or 'register' ("Create an account")
   const [authMode, setAuthMode] = useState<'register' | 'login'>('login');
@@ -286,8 +292,12 @@ export const SSTAuthGate: React.FC = () => {
   };
 
   // 1-Click Quick Role Presets handler for instant test switching
-  const handleSelectRolePreset = (role: 'Admin' | 'Teacher' | 'CR' | 'Student') => {
+  const handleSelectRolePreset = (role: 'Admin' | 'Teacher' | 'CR' | 'Student' | 'Guest') => {
     soundFx.playPop();
+    if (role === 'Guest') {
+      handleGuestLogin();
+      return;
+    }
     setAuthMode('login');
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -543,7 +553,7 @@ export const SSTAuthGate: React.FC = () => {
                 </span>
                 <span className="text-[10px] text-indigo-300 font-medium">1-Click Fast Login</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
                 <button
                   type="button"
                   onClick={() => handleSelectRolePreset('Admin')}
@@ -595,6 +605,15 @@ export const SSTAuthGate: React.FC = () => {
                 >
                   <span>👨‍🎓</span>
                   <span>Student</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRolePreset('Guest')}
+                  className="px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border bg-teal-500/15 text-teal-300 border-teal-500/30 hover:bg-teal-500/25 hover:border-teal-400/50"
+                  title="Explore as Guest Visitor (Read-Only Preview)"
+                >
+                  <span>👁️</span>
+                  <span>Guest</span>
                 </button>
               </div>
             </div>
@@ -788,6 +807,20 @@ export const SSTAuthGate: React.FC = () => {
               >
                 <GoogleGIcon className="w-4 h-4 shrink-0" />
                 <span>Continue with Google (@sst.scaler.com)</span>
+              </button>
+            </div>
+
+            {/* 1-Click Guest Visitor Showcase Button */}
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={handleGuestLogin}
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-emerald-600/25 via-teal-600/25 to-cyan-600/25 hover:from-emerald-600/40 hover:via-teal-600/40 hover:to-cyan-600/40 active:scale-[0.99] text-emerald-200 border border-emerald-500/35 hover:border-emerald-400/55 rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 text-xs font-semibold transition cursor-pointer shadow-md shadow-emerald-950/40"
+                title="Explore Classora Academic OS with read-only visitor access"
+              >
+                <Eye className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <span>Explore as Guest Visitor (Read-Only Preview)</span>
               </button>
             </div>
 

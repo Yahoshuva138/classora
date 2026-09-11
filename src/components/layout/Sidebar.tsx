@@ -128,6 +128,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     { id: 'sessions', label: 'Course Syllabus', icon: CheckSquare },
   ];
 
+  const guestNavItems: NavItem[] = [
+    { id: 'dashboard', label: 'Showcase Dashboard', icon: LayoutDashboard },
+    { id: 'students', label: 'Student Directory', icon: Users },
+    { id: 'sessions', label: 'Curriculum & Schedule', icon: Calendar },
+    { id: 'attendance', label: 'Attendance Records', icon: CheckSquare },
+    { id: 'groups', label: 'Discussion Groups (1-7)', icon: Users, badge: 7, badgeColor: 'bg-purple-500 text-white' },
+    { id: 'performance', label: 'Skill Analytics', icon: TrendingUp },
+    { id: 'reports', label: 'Reports & Audits', icon: FileSpreadsheet },
+  ];
+
   const currentNavItems =
     userRole === 'Admin'
       ? adminNavItems
@@ -135,6 +145,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
       ? studentNavItems
       : userRole === 'Teacher'
       ? teacherNavItems
+      : userRole === 'Guest'
+      ? guestNavItems
       : crNavItems;
 
   const roleAccentColor =
@@ -144,6 +156,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
       ? 'bg-emerald-600 shadow-emerald-600/20'
       : userRole === 'Teacher'
       ? 'bg-indigo-600 shadow-indigo-600/20'
+      : userRole === 'Guest'
+      ? 'bg-teal-600 shadow-teal-600/20'
       : 'bg-blue-600 shadow-blue-600/20';
 
   const roleBadge =
@@ -153,6 +167,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
       ? { text: 'Student Portal', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
       : userRole === 'Teacher'
       ? { text: 'Teacher / Faculty', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' }
+      : userRole === 'Guest'
+      ? { text: 'Guest Visitor', color: 'bg-teal-500/20 text-teal-300 border-teal-500/30' }
       : { text: 'Class Rep (CR)', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
 
   const handleNavClick = (id: string) => {
@@ -198,6 +214,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
             ? 'Student Workspace'
             : userRole === 'Teacher'
             ? 'Faculty Workspace'
+            : userRole === 'Guest'
+            ? 'Guest Read-Only Showcase'
             : 'CR Navigation'}
         </div>
         {currentNavItems.map(item => {
@@ -248,6 +266,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
               ? `Student: ${currentStudent.name}`
               : userRole === 'Teacher'
               ? `Faculty: ${activeTeacher.name}`
+              : userRole === 'Guest'
+              ? `Guest: ${currentUser.name || 'Visitor'}`
               : `Lead CR: ${currentUser.name || 'Yahoshuva Kesaboyina'}`}
           </span>
           <span className="text-emerald-400 font-medium text-[10px]">● Online</span>

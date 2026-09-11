@@ -54,6 +54,15 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
         { id: 'sessions', label: 'Schedule', icon: Calendar },
       ];
     }
+    if (userRole === 'Guest') {
+      return [
+        { id: 'dashboard', label: 'Showcase', icon: LayoutDashboard },
+        { id: 'students', label: 'Students', icon: Users },
+        { id: 'sessions', label: 'Curriculum', icon: Calendar },
+        { id: 'attendance', label: 'Attendance', icon: CheckSquare },
+        { id: 'groups', label: 'Groups', icon: Users },
+      ];
+    }
     return [
       { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
       { id: 'students', label: 'Students', icon: Users },
@@ -106,6 +115,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           } else if (userRole === 'Student') {
             activeClasses = 'text-emerald-600 font-bold';
             activePill = 'bg-emerald-50';
+          } else if (userRole === 'Guest') {
+            activeClasses = 'text-teal-600 font-bold';
+            activePill = 'bg-teal-50';
           }
 
           return (

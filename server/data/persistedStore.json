@@ -2665,7 +2665,7 @@
       "batch": "English C - Term 1",
       "discussionGroup": "Group 5",
       "group": "Group 5",
-      "avatar": "",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&auto=format&fit=crop&q=80",
       "joiningDate": "2026-08-01",
       "currentLevel": "Intermediate (B1)",
       "initialRemarks": "",
@@ -2716,16 +2716,16 @@
       ],
       "crRemarks": [],
       "historicalScores": [],
-      "headline": "",
-      "bio": "",
+      "headline": "SST CSE 2026 • AI / Systems Enthusiast • Course Admin",
+      "bio": "Pioneering intelligent agentic education platforms and real-time student analytics at Scaler School of Technology.",
       "publicLinks": {
-        "github": "",
-        "linkedin": "",
-        "portfolio": "",
-        "leetcode": "",
-        "twitter": ""
+        "github": "https://github.com/Yahoshuva138",
+        "linkedin": "https://linkedin.com/in/yahoshuva-kesaboyina",
+        "portfolio": "https://yahoshuva.dev",
+        "leetcode": "https://leetcode.com/u/yahoshuva",
+        "twitter": "https://x.com/yahoshuva"
       },
-      "updatedAt": "2026-09-11T19:49:39.638Z"
+      "updatedAt": "2026-09-11T20:11:21.233Z"
     },
     {
       "id": "26bcs10450",
@@ -5370,22 +5370,22 @@
       "email": "yahoshuva.26bcs10296@sst.scaler.com",
       "role": "Admin",
       "studentId": "26bcs10296",
-      "avatar": "",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&auto=format&fit=crop&q=80",
       "personaKey": "primary_admin_yahoshuva",
       "isGoogleAuthenticated": true,
       "password": "SST@2026",
       "isRegistered": true,
       "mustChangePassword": true,
-      "headline": "",
-      "bio": "",
+      "headline": "SST CSE 2026 • AI / Systems Enthusiast • Course Admin",
+      "bio": "Pioneering intelligent agentic education platforms and real-time student analytics at Scaler School of Technology.",
       "publicLinks": {
-        "github": "",
-        "linkedin": "",
-        "portfolio": "",
-        "leetcode": "",
-        "twitter": ""
+        "github": "https://github.com/Yahoshuva138",
+        "linkedin": "https://linkedin.com/in/yahoshuva-kesaboyina",
+        "portfolio": "https://yahoshuva.dev",
+        "leetcode": "https://leetcode.com/u/yahoshuva",
+        "twitter": "https://x.com/yahoshuva"
       },
-      "updatedAt": "2026-09-11T19:49:39.638Z"
+      "updatedAt": "2026-09-11T20:11:21.231Z"
     },
     {
       "id": "usr_26bcs10535",

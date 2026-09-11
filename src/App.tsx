@@ -21,6 +21,7 @@ import { StudentPortalView } from './components/screens/StudentPortalView';
 import { TeacherPortalView } from './components/screens/TeacherPortalView';
 import { DiscussionGroupsScreen } from './components/screens/DiscussionGroupsScreen';
 import { RoleManagementModal } from './components/admin/RoleManagementModal';
+import { GuestVisitorsModal } from './components/admin/GuestVisitorsModal';
 
 import { SSTAuthGate } from './components/auth/SSTAuthGate';
 import { GoogleAuthModal } from './components/auth/GoogleAuthModal';
@@ -43,7 +44,8 @@ const AuthenticatedApp: React.FC = () => {
     isOnboardingOpen,
     setIsOnboardingOpen,
     isShortcutsOpen,
-    setIsShortcutsOpen
+    setIsShortcutsOpen,
+    signOutGoogle
   } = useApp();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -133,6 +135,36 @@ const AuthenticatedApp: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Header onToggleMobileMenu={() => setIsMobileNavOpen(true)} />
 
+        {/* Ambient Read-Only Sandbox Banner for Guest Visitors */}
+        {userRole === 'Guest' && (
+          <div className="bg-gradient-to-r from-teal-900 via-cyan-950 to-slate-900 border-b border-teal-500/30 px-4 py-2 text-white flex flex-wrap items-center justify-between gap-3 text-xs shadow-md animate-in fade-in">
+            <div className="flex items-center gap-2.5 font-medium">
+              <span className="flex h-2.5 w-2.5 relative shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-400"></span>
+              </span>
+              <span>
+                <strong className="text-teal-300 font-bold">👁️ Guest Visitor Mode:</strong> You are exploring Classora in <strong>Read-Only Demonstration Mode</strong>. Cohort data is protected; marking attendance, modifying records, and data sharing are disabled.
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-[11px] text-teal-200/70 hidden md:inline">
+                Registered in Main Admin Audit
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  signOutGoogle();
+                  setIsGoogleAuthModalOpen(true);
+                }}
+                className="px-3 py-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-lg text-xs transition shadow-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Exit & Sign In</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Security Banner if user is on default password */}
         {currentUser?.mustChangePassword && (
           <div className="bg-amber-500/10 border-b border-amber-500/30 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs transition-all animate-in fade-in">
@@ -182,6 +214,7 @@ const AuthenticatedApp: React.FC = () => {
         onClose={() => setIsShortcutsOpen(false)}
       />
       <RoleManagementModal />
+      <GuestVisitorsModal />
       <UserProfileCustomizationModal />
       <PublicProfileModal />
     </div>

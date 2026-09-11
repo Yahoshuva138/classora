@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { BookOpen, Sparkles, ArrowRight, Volume2, VolumeX, ChevronRight } from 'lucide-react';
+import { BookOpen, Sparkles, ArrowRight, Volume2, VolumeX, ChevronRight, Eye } from 'lucide-react';
 import { soundFx } from '../../utils/soundEffects';
+import { useApp } from '../../context/AppContext';
 
 interface LibraryBookIntroProps {
   onComplete: () => void;
 }
 
 export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }) => {
+  const { loginAsGuest } = useApp();
   // Steps:
   // 0: Closed Tome (Awaiting user click)
   // 1: Front Cover Swung Open in 3D (Page 1 visible - Awaiting user click)
@@ -88,6 +90,18 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
             title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-amber-400" /> : <VolumeX className="w-3.5 h-3.5 text-white/40" />}
+          </button>
+          <button
+            onClick={async () => {
+              if (soundEnabled) soundFx.playSuccess();
+              onComplete();
+              await loginAsGuest();
+            }}
+            className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/35 transition text-xs font-semibold flex items-center gap-1.5 backdrop-blur-md shadow-sm cursor-pointer"
+            title="Instant Guest Visitor Read-Only Preview"
+          >
+            <Eye className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Explore as Guest</span>
           </button>
           <button
             onClick={handleSkip}

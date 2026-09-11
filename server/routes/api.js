@@ -12,6 +12,7 @@ import { StudentRequest } from '../models/StudentRequest.js';
 import { AppSettings } from '../models/AppSettings.js';
 import { User } from '../models/User.js';
 import { ActivityLog } from '../models/ActivityLog.js';
+import { GuestVisitor } from '../models/GuestVisitor.js';
 import { presetActivityLogs } from '../services/seedService.js';
 
 const router = express.Router();
@@ -78,6 +79,19 @@ function model(name, MongooseModel) {
       };
     }
   });
+}
+
+function getCallerRole(req) {
+  return (
+    req.headers['x-user-role'] ||
+    req.headers['x-caller-role'] ||
+    req.body?.callerRole ||
+    req.body?.actorRole ||
+    req.body?.markedByRole ||
+    req.query?.callerRole ||
+    req.query?.role ||
+    null
+  );
 }
 
 // Enterprise Activity Logger helper
@@ -418,6 +432,14 @@ function getCriteriaLimit(assignment, aid) {
 
 router.put('/students/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest' || callerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot modify student records.'
+      });
+    }
+
     const id = req.params.id;
     const query = { $or: [{ rollNo: id }, { id }] };
     await model('students', Student).updateOne(query, { $set: req.body });
@@ -430,6 +452,14 @@ router.put('/students/:id', async (req, res) => {
 
 router.delete('/students/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole && (callerRole === 'Guest' || (callerRole !== 'Admin' && callerRole !== 'Teacher'))) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors and unauthorized users cannot archive students.'
+      });
+    }
+
     const id = req.params.id;
     await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: { isArchived: true } });
     res.json({ success: true, message: 'Student archived' });
@@ -441,6 +471,14 @@ router.delete('/students/:id', async (req, res) => {
 // Add CR Remark
 router.post('/students/:id/remarks', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest' || callerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot add remarks.'
+      });
+    }
+
     const id = req.params.id;
     const remark = {
       id: `RMK-${Date.now()}`,
@@ -568,8 +606,8 @@ router.get('/attendance', async (req, res) => {
 
 router.post(['/attendance', '/attendance/mark'], async (req, res) => {
   try {
-    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
-    if (callerRole === 'CR' || callerRole === 'Student') {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'CR' || callerRole === 'Student' || callerRole === 'Guest') {
       return res.status(403).json({
         success: false,
         error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to record or modify official attendance.'
@@ -591,8 +629,8 @@ router.post(['/attendance', '/attendance/mark'], async (req, res) => {
 
 router.post('/attendance/bulk', async (req, res) => {
   try {
-    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
-    if (callerRole === 'CR' || callerRole === 'Student') {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'CR' || callerRole === 'Student' || callerRole === 'Guest') {
       return res.status(403).json({
         success: false,
         error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to record or modify official attendance.'
@@ -631,8 +669,8 @@ router.post('/attendance/bulk', async (req, res) => {
 
 router.delete('/attendance/session/:sessionId', async (req, res) => {
   try {
-    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
-    if (callerRole === 'CR' || callerRole === 'Student') {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'CR' || callerRole === 'Student' || callerRole === 'Guest') {
       return res.status(403).json({
         success: false,
         error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to reset attendance.'
@@ -664,6 +702,14 @@ router.get('/followups', async (req, res) => {
 
 router.post('/followups', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot create follow-up tasks.'
+      });
+    }
+
     const id = req.body.id || `flw_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
     const item = await model('followups', FollowUp).create({ ...req.body, id });
     res.status(201).json({ success: true, data: item });
@@ -674,6 +720,14 @@ router.post('/followups', async (req, res) => {
 
 router.put('/followups/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot update follow-up tasks.'
+      });
+    }
+
     const id = req.params.id;
     await model('followups', FollowUp).updateOne({ id }, { $set: req.body });
     const updated = await model('followups', FollowUp).findOne({ id });
@@ -685,6 +739,14 @@ router.put('/followups/:id', async (req, res) => {
 
 router.delete('/followups', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest' || (callerRole !== 'Admin' && callerRole !== 'Teacher')) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot clear follow-ups.'
+      });
+    }
+
     await model('followups', FollowUp).deleteMany({});
     res.json({ success: true, message: 'All follow-ups cleared' });
   } catch (err) {
@@ -694,6 +756,14 @@ router.delete('/followups', async (req, res) => {
 
 router.delete('/followups/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot delete follow-ups.'
+      });
+    }
+
     const id = req.params.id;
     await model('followups', FollowUp).deleteOne({ id });
     res.json({ success: true, message: 'Follow-up deleted' });
@@ -717,6 +787,14 @@ router.get('/tasks', async (req, res) => {
 
 router.post('/tasks', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot create CR tasks.'
+      });
+    }
+
     const id = req.body.id || `TSK-${Date.now().toString().slice(-4)}`;
     const task = await model('tasks', CRTask).create({ ...req.body, id });
     res.status(201).json({ success: true, data: task });
@@ -727,6 +805,14 @@ router.post('/tasks', async (req, res) => {
 
 router.put('/tasks/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot modify CR tasks.'
+      });
+    }
+
     const id = req.params.id;
     await model('tasks', CRTask).updateOne({ id }, { $set: req.body });
     const updated = await model('tasks', CRTask).findOne({ id });
@@ -738,6 +824,14 @@ router.put('/tasks/:id', async (req, res) => {
 
 router.patch('/tasks/:id/toggle', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot toggle task completion.'
+      });
+    }
+
     const id = req.params.id;
     const existing = await model('tasks', CRTask).findOne({ id });
     if (!existing) return res.status(404).json({ error: 'Task not found' });
@@ -751,6 +845,14 @@ router.patch('/tasks/:id/toggle', async (req, res) => {
 
 router.delete('/tasks/:id', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot delete CR tasks.'
+      });
+    }
+
     const id = req.params.id;
     await model('tasks', CRTask).deleteOne({ id });
     res.json({ success: true, message: 'Task deleted' });
@@ -776,6 +878,14 @@ router.get('/requests', async (req, res) => {
 
 router.post('/requests', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot submit student requests or leave excuses.'
+      });
+    }
+
     const id = `REQ-${Date.now()}`;
     const student = await model('students', Student).findOne({ $or: [{ rollNo: req.body.studentId }, { id: req.body.studentId }] });
     const requestData = {
@@ -814,6 +924,14 @@ router.post('/requests', async (req, res) => {
 
 router.patch('/requests/:id/resolve', async (req, res) => {
   try {
+    const callerRole = getCallerRole(req);
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot resolve student requests.'
+      });
+    }
+
     const id = req.params.id;
     const { response, newStatus = 'Approved', actorName = 'Noor Nigar', actorRole = 'Teacher' } = req.body;
     const requestDoc = await model('requests', StudentRequest).findOne({ id });
@@ -1041,6 +1159,14 @@ router.patch('/auth/users/:id/role', async (req, res) => {
 // -------------------------------------------------------------
 router.put('/auth/users/:id/profile', async (req, res) => {
   try {
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole;
+    if (callerRole === 'Guest') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Read-only guest visitors cannot modify user profiles.'
+      });
+    }
+
     const rawId = req.params.id;
     const { avatar, bio, headline, publicLinks, name } = req.body;
 
@@ -1549,9 +1675,8 @@ router.get('/auth/users', async (req, res) => {
 router.patch('/auth/users/:id/role', async (req, res) => {
   try {
     const targetIdentifier = req.params.id;
-    const { newRole, callerEmail, callerRole } = req.body;
-    const headerRole = req.headers['x-user-role'];
-    const effectiveCallerRole = callerRole || headerRole || 'Admin';
+    const { newRole, callerEmail } = req.body;
+    const effectiveCallerRole = getCallerRole(req) || 'Admin';
 
     const validRoles = ['Admin', 'Teacher', 'CR', 'Student'];
     if (!validRoles.includes(newRole)) {
@@ -1561,7 +1686,7 @@ router.patch('/auth/users/:id/role', async (req, res) => {
       });
     }
 
-    if (effectiveCallerRole === 'CR' || effectiveCallerRole === 'Student') {
+    if (effectiveCallerRole === 'CR' || effectiveCallerRole === 'Student' || effectiveCallerRole === 'Guest') {
       return res.status(403).json({
         success: false,
         error: 'Access Denied: Only Course Admins and Faculty Teachers have authority to modify roles.'
@@ -1628,6 +1753,144 @@ router.patch('/auth/users/:id/role', async (req, res) => {
         avatar: user.avatar
       }
     });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 13. GUEST VISITOR SESSION & AUDIT (READ-ONLY SHOWCASE)
+// -------------------------------------------------------------
+router.post('/auth/guest-session', async (req, res) => {
+  try {
+    const { guestName: rawGuestName, deviceType: rawDeviceType, userAgent: rawUserAgent } = req.body || {};
+    const guestNumber = Math.floor(1000 + Math.random() * 9000);
+    const guestName = (rawGuestName && rawGuestName.trim()) ? rawGuestName.trim() : `Guest Visitor #${guestNumber}`;
+    const guestId = `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const guestEmail = `guest.${guestNumber}@classora.preview`;
+    const deviceType = rawDeviceType || (req.headers['sec-ch-ua-mobile'] === '?1' ? 'Mobile' : 'Desktop');
+    const userAgent = rawUserAgent || req.headers['user-agent'] || 'Modern Web Browser';
+    const ipAddress = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').toString().split(',')[0].trim();
+    const now = new Date().toISOString();
+
+    const visitorDoc = {
+      id: guestId,
+      guestName,
+      guestEmail,
+      ipAddress,
+      userAgent,
+      deviceType: ['Desktop', 'Mobile', 'Tablet'].includes(deviceType) ? deviceType : 'Desktop',
+      loginTime: now,
+      lastActiveTime: now,
+      pageViewsCount: 1,
+      attemptedMutationsCount: 0,
+      status: 'Active'
+    };
+
+    const created = await model('guest_visitors', GuestVisitor).create(visitorDoc);
+
+    await logActivity({
+      actorName: guestName,
+      actorRole: 'Guest',
+      action: 'Guest Session Initiated',
+      details: `Guest visitor "${guestName}" entered Classora Read-Only Preview from ${deviceType} device.`,
+      category: 'security',
+      targetId: guestId,
+      targetName: guestName
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Welcome to Classora Showcase Preview, ${guestName}!`,
+      user: {
+        id: guestId,
+        name: guestName,
+        email: guestEmail,
+        role: 'Guest',
+        avatar: '',
+        isGoogleAuthenticated: false,
+        isGuest: true,
+        mustChangePassword: false
+      },
+      visitor: created
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/auth/guest-ping', async (req, res) => {
+  try {
+    const { visitorId } = req.body;
+    if (visitorId) {
+      const existing = await model('guest_visitors', GuestVisitor).findOne({ id: visitorId });
+      if (existing) {
+        const pageViews = (existing.pageViewsCount || 1) + 1;
+        await model('guest_visitors', GuestVisitor).updateOne(
+          { id: visitorId },
+          { $set: { lastActiveTime: new Date().toISOString(), pageViewsCount: pageViews, status: 'Active' } }
+        );
+      }
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 14. MAIN ADMIN EXCLUSIVE: GUEST VISITORS REGISTRY
+// Strictly accessible ONLY to userRole === 'Admin'
+// -------------------------------------------------------------
+router.get('/admin/guest-visitors', async (req, res) => {
+  try {
+    const callerRole = getCallerRole(req);
+    if (callerRole !== 'Admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Main Course Administrator authorization is strictly required to view the guest visitor registry.'
+      });
+    }
+
+    let visitors = await model('guest_visitors', GuestVisitor).find({});
+    if (Array.isArray(visitors)) {
+      visitors = visitors.slice().sort((a, b) => new Date(b.loginTime).getTime() - new Date(a.loginTime).getTime());
+    }
+
+    res.json({
+      success: true,
+      count: (visitors || []).length,
+      data: visitors || []
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.delete('/admin/guest-visitors/:id', async (req, res) => {
+  try {
+    const callerRole = getCallerRole(req);
+    if (callerRole !== 'Admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Main Course Administrator authorization is strictly required to manage guest logs.'
+      });
+    }
+
+    const { id } = req.params;
+    if (id === 'all') {
+      await model('guest_visitors', GuestVisitor).deleteMany({});
+      return res.json({ success: true, message: 'All guest visitor records pruned successfully' });
+    }
+
+    const query = {
+      $or: [
+        { id },
+        ...(mongoose.isValidObjectId(id) ? [{ _id: id }] : [])
+      ]
+    };
+    await model('guest_visitors', GuestVisitor).deleteOne(query);
+    res.json({ success: true, message: `Guest visitor record ${id} removed` });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

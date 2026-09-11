@@ -18,7 +18,8 @@ import {
   Key,
   Crown,
   Users,
-  ExternalLink
+  ExternalLink,
+  Eye
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Classora3DLogo, GoogleIcon } from '../common/Classora3DLogo';
@@ -56,6 +57,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
     setIsShortcutsOpen,
     isRoleManagementModalOpen,
     setIsRoleManagementModalOpen,
+    setIsGuestVisitorsModalOpen,
     setIsProfileCustomizationOpen,
     openPublicProfile,
     soundEnabled,
@@ -126,6 +128,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         default: return 'Student Portal Overview';
       }
     }
+    if (userRole === 'Guest') {
+      switch (activeTab) {
+        case 'dashboard': return 'Showcase Dashboard (Read-Only)';
+        case 'students': return 'Student Directory (Read-Only)';
+        case 'sessions': return 'Curriculum & Session Schedule';
+        case 'attendance': return 'Attendance Records (Read-Only)';
+        case 'groups': return 'Discussion Groups 1–7 (Read-Only)';
+        case 'performance': return 'Competency & Skill Analytics';
+        case 'reports': return 'Class Performance Reports';
+        default: return 'Classora Showcase (Read-Only)';
+      }
+    }
     if (userRole === 'Teacher') {
       switch (activeTab) {
         case 'teacher-overview': return 'Course Coordinator Overview';
@@ -156,6 +170,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   };
 
   const getProfileDetails = () => {
+    if (userRole === 'Guest' || currentUser.role === 'Guest') {
+      return {
+        initials: 'GV',
+        name: currentUser.name || 'Guest Visitor',
+        roleTitle: 'Guest Visitor • Read-Only Showcase',
+        email: currentUser.email || 'guest@visitor.classora.internal',
+        badgeText: '👁️ Guest Preview',
+        bg: 'bg-teal-600'
+      };
+    }
     if (currentUser.isGoogleAuthenticated) {
       const isUserAdmin = currentUser.role === 'Admin';
       const isUserTeacher = currentUser.role === 'Teacher';
@@ -291,6 +315,17 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               <Crown className="w-3.5 h-3.5" />
               <span>Role Manager</span>
             </button>
+            <button
+              onClick={() => {
+                soundFx.playPop();
+                setIsGuestVisitorsModalOpen(true);
+              }}
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-2xl text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-xs transition-all cursor-pointer"
+              title="Inspect Guest Visitor Sessions & Security Audit (Admin Only)"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Guest Visitors</span>
+            </button>
           </div>
         ) : userRole === 'Teacher' ? (
           <div className="flex items-center space-x-2">
@@ -319,6 +354,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
             <span className="text-xs font-extrabold tracking-tight">Class Rep (CR)</span>
             <span className="hidden 2xl:inline text-[10px] font-semibold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded-md">
               Peer Lead
+            </span>
+          </div>
+        ) : userRole === 'Guest' ? (
+          <div className="flex items-center space-x-1.5 px-3 py-1 rounded-2xl bg-teal-50 text-teal-800 border border-teal-200 shadow-2xs">
+            <span className="text-xs">👁️</span>
+            <span className="text-xs font-extrabold tracking-tight">Guest Visitor</span>
+            <span className="hidden 2xl:inline text-[10px] font-semibold text-teal-700 bg-teal-100 px-1.5 py-0.2 rounded-md">
+              Read-Only Showcase
             </span>
           </div>
         ) : (
@@ -605,6 +648,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                       {userRole === 'Admin' ? <Crown className="w-4 h-4 text-amber-600" /> : <Users className="w-4 h-4 text-indigo-600" />}
                       <span>{userRole === 'Admin' ? 'Appoint Teachers & Staff' : 'Appoint Class Reps (CR)'}</span>
                     </button>
+                    {userRole === 'Admin' && (
+                      <button
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          setIsGuestVisitorsModalOpen(true);
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs flex items-center space-x-2 font-bold text-teal-700 hover:bg-teal-50 cursor-pointer"
+                      >
+                        <Eye className="w-4 h-4 text-teal-600" />
+                        <span>👁️ Guest Visitors Registry</span>
+                      </button>
+                    )}
                     <div className="border-t border-slate-100 my-1"></div>
                   </>
                 )}
