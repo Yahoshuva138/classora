@@ -15,13 +15,15 @@ import {
   ExternalLink,
   Code2,
   AtSign,
-  AlertCircle
+  AlertCircle,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import { soundFx } from '../../utils/soundEffects';
 import { fireQuickConfetti, fireStarConfetti } from '../../utils/confettiUtils';
 import { UserSocialLinks } from '../../types';
+import { sanitizeImageUrl, SAMPLE_IMAGE_PRESETS, testImageLoad } from '../../utils/imageUrlHelper';
 
 // Curated high-resolution academic & tech avatars
 const CURATED_AVATARS = [
@@ -101,10 +103,13 @@ export const UserProfileCustomizationModal: React.FC = () => {
   const [portfolio, setPortfolio] = useState('');
   const [leetcode, setLeetcode] = useState('');
   const [twitter, setTwitter] = useState('');
+  const [imageLink, setImageLink] = useState('');
 
   // Custom Image URL test input
   const [customImageUrl, setCustomImageUrl] = useState('');
   const [imageError, setImageError] = useState(false);
+  const [isVerifyingImage, setIsVerifyingImage] = useState(false);
+  const [imageVerified, setImageVerified] = useState(false);
 
   // DiceBear Generator seed
   const [dicebearSeed, setDicebearSeed] = useState('');
@@ -124,8 +129,11 @@ export const UserProfileCustomizationModal: React.FC = () => {
       setPortfolio(currentUser.publicLinks?.portfolio || '');
       setLeetcode(currentUser.publicLinks?.leetcode || '');
       setTwitter(currentUser.publicLinks?.twitter || '');
+      setImageLink(currentUser.publicLinks?.imageLink || '');
       setCustomImageUrl(currentUser.avatar || '');
       setImageError(false);
+      setImageVerified(!!currentUser.avatar);
+      setIsVerifyingImage(false);
       setDicebearSeed(currentUser.studentId || currentUser.name || 'SST');
     }
   }, [isProfileCustomizationOpen, currentUser]);
@@ -188,19 +196,67 @@ export const UserProfileCustomizationModal: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleApplyCustomUrl = () => {
-    if (!customImageUrl.trim()) return;
-    setAvatar(customImageUrl.trim());
+  const handleUrlInputChange = (val: string) => {
+    setCustomImageUrl(val);
+    setImageVerified(false);
     setImageError(false);
-    soundFx.playPop();
-    addToast('Direct image URL applied!', 'info');
+    const sanitized = sanitizeImageUrl(val);
+    if (sanitized && (sanitized.startsWith('http') || sanitized.startsWith('data:'))) {
+      setAvatar(sanitized);
+    }
+  };
+
+  const handleApplyCustomUrl = async () => {
+    if (!customImageUrl.trim()) return;
+    const sanitized = sanitizeImageUrl(customImageUrl);
+    setCustomImageUrl(sanitized);
+    setAvatar(sanitized);
+    setIsVerifyingImage(true);
+    const ok = await testImageLoad(sanitized);
+    setIsVerifyingImage(false);
+    if (ok) {
+      setImageError(false);
+      setImageVerified(true);
+      soundFx.playSuccess();
+      addToast('Image verified and applied successfully!', 'success');
+    } else {
+      setImageError(true);
+      setImageVerified(false);
+      soundFx.playPop();
+      addToast('Image URL applied. If it fails to show, check link public view permissions.', 'info');
+    }
+  };
+
+  const handlePasteFromClipboard = async () => {
+    try {
+      if (!navigator.clipboard?.readText) {
+        addToast('Clipboard access not supported in this browser.', 'error');
+        return;
+      }
+      const text = await navigator.clipboard.readText();
+      if (!text || !text.trim()) {
+        addToast('Clipboard is empty. Copy an image URL first!', 'info');
+        return;
+      }
+      const sanitized = sanitizeImageUrl(text.trim());
+      setCustomImageUrl(sanitized);
+      setAvatar(sanitized);
+      setImageError(false);
+      setImageVerified(true);
+      soundFx.playPop();
+      addToast('Pasted and applied image URL from clipboard!', 'success');
+    } catch {
+      addToast('Could not access clipboard. Please paste manually.', 'error');
+    }
   };
 
   const handleGenerateDicebear = () => {
     const seed = (dicebearSeed.trim() || name || 'SST').toLowerCase();
     const generated = `https://api.dicebear.com/7.x/${dicebearStyle}/svg?seed=${encodeURIComponent(seed)}`;
     setAvatar(generated);
+    setCustomImageUrl(generated);
     setImageError(false);
+    setImageVerified(true);
     soundFx.playPop();
     fireQuickConfetti();
     addToast(`Generated unique ${dicebearStyle} avatar!`, 'success');
@@ -209,6 +265,8 @@ export const UserProfileCustomizationModal: React.FC = () => {
   const handleResetToMonogram = () => {
     setAvatar('');
     setCustomImageUrl('');
+    setImageVerified(false);
+    setImageError(false);
     soundFx.playPop();
     addToast('Reset to default SST monogram initials.', 'info');
   };
@@ -245,16 +303,22 @@ export const UserProfileCustomizationModal: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Prioritize sanitized customImageUrl if user entered something
+      const finalAvatar = customImageUrl.trim()
+        ? sanitizeImageUrl(customImageUrl.trim())
+        : (avatar.trim() || '');
+
       const formattedLinks: UserSocialLinks = {
         github: normalizeUrl(github, 'https://github.com/'),
         linkedin: normalizeUrl(linkedin, 'https://linkedin.com/in/'),
         portfolio: portfolio.trim() ? (portfolio.startsWith('http') ? portfolio.trim() : `https://${portfolio.trim()}`) : '',
         leetcode: normalizeUrl(leetcode, 'https://leetcode.com/u/'),
         twitter: normalizeUrl(twitter, 'https://x.com/'),
+        imageLink: imageLink.trim() ? sanitizeImageUrl(imageLink.trim()) : '',
       };
 
       await updateUserProfile({
-        avatar: avatar.trim(),
+        avatar: finalAvatar,
         name: name.trim() || currentUser.name,
         headline: headline.trim(),
         bio: bio.trim(),
@@ -411,32 +475,118 @@ export const UserProfileCustomizationModal: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Option 1: Direct Image URL */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Option A: Direct Image Web Link
-                  </label>
+                {/* Option 1: Direct Image URL (Supports ANY Web / Drive / Cloud / GitHub link) */}
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4 text-blue-600" />
+                        Option A: Any Image URL Link (Web, Drive, Cloud, Social)
+                      </label>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Paste ANY link: Google Drive photo, Dropbox, GitHub profile, Unsplash, Imgur, or direct image URL.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handlePasteFromClipboard}
+                      className="self-start sm:self-auto px-2.5 py-1 text-[11px] font-bold rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 flex items-center gap-1 transition cursor-pointer shrink-0"
+                      title="Paste image link from clipboard"
+                    >
+                      <Copy className="w-3 h-3" />
+                      Paste from Clipboard
+                    </button>
+                  </div>
+
                   <div className="flex gap-2">
                     <input
                       type="url"
                       value={customImageUrl}
-                      onChange={e => setCustomImageUrl(e.target.value)}
-                      placeholder="https://images.unsplash.com/... or https://github.com/torvalds.png"
-                      className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                      onChange={e => handleUrlInputChange(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleApplyCustomUrl();
+                        }
+                      }}
+                      placeholder="Paste ANY image URL (e.g. Google Drive share link, https://... or github.com/username)"
+                      className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-slate-900"
                     />
                     <button
                       type="button"
                       onClick={handleApplyCustomUrl}
-                      className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition cursor-pointer shrink-0"
+                      disabled={isVerifyingImage}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition cursor-pointer shrink-0 shadow-xs flex items-center gap-1.5"
                     >
-                      Apply URL
+                      {isVerifyingImage ? (
+                        <span>Checking...</span>
+                      ) : (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Apply URL</span>
+                        </>
+                      )}
                     </button>
+                    {customImageUrl && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCustomImageUrl('');
+                          setAvatar('');
+                          setImageVerified(false);
+                          setImageError(false);
+                          soundFx.playPop();
+                        }}
+                        className="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer shrink-0"
+                        title="Clear link"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
-                  {imageError && (
-                    <p className="text-[11px] text-rose-600 flex items-center gap-1 font-medium">
-                      <AlertCircle className="w-3.5 h-3.5" /> Image failed to load. Please verify the URL or try uploading a local file.
-                    </p>
+
+                  {/* Verification / status indicator */}
+                  {imageVerified && (
+                    <div className="text-[11px] text-emerald-700 font-bold flex items-center gap-1.5 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Image URL verified & active in preview!</span>
+                    </div>
                   )}
+
+                  {imageError && (
+                    <div className="text-[11px] text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-500" />
+                      <span>
+                        Could not display image directly. If using Google Drive, ensure link sharing is set to "Anyone with the link can view".
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Quick 1-Click Sample Presets */}
+                  <div className="pt-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                      Quick 1-Click Sample Image Links:
+                    </span>
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                      {SAMPLE_IMAGE_PRESETS.map(preset => (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => {
+                            setCustomImageUrl(preset.url);
+                            setAvatar(preset.url);
+                            setImageError(false);
+                            setImageVerified(true);
+                            soundFx.playPop();
+                            addToast(`Applied sample image URL (${preset.label})!`, 'info');
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-[11px] font-bold text-slate-700 hover:text-indigo-700 transition shrink-0 cursor-pointer flex items-center gap-1 shadow-2xs"
+                        >
+                          <span>{preset.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Option 2: Curated SST & Academic Presets Grid */}
@@ -701,6 +851,41 @@ export const UserProfileCustomizationModal: React.FC = () => {
                     className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono text-slate-800"
                   />
                 </div>
+
+                {/* Public Image / Headshot URL Link */}
+                <div className="p-3.5 rounded-2xl bg-purple-50/60 border border-purple-100">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-purple-950 flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                      Public Headshot / Image URL Link
+                    </label>
+                    <span className="text-[10px] font-bold text-purple-700 uppercase bg-purple-100/70 px-2 py-0.5 rounded-full">
+                      Optional Image Link
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      value={imageLink}
+                      onChange={e => setImageLink(e.target.value)}
+                      placeholder="https://drive.google.com/... or https://images.unsplash.com/..."
+                      className="flex-1 px-3.5 py-2 text-xs rounded-xl border border-purple-200 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-slate-900"
+                    />
+                    {imageLink && (
+                      <a
+                        href={sanitizeImageUrl(imageLink)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 shrink-0 cursor-pointer"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" /> View
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-purple-700/80 mt-1">
+                    Direct link to your high-resolution Google Drive headshot, portfolio photo, or photography collection.
+                  </p>
+                </div>
               </div>
             )}
 
@@ -864,9 +1049,21 @@ export const UserProfileCustomizationModal: React.FC = () => {
                           <ExternalLink className="w-3 h-3 text-sky-200" />
                         </a>
                       )}
-                      {!github && !linkedin && !portfolio && !leetcode && !twitter && (
+                      {imageLink && (
+                        <a
+                          href={sanitizeImageUrl(imageLink)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 rounded-xl bg-purple-600 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-purple-700 transition"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5" />
+                          <span>Image / Photo</span>
+                          <ExternalLink className="w-3 h-3 text-purple-200" />
+                        </a>
+                      )}
+                      {!github && !linkedin && !portfolio && !leetcode && !twitter && !imageLink && (
                         <span className="text-xs text-slate-400 italic">
-                          No social links added yet. Switch to "Public Links" tab to add your GitHub, LinkedIn, or Portfolio.
+                          No social links added yet. Switch to "Public Links" tab to add your GitHub, LinkedIn, or Image link.
                         </span>
                       )}
                     </div>

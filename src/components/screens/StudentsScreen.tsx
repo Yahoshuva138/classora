@@ -15,7 +15,8 @@ import {
   CheckCircle2,
   Mail,
   Phone,
-  Share2
+  Share2,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Student } from '../../types';
@@ -23,6 +24,7 @@ import { RiskBadge } from '../common/StatusBadge';
 import { Modal } from '../common/Modal';
 import { ConfirmDialog } from '../common/ConfirmDialog';
 import { generateAttendanceCSV, downloadCSV } from '../../utils/exportUtils';
+import { sanitizeImageUrl } from '../../utils/imageUrlHelper';
 
 export const StudentsScreen: React.FC = () => {
   const {
@@ -64,6 +66,7 @@ export const StudentsScreen: React.FC = () => {
     joiningDate: new Date().toISOString().split('T')[0],
     currentLevel: 'Intermediate (B1)',
     initialRemarks: '',
+    avatar: '',
   });
 
   const resetForm = () => {
@@ -75,6 +78,7 @@ export const StudentsScreen: React.FC = () => {
       joiningDate: new Date().toISOString().split('T')[0],
       currentLevel: 'Intermediate (B1)',
       initialRemarks: '',
+      avatar: '',
     });
   };
 
@@ -121,7 +125,10 @@ export const StudentsScreen: React.FC = () => {
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) return;
-    addStudent(formData);
+    addStudent({
+      ...formData,
+      avatar: formData.avatar ? sanitizeImageUrl(formData.avatar) : ''
+    });
     setIsAddModalOpen(false);
     resetForm();
   };
@@ -129,7 +136,10 @@ export const StudentsScreen: React.FC = () => {
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingStudent) return;
-    updateStudent(editingStudent.id, formData);
+    updateStudent(editingStudent.id, {
+      ...formData,
+      avatar: formData.avatar ? sanitizeImageUrl(formData.avatar) : ''
+    });
     setIsEditModalOpen(false);
     setEditingStudent(null);
   };
@@ -144,6 +154,7 @@ export const StudentsScreen: React.FC = () => {
       joiningDate: student.joiningDate,
       currentLevel: student.currentLevel,
       initialRemarks: student.initialRemarks,
+      avatar: student.avatar || '',
     });
     setIsEditModalOpen(true);
   };
@@ -564,6 +575,41 @@ export const StudentsScreen: React.FC = () => {
             </div>
           </div>
 
+          {/* Student Photo / Image URL Link */}
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                Student Photo / Image URL Link
+              </span>
+              <span className="text-[10px] text-slate-400 font-normal">Optional Web/Drive Link</span>
+            </label>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center text-xs font-bold text-slate-500 shadow-2xs">
+                {formData.avatar ? (
+                  <img
+                    src={sanitizeImageUrl(formData.avatar)}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as any).style.display = 'none'; }}
+                  />
+                ) : (
+                  formData.name ? formData.name.slice(0, 2).toUpperCase() : 'SST'
+                )}
+              </div>
+              <input
+                type="url"
+                value={formData.avatar}
+                onChange={e => setFormData({ ...formData, avatar: e.target.value })}
+                placeholder="Paste ANY image URL (Google Drive, Unsplash, GitHub, WebP...)"
+                className="flex-1 text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono"
+              />
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">
+              Supports any image URL link, Google Drive photo, GitHub avatar, or Unsplash portrait.
+            </p>
+          </div>
+
           <div>
             <label className="text-xs font-bold text-slate-700 block mb-1">
               Initial Remarks / Faculty Notes
@@ -665,6 +711,41 @@ export const StudentsScreen: React.FC = () => {
                 <option value="Advanced (C1)">Advanced (C1)</option>
               </select>
             </div>
+          </div>
+
+          {/* Student Photo / Image URL Link */}
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-blue-600" />
+                Student Photo / Image URL Link
+              </span>
+              <span className="text-[10px] text-slate-400 font-normal">Optional Web/Drive Link</span>
+            </label>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center text-xs font-bold text-slate-500 shadow-2xs">
+                {formData.avatar ? (
+                  <img
+                    src={sanitizeImageUrl(formData.avatar)}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as any).style.display = 'none'; }}
+                  />
+                ) : (
+                  formData.name ? formData.name.slice(0, 2).toUpperCase() : 'SST'
+                )}
+              </div>
+              <input
+                type="url"
+                value={formData.avatar}
+                onChange={e => setFormData({ ...formData, avatar: e.target.value })}
+                placeholder="Paste ANY image URL (Google Drive, Unsplash, GitHub, WebP...)"
+                className="flex-1 text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono"
+              />
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">
+              Supports any image URL link, Google Drive photo, GitHub avatar, or Unsplash portrait.
+            </p>
           </div>
 
           <div className="flex justify-end space-x-2 pt-3 border-t border-slate-200">

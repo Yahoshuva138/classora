@@ -52,7 +52,8 @@ const StudentSchema = new mongoose.Schema({
     linkedin: { type: String, default: '' },
     portfolio: { type: String, default: '' },
     twitter: { type: String, default: '' },
-    leetcode: { type: String, default: '' }
+    leetcode: { type: String, default: '' },
+    imageLink: { type: String, default: '' }
   },
   lastActivity: { type: String, default: 'Just now' },
   skills: { type: StudentSkillScoresSchema, default: () => ({}) },

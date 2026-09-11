@@ -15,7 +15,8 @@ import {
   Award,
   BookOpen,
   Calendar,
-  Edit3
+  Edit3,
+  Image as ImageIcon
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
@@ -323,7 +324,19 @@ export const PublicProfileModal: React.FC = () => {
                     <ExternalLink className="w-3 h-3 text-sky-200" />
                   </a>
                 )}
-                {!links.github && !links.linkedin && !links.portfolio && !links.leetcode && !links.twitter && (
+                {links.imageLink && (
+                  <a
+                    href={links.imageLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 rounded-xl bg-purple-600 text-white text-xs font-bold flex items-center gap-1.5 hover:bg-purple-700 transition shadow-xs"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5" />
+                    <span>View Image / Photo</span>
+                    <ExternalLink className="w-3 h-3 text-purple-200" />
+                  </a>
+                )}
+                {!links.github && !links.linkedin && !links.portfolio && !links.leetcode && !links.twitter && !links.imageLink && (
                   <p className="text-xs text-slate-400 italic">
                     No public links added yet by this member.
                   </p>

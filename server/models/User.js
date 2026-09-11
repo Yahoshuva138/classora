@@ -20,7 +20,8 @@ const UserSchema = new mongoose.Schema({
     linkedin: { type: String, default: '' },
     portfolio: { type: String, default: '' },
     twitter: { type: String, default: '' },
-    leetcode: { type: String, default: '' }
+    leetcode: { type: String, default: '' },
+    imageLink: { type: String, default: '' }
   }
 }, {
   timestamps: true

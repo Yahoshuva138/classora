@@ -199,6 +199,7 @@ export interface UserSocialLinks {
   portfolio?: string;
   twitter?: string;
   leetcode?: string;
+  imageLink?: string;
 }
 
 export interface GoogleUser {

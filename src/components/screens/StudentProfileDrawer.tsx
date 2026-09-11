@@ -23,8 +23,13 @@ import {
   User,
   AtSign,
   Edit3,
-  Camera
+  Camera,
+  Check,
+  Image as ImageIcon
 } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
+import { soundFx } from '../../utils/soundEffects';
+import { sanitizeImageUrl } from '../../utils/imageUrlHelper';
 import {
   ResponsiveContainer,
   LineChart,
@@ -59,8 +64,10 @@ export const StudentProfileDrawer: React.FC = () => {
     currentUser,
     userRole,
     setIsProfileCustomizationOpen,
-    openPublicProfile
+    openPublicProfile,
+    updateStudent
   } = useApp();
+  const { addToast } = useToast();
 
   const [activeTab, setActiveTab] = useState<
     'overview' | 'attendance' | 'performance' | 'assignments' | 'followups' | 'notes' | 'simulator'
@@ -69,6 +76,10 @@ export const StudentProfileDrawer: React.FC = () => {
   const [showAddFollowUp, setShowAddFollowUp] = useState(false);
   const [newFollowUpAction, setNewFollowUpAction] = useState('');
   const [newFollowUpPriority, setNewFollowUpPriority] = useState<'Low' | 'Medium' | 'High' | 'Urgent'>('High');
+
+  // Quick Photo / Image URL Edit Modal State
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [photoUrlInput, setPhotoUrlInput] = useState('');
 
   // Printable Document Modal State
   const [isPrintDocOpen, setIsPrintDocOpen] = useState(false);
@@ -147,15 +158,20 @@ export const StudentProfileDrawer: React.FC = () => {
                       student.name.slice(0, 2).toUpperCase()
                     )}
                   </div>
-                  {(currentUser.id === student.id || currentUser.studentId === student.id || userRole === 'Admin') && (
+                  {(currentUser.id === student.id || currentUser.studentId === student.id || userRole === 'Admin' || userRole === 'Teacher') && (
                     <button
                       type="button"
                       onClick={() => {
-                        closeStudentProfile();
-                        setIsProfileCustomizationOpen(true);
+                        if (currentUser.id === student.id || currentUser.studentId === student.id) {
+                          closeStudentProfile();
+                          setIsProfileCustomizationOpen(true);
+                        } else {
+                          setPhotoUrlInput(student.avatar || '');
+                          setIsPhotoModalOpen(true);
+                        }
                       }}
                       className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-slate-900 text-white hover:bg-blue-600 transition shadow-xs cursor-pointer"
-                      title="Edit photo & links"
+                      title="Edit photo & image link"
                     >
                       <Camera className="w-3 h-3 text-amber-300" />
                     </button>
@@ -243,12 +259,22 @@ export const StudentProfileDrawer: React.FC = () => {
                           <AtSign className="w-3 h-3 text-sky-100" /> Twitter
                         </a>
                       )}
+                      {student.publicLinks.imageLink && (
+                        <a
+                          href={student.publicLinks.imageLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-purple-600 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-purple-700 transition"
+                        >
+                          <ImageIcon className="w-3 h-3 text-purple-200" /> Photo Link
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex items-center space-x-1.5 shrink-0">
-                {(currentUser.id === student.id || currentUser.studentId === student.id || userRole === 'Admin') && (
+                {(currentUser.id === student.id || currentUser.studentId === student.id) && (
                   <button
                     type="button"
                     onClick={() => {
@@ -260,6 +286,20 @@ export const StudentProfileDrawer: React.FC = () => {
                   >
                     <Edit3 className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">Edit</span>
+                  </button>
+                )}
+                {(userRole === 'Admin' || userRole === 'Teacher') && currentUser.id !== student.id && currentUser.studentId !== student.id && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPhotoUrlInput(student.avatar || '');
+                      setIsPhotoModalOpen(true);
+                    }}
+                    title="Change Student Photo / Image URL"
+                    className="px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold transition-colors flex items-center gap-1 border border-purple-200 cursor-pointer"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5 text-purple-600" />
+                    <span className="hidden sm:inline">Photo URL</span>
                   </button>
                 )}
                 <button
@@ -744,6 +784,100 @@ export const StudentProfileDrawer: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Quick Student Photo / Image URL Modal */}
+      {isPhotoModalOpen && (
+        <div className="fixed inset-0 z-60 overflow-y-auto flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="p-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-100">
+                  <ImageIcon className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Update Student Photo
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Paste ANY image link for {student.name}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPhotoModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Live Preview */}
+            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-white border border-slate-200 shrink-0 flex items-center justify-center font-black text-slate-700 shadow-sm">
+                {photoUrlInput ? (
+                  <img
+                    src={sanitizeImageUrl(photoUrlInput)}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as any).style.display = 'none'; }}
+                  />
+                ) : (
+                  student.name.slice(0, 2).toUpperCase()
+                )}
+              </div>
+              <div className="text-xs text-slate-600 min-w-0">
+                <p className="font-extrabold text-slate-900 truncate">{student.name}</p>
+                <p className="text-[11px] text-slate-500 font-mono">{student.id}</p>
+                <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
+                  <Check className="w-3 h-3" /> Live preview active
+                </p>
+              </div>
+            </div>
+
+            {/* Input Field */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-slate-700">
+                Image URL Link (Google Drive, Unsplash, GitHub, WebP...)
+              </label>
+              <input
+                type="url"
+                value={photoUrlInput}
+                onChange={e => setPhotoUrlInput(e.target.value)}
+                placeholder="Paste ANY image URL link or Google Drive link..."
+                className="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none font-mono text-slate-900"
+              />
+              <p className="text-[10px] text-slate-400">
+                Google Drive view links, Dropbox, and GitHub profile URLs are automatically converted.
+              </p>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsPhotoModalOpen(false)}
+                className="px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const sanitized = sanitizeImageUrl(photoUrlInput);
+                  updateStudent(student.id, { avatar: sanitized });
+                  soundFx.playSuccess();
+                  addToast(`Updated display photo for ${student.name}!`, 'success');
+                  setIsPhotoModalOpen(false);
+                }}
+                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Check className="w-3.5 h-3.5" />
+                Save Photo URL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Official Printable Academic Document Modal */}
       <PrintableStudentDocument
