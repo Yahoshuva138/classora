@@ -1013,12 +1013,14 @@ router.post('/auth/register', async (req, res) => {
     let userName = name?.trim() || cleanEmail.split('@')[0].replace(/\./g, ' ');
     let student = null;
 
+    const isTeacherDomain = (cleanEmail.endsWith('@scaler.com') && !cleanEmail.endsWith('@sst.scaler.com')) || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail.includes('teacher') || requestedRole === 'Teacher';
+
     if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
       role = 'CR';
       userName = 'Aarav Sharma';
-    } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+    } else if (isTeacherDomain) {
       role = 'Teacher';
-      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar';
+      userName = name?.trim() || (cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.includes('noor') || cleanEmail.includes('nigar') ? 'Noor Nigar' : cleanEmail.split('@')[0].split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
     } else {
       role = 'Student';
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -1116,7 +1118,8 @@ router.post('/auth/login', async (req, res) => {
 
     // Admin & Staff hierarchy validation
     const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
-    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    const isTeacherDomain = (cleanEmail.endsWith('@scaler.com') && !cleanEmail.endsWith('@sst.scaler.com')) || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail.includes('teacher');
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || isTeacherDomain;
     let student = null;
     if (!isStaff) {
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -1131,7 +1134,7 @@ router.post('/auth/login', async (req, res) => {
       if (!student) {
         return res.status(403).json({
           success: false,
-          error: 'Access Denied: Only students in the official SST ENG-101 cohort (44 students) are eligible to log in.'
+          error: 'Access Denied: Only students in the official SST ENG-101 cohort (44 students) or faculty (@scaler.com) are eligible to log in.'
         });
       }
     }
@@ -1141,13 +1144,13 @@ router.post('/auth/login', async (req, res) => {
     // Auto-provision any cohort member who doesn't have an existing user document yet
     if (!user) {
       const studentId = student ? (student.id || student.rollNo) : (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com' ? '26bcs10296' : null);
-      let userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : (cleanEmail.includes('noor') || cleanEmail.includes('nigar')) ? 'Noor Nigar' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0]);
+      let userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : (cleanEmail.includes('noor') || cleanEmail.includes('nigar')) ? 'Noor Nigar' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0].split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
       if (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com') userName = 'Yahoshuva Kesaboyina';
 
       let role = 'Student';
       if (isAdmin) {
         role = 'Admin';
-      } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+      } else if (isTeacherDomain) {
         role = 'Teacher';
       } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
         role = 'CR';
@@ -1301,13 +1304,14 @@ router.post('/auth/google', async (req, res) => {
     if (!isSstDomain) {
       return res.status(403).json({
         success: false,
-        error: 'Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are authorized.'
+        error: 'Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.'
       });
     }
 
     // Cohort & Staff validation
     const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
-    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    const isTeacherDomain = (cleanEmail.endsWith('@scaler.com') && !cleanEmail.endsWith('@sst.scaler.com')) || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail.includes('teacher');
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || isTeacherDomain;
     let studentId = null;
     let userName = name || cleanEmail.split('@')[0].replace(/\./g, ' ');
     let role = 'Student';
@@ -1319,9 +1323,9 @@ router.post('/auth/google', async (req, res) => {
     } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
       role = 'CR';
       userName = 'Aarav Sharma';
-    } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+    } else if (isTeacherDomain) {
       role = 'Teacher';
-      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar';
+      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.includes('noor') || cleanEmail.includes('nigar') ? 'Noor Nigar' : (name || cleanEmail.split('@')[0].split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
     } else {
       role = 'Student';
       const rollMatch = cleanEmail.match(/26bcs\d+/i);

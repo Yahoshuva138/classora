@@ -45,25 +45,26 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
     const email = customEmail.trim().toLowerCase();
     if (!email) return;
 
-    // Strict Institutional Domain validation
+    // Strict Institutional Domain validation (@sst.scaler.com for students, @scaler.com for teachers)
     if (!isSstEmail(email)) {
       soundFx.playPop();
-      setErrorMessage('Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are authorized.');
+      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for faculty) are authorized.');
       return;
     }
 
     setIsLoading(true);
     try {
-      let role: UserRole = customRole;
+      const isTeacher = (email.endsWith('@scaler.com') && !email.endsWith('@sst.scaler.com')) || email.includes('noor') || email.includes('nigar') || email.includes('priya') || email.includes('faculty') || email.includes('teacher') || customRole === 'Teacher';
+      let role: UserRole = isTeacher ? 'Teacher' : customRole;
       let studentId = undefined;
       let userName = customName.trim() || email.split('@')[0].replace(/\./g, ' ');
 
       if (email.includes('aarav') || email.includes('cr')) {
         role = 'CR';
         userName = customName.trim() || 'Aarav Sharma';
-      } else if (email.includes('noor') || email.includes('nigar') || email.includes('priya') || email.includes('faculty') || email.includes('teacher')) {
+      } else if (isTeacher) {
         role = 'Teacher';
-        userName = customName.trim() || 'Noor Nigar';
+        userName = customName.trim() || (email.includes('noor') || email.includes('nigar') ? 'Noor Nigar' : email.split('@')[0].replace(/\./g, ' '));
       } else {
         const rollMatch = email.match(/26bcs\d+/i);
         const rollNo = rollMatch ? rollMatch[0].toLowerCase() : null;
@@ -125,7 +126,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
             Institutional Google Gateway
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Scaler School of Technology • <strong className="text-slate-800 font-semibold">@sst.scaler.com</strong>
+            Scaler School of Technology • <strong className="text-slate-800 font-semibold">@sst.scaler.com</strong> / Faculty • <strong className="text-slate-800 font-semibold">@scaler.com</strong>
           </p>
         </div>
 
@@ -192,15 +193,24 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
 
           <form onSubmit={handleSubmit} className="space-y-3.5 text-left text-xs">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
-                Institutional Email Address
+              <label className="block font-semibold text-slate-700 mb-1.5 text-xs flex items-center justify-between">
+                <span>Institutional Email Address</span>
+                <span className="text-[10px] text-slate-400 font-normal">
+                  {customRole === 'Teacher' ? 'Teachers use @scaler.com' : 'Students use @sst.scaler.com'}
+                </span>
               </label>
               <input
                 type="email"
                 required
                 value={customEmail}
-                onChange={e => setCustomEmail(e.target.value)}
-                placeholder="name.26bcs10xxx@sst.scaler.com"
+                onChange={e => {
+                  const val = e.target.value;
+                  setCustomEmail(val);
+                  if (val.trim().toLowerCase().endsWith('@scaler.com') && !val.trim().toLowerCase().endsWith('@sst.scaler.com')) {
+                    setCustomRole('Teacher');
+                  }
+                }}
+                placeholder={customRole === 'Teacher' ? 'faculty.name@scaler.com' : 'name.26bcs10xxx@sst.scaler.com'}
                 className="w-full h-10 px-3.5 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
               />
             </div>

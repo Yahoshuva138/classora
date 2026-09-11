@@ -59,10 +59,28 @@ function getOfflineCohortUser(email: string, passwordAttempt?: string): GoogleUs
     };
   }
 
-  if (clean === 'noor.nigar@scaler.com' || clean === 'noor.nigar@sst.scaler.com' || clean === 'priya.nair@sst.scaler.com') {
+  if (
+    clean === 'noor.nigar@scaler.com' ||
+    clean === 'noor.nigar@sst.scaler.com' ||
+    clean === 'priya.nair@sst.scaler.com' ||
+    (clean.endsWith('@scaler.com') && !clean.endsWith('@sst.scaler.com')) ||
+    clean.includes('noor') ||
+    clean.includes('nigar') ||
+    clean.includes('faculty') ||
+    clean.includes('teacher')
+  ) {
+    const isNoor = clean.includes('noor') || clean.includes('nigar');
+    const teacherName = isNoor
+      ? 'Noor Nigar'
+      : clean
+          .split('@')[0]
+          .split('.')
+          .map(p => p.charAt(0).toUpperCase() + p.slice(1))
+          .join(' ');
+
     return {
-      id: 'goog-faculty',
-      name: 'Noor Nigar',
+      id: isNoor ? 'goog-faculty' : `goog-${clean.split('@')[0].replace(/[^a-zA-Z0-9]/g, '-')}`,
+      name: teacherName,
       email: clean,
       role: 'Teacher',
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
@@ -215,7 +233,7 @@ export const SSTAuthGate: React.FC = () => {
     const targetEmail = email.trim().toLowerCase() || 'yahoshuva.26bcs10296@sst.scaler.com';
     if (!isSstEmail(targetEmail)) {
       soundFx.playPop();
-      setErrorMessage('Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are authorized.');
+      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.');
       setIsLoading(false);
       return;
     }
@@ -305,7 +323,7 @@ export const SSTAuthGate: React.FC = () => {
 
     if (!isSstEmail(cleanEmail)) {
       soundFx.playPop();
-      setErrorMessage('Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are authorized.');
+      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.');
       return;
     }
 
@@ -670,7 +688,7 @@ export const SSTAuthGate: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="Email (@sst.scaler.com)"
+                  placeholder="Email (@sst.scaler.com or @scaler.com)"
                   className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                 />
               </div>
