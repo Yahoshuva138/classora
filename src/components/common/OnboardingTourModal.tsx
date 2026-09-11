@@ -203,13 +203,16 @@ export const OnboardingTourModal: React.FC<OnboardingTourModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-4 md:p-6 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-150"
+      onClick={onClose}
+    >
       <div
-        className="w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden relative animate-in zoom-in-95 duration-150 flex flex-col"
+        className="w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden relative animate-in zoom-in-95 duration-150 my-auto max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2.5rem)] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 pb-3 border-b border-slate-100 flex items-start justify-between">
+        <div className="shrink-0 p-5 pb-3 border-b border-slate-100 flex items-start justify-between">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">
               {current.badge}
@@ -224,19 +227,19 @@ export const OnboardingTourModal: React.FC<OnboardingTourModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 flex-1 min-h-[300px] flex flex-col justify-center">
+        <div className="p-5 sm:p-6 flex-1 overflow-y-auto min-h-[220px] flex flex-col justify-center">
           {current.content}
         </div>
 
         {/* Footer Progress & Nav */}
-        <div className="p-4 px-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <div className="shrink-0 p-3.5 sm:p-4 px-5 sm:px-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
           {/* Step Indicators */}
           <div className="flex space-x-1.5">
             {tourSteps.map((_, idx) => (

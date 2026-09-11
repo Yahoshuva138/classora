@@ -709,8 +709,14 @@ export const SSTAuthGate: React.FC = () => {
 
       {/* GCP OAuth Client ID Configuration & Explanation Modal */}
       {isGcpModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-[#231e36] text-white rounded-2xl max-w-lg w-full shadow-2xl border border-white/10 p-6 relative max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-4 md:p-6 bg-black/75 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-200"
+          onClick={() => setIsGcpModalOpen(false)}
+        >
+          <div
+            className="bg-[#231e36] text-white rounded-2xl max-w-lg w-full shadow-2xl border border-white/10 p-5 sm:p-6 relative my-auto max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2.5rem)] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setIsGcpModalOpen(false)}
               className="absolute top-4 right-4 text-white/40 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
@@ -794,8 +800,14 @@ export const SSTAuthGate: React.FC = () => {
 
       {/* Official 44 Cohort Roster Modal */}
       {isRosterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-[#231e36] text-white rounded-2xl max-w-2xl w-full shadow-2xl border border-white/10 p-6 relative max-h-[85vh] flex flex-col">
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-200"
+          onClick={() => setIsRosterModalOpen(false)}
+        >
+          <div
+            className="bg-[#231e36] text-white rounded-2xl max-w-2xl w-full shadow-2xl border border-white/10 p-5 sm:p-6 relative my-auto max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2.5rem)] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setIsRosterModalOpen(false)}
               className="absolute top-4 right-4 text-white/40 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
