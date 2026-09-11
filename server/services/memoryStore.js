@@ -1,10 +1,20 @@
-// Zero-crash In-Memory Data Store for Classora
-// Provides collection-like storage and querying when local MongoDB is not running
+// Zero-crash In-Memory Data Store for Classora with Disk Persistence
+// Provides collection-like storage and querying when local MongoDB is not running,
+// automatically persisting updates to server/data/persistedStore.json across restarts.
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PERSIST_FILE_PATH = path.join(__dirname, '../data/persistedStore.json');
 
 class MemoryCollection {
-  constructor(name) {
+  constructor(name, onMutate) {
     this.name = name;
     this.docs = [];
+    this.onMutate = typeof onMutate === 'function' ? onMutate : () => {};
   }
 
   _matches(doc, filter) {
@@ -71,6 +81,7 @@ class MemoryCollection {
     };
     if (!newDoc.id && newDoc.rollNo) newDoc.id = newDoc.rollNo;
     this.docs.push(newDoc);
+    this.onMutate();
     return { ...newDoc };
   }
 
@@ -83,6 +94,7 @@ class MemoryCollection {
       ...item
     }));
     this.docs.push(...inserted);
+    this.onMutate();
     return inserted;
   }
 
@@ -92,6 +104,7 @@ class MemoryCollection {
       const existing = this.docs[idx];
       const updates = update.$set ? update.$set : update;
       this.docs[idx] = { ...existing, ...updates, updatedAt: new Date().toISOString() };
+      this.onMutate();
       return { matchedCount: 1, modifiedCount: 1, doc: { ...this.docs[idx] } };
     } else if (options.upsert) {
       const newDoc = await this.create({ ...filter, ...(update.$set || update) });
@@ -113,6 +126,7 @@ class MemoryCollection {
     const idx = this.docs.findIndex(d => this._matches(d, filter));
     if (idx >= 0) {
       this.docs.splice(idx, 1);
+      this.onMutate();
       return { deletedCount: 1 };
     }
     return { deletedCount: 0 };
@@ -122,10 +136,12 @@ class MemoryCollection {
     if (!filter || Object.keys(filter).length === 0) {
       const count = this.docs.length;
       this.docs = [];
+      this.onMutate();
       return { deletedCount: count };
     }
     const initial = this.docs.length;
     this.docs = this.docs.filter(d => !this._matches(d, filter));
+    this.onMutate();
     return { deletedCount: initial - this.docs.length };
   }
 
@@ -137,17 +153,61 @@ class MemoryCollection {
 class MemoryStoreManager {
   constructor() {
     this.collections = new Map();
+    this.saveTimeout = null;
+    this.loadFromDisk();
+  }
+
+  loadFromDisk() {
+    try {
+      if (fs.existsSync(PERSIST_FILE_PATH)) {
+        const raw = fs.readFileSync(PERSIST_FILE_PATH, 'utf8');
+        const data = JSON.parse(raw);
+        if (data && typeof data === 'object') {
+          for (const [colName, docs] of Object.entries(data)) {
+            if (Array.isArray(docs)) {
+              const col = this.collection(colName);
+              col.docs = docs;
+            }
+          }
+          console.log(`💾 [Classora Storage] Loaded ${Object.keys(data).length} persisted collections from disk (${PERSIST_FILE_PATH})`);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ [Classora Storage] Error reading persisted store, starting fresh:', err.message);
+    }
+  }
+
+  scheduleSave() {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    this.saveTimeout = setTimeout(() => {
+      this.flushSync();
+    }, 150);
+  }
+
+  flushSync() {
+    try {
+      const dump = {};
+      for (const [colName, col] of this.collections.entries()) {
+        dump[colName] = col.docs;
+      }
+      fs.writeFileSync(PERSIST_FILE_PATH, JSON.stringify(dump, null, 2), 'utf8');
+    } catch (err) {
+      console.warn('⚠️ [Classora Storage] Failed to write persisted store to disk:', err.message);
+    }
   }
 
   collection(name) {
     if (!this.collections.has(name)) {
-      this.collections.set(name, new MemoryCollection(name));
+      this.collections.set(name, new MemoryCollection(name, () => this.scheduleSave()));
     }
     return this.collections.get(name);
   }
 
   clear() {
     this.collections.clear();
+    this.scheduleSave();
   }
 }
 

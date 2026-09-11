@@ -299,11 +299,30 @@ router.post('/students', async (req, res) => {
   }
 });
 
+// Academic Marking Criteria Maximum Column Limits
+const CRITERIA_LIMITS = {
+  'ASG-101': 25, // English Test_C
+  'ASG-102': 20, // Tenses Quiz_C
+  'ASG-103': 25, // Presentation
+  'ASG-104': 30  // Group Discussion
+};
+
+function getCriteriaLimit(assignment, aid) {
+  if (aid && CRITERIA_LIMITS[aid]) return CRITERIA_LIMITS[aid];
+  const t = (assignment?.title || '').toLowerCase();
+  if (t.includes('english test') || t.includes('diagnostic')) return 25;
+  if (t.includes('tenses') || t.includes('quiz')) return 20;
+  if (t.includes('presentation') || t.includes('pitch')) return 25;
+  if (t.includes('group discussion') || t.includes('debate')) return 30;
+  return assignment?.maxScore || 25;
+}
+
 router.put('/students/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    await model('students', Student).updateOne({ id }, { $set: req.body });
-    const updated = await model('students', Student).findOne({ id });
+    const query = { $or: [{ rollNo: id }, { id }] };
+    await model('students', Student).updateOne(query, { $set: req.body });
+    const updated = await model('students', Student).findOne(query);
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -313,7 +332,7 @@ router.put('/students/:id', async (req, res) => {
 router.delete('/students/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    await model('students', Student).updateOne({ id }, { $set: { isArchived: true } });
+    await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: { isArchived: true } });
     res.json({ success: true, message: 'Student archived' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -340,34 +359,48 @@ router.post('/students/:id/remarks', async (req, res) => {
   }
 });
 
-// Update single skill score
+// Update single skill score with strict [0, 100] column limits
 router.patch('/students/:id/skills', async (req, res) => {
   try {
     const id = req.params.id;
     const { skill, score } = req.body;
+    const allowedSkills = ['communication', 'grammar', 'vocabulary', 'pronunciation', 'participation', 'assignments', 'assessments'];
+    if (!allowedSkills.includes(skill)) {
+      return res.status(400).json({ error: `Invalid skill: ${skill}` });
+    }
     const student = await model('students', Student).findOne({ $or: [{ rollNo: id }, { id }] });
     if (!student) return res.status(404).json({ error: 'Student not found' });
-    const skills = { ...student.skills, [skill]: score };
+    
+    // Strict clamp to [0, 100]
+    const clampedScore = Math.max(0, Math.min(100, Math.round(Number(score) || 0)));
+    const skills = { ...student.skills, [skill]: clampedScore };
     await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: { skills } });
-    res.json({ success: true, data: skills });
+    res.json({ success: true, data: skills, clampedScore });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Update assignment score
+// Update assignment score with strict column criteria limit enforcement
 router.patch('/students/:id/assignments/:aid', async (req, res) => {
   try {
     const { id, aid } = req.params;
     const { score } = req.body;
     const student = await model('students', Student).findOne({ $or: [{ rollNo: id }, { id }] });
     if (!student) return res.status(404).json({ error: 'Student not found' });
+    
+    const existing = (student.assignments || []).find(a => a.id === aid);
+    const maxLimit = getCriteriaLimit(existing, aid);
+    const clampedScore = Math.max(0, Math.min(maxLimit, Math.round(Number(score) || 0)));
+
     const assignments = (student.assignments || []).map(a => {
-      if (a.id === aid) return { ...a, score, status: 'Graded' };
+      if (a.id === aid) {
+        return { ...a, score: clampedScore, maxScore: maxLimit, status: 'Graded' };
+      }
       return a;
     });
     await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: { assignments } });
-    res.json({ success: true, data: assignments });
+    res.json({ success: true, data: assignments, score: clampedScore, maxLimit });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

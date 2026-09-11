@@ -276,6 +276,7 @@ export async function executeFullSeed(seedData) {
     await memoryStore.collection('settings').insertMany([{ singletonKey: 'GLOBAL_SETTINGS', ...seedData.initialSettings }]);
     await memoryStore.collection('users').insertMany(uniqueUsers);
     await memoryStore.collection('activity_logs').insertMany(presetActivityLogs);
+    memoryStore.flushSync();
   }
 
   console.log(`✨ [Seeder] Full initial database seed complete:`);

@@ -181,6 +181,85 @@ const STORAGE_KEYS = {
   GOOGLE_USER: 'classora_goog_user_v2',
 };
 
+// Academic Marking Criteria Column Max Limits
+export const MARKING_CRITERIA_LIMITS: Record<string, { id: string; name: string; maxScore: number; minScore: number }> = {
+  'ASG-101': { id: 'ASG-101', name: 'English Test_C', maxScore: 25, minScore: 0 },
+  'ASG-102': { id: 'ASG-102', name: 'Tenses Quiz_C', maxScore: 20, minScore: 0 },
+  'ASG-103': { id: 'ASG-103', name: 'Presentation', maxScore: 25, minScore: 0 },
+  'ASG-104': { id: 'ASG-104', name: 'Group Discussion', maxScore: 30, minScore: 0 },
+};
+
+export function getCriteriaMaxScore(assignmentId?: string, title?: string, fallbackMax = 25): number {
+  if (assignmentId && MARKING_CRITERIA_LIMITS[assignmentId]) {
+    return MARKING_CRITERIA_LIMITS[assignmentId].maxScore;
+  }
+  const t = (title || '').toLowerCase();
+  if (t.includes('english test') || t.includes('diagnostic')) return 25;
+  if (t.includes('tenses') || t.includes('quiz')) return 20;
+  if (t.includes('presentation') || t.includes('pitch')) return 25;
+  if (t.includes('group discussion') || t.includes('debate')) return 30;
+  return fallbackMax;
+}
+
+// Local-first smart reconciliation to guarantee data persistence across restarts
+function reconcileStudents(localList: Student[], serverList: Student[]): Student[] {
+  if (!serverList || serverList.length === 0) return localList;
+  if (!localList || localList.length === 0) return serverList;
+
+  const localMap = new Map(localList.map(s => [s.id, s]));
+
+  return serverList.map(serverStudent => {
+    const localStudent = localMap.get(serverStudent.id);
+    if (!localStudent) return serverStudent;
+
+    const mergedAssignments = (serverStudent.assignments || []).map(serverAsg => {
+      const localAsg = localStudent.assignments?.find(a => a.id === serverAsg.id);
+      if (!localAsg) return serverAsg;
+      // If local has a score and server doesn't, or local was evaluated, preserve local score
+      if (localAsg.score !== null && localAsg.score !== undefined && (serverAsg.score === null || serverAsg.score === undefined)) {
+        return {
+          ...serverAsg,
+          score: localAsg.score,
+          status: localAsg.status || 'Graded'
+        };
+      }
+      return serverAsg;
+    });
+
+    const serverRemarkIds = new Set((serverStudent.crRemarks || []).map(r => r.id));
+    const extraLocalRemarks = (localStudent.crRemarks || []).filter(r => !serverRemarkIds.has(r.id));
+    const mergedRemarks = [...extraLocalRemarks, ...(serverStudent.crRemarks || [])];
+
+    return {
+      ...serverStudent,
+      assignments: mergedAssignments,
+      crRemarks: mergedRemarks
+    };
+  });
+}
+
+function reconcileAttendance(localRecs: AttendanceRecord[], serverRecs: AttendanceRecord[]): AttendanceRecord[] {
+  if (!serverRecs || serverRecs.length === 0) return localRecs;
+  if (!localRecs || localRecs.length === 0) return serverRecs;
+
+  const map = new Map<string, AttendanceRecord>();
+  for (const r of serverRecs) {
+    map.set(`${r.sessionId}_${r.studentId}`, r);
+  }
+  for (const lr of localRecs) {
+    const key = `${lr.sessionId}_${lr.studentId}`;
+    const sr = map.get(key);
+    if (!sr) {
+      map.set(key, lr);
+    } else if (lr.timestamp && sr.timestamp) {
+      if (new Date(lr.timestamp).getTime() > new Date(sr.timestamp).getTime()) {
+        map.set(key, lr);
+      }
+    }
+  }
+  return Array.from(map.values());
+}
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { addToast } = useToast();
 
@@ -310,9 +389,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setIsSyncing(true);
       const data = await api.getBootstrapData();
       if (data) {
-        if (data.students && data.students.length > 0) setStudents(data.students);
+        if (data.students && data.students.length > 0) {
+          setStudents(prev => reconcileStudents(prev, data.students));
+        }
         if (data.sessions && data.sessions.length > 0) setSessions(data.sessions);
-        if (data.attendanceRecords) setAttendanceRecords(data.attendanceRecords);
+        if (data.attendanceRecords) {
+          setAttendanceRecords(prev => reconcileAttendance(prev, data.attendanceRecords));
+        }
         if (data.followUps) setFollowUps(data.followUps);
         if (data.tasks) setTasks(data.tasks);
         if (data.studentRequests) setStudentRequests(data.studentRequests);
@@ -374,7 +457,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
   }, [isBackendConnected, isSyncing, refreshData]);
 
-  // Initial load from backend with fallback
+  // Initial load from backend with fallback and smart reconciliation
   useEffect(() => {
     let isMounted = true;
     const initApp = async () => {
@@ -382,9 +465,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsLoading(true);
         const data = await api.getBootstrapData();
         if (isMounted && data) {
-          if (data.students && data.students.length > 0) setStudents(data.students);
+          if (data.students && data.students.length > 0) {
+            setStudents(prev => reconcileStudents(prev, data.students));
+          }
           if (data.sessions && data.sessions.length > 0) setSessions(data.sessions);
-          if (data.attendanceRecords) setAttendanceRecords(data.attendanceRecords);
+          if (data.attendanceRecords) {
+            setAttendanceRecords(prev => reconcileAttendance(prev, data.attendanceRecords));
+          }
           if (data.followUps) setFollowUps(data.followUps);
           if (data.tasks) setTasks(data.tasks);
           if (data.studentRequests) setStudentRequests(data.studentRequests);
@@ -962,43 +1049,68 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   }, [studentRequests, selectedSessionId, addToast, refreshData, refreshActivityLogs]);
 
-  // Teacher grading & feedback methods
-  const updateStudentSkillScore = useCallback((studentId: string, skill: keyof StudentSkillScores, score: number) => {
-    setStudents(prev => prev.map(s => {
-      if (s.id !== studentId) return s;
-      return {
-        ...s,
-        skills: {
-          ...s.skills,
-          [skill]: Math.max(0, Math.min(100, score))
-        }
-      };
-    }));
-    api.updateStudentSkill(studentId, skill, score).catch(err => {
+  // Teacher grading & feedback methods with strict column limit enforcement
+  const updateStudentSkillScore = useCallback((studentId: string, skill: keyof StudentSkillScores, rawScore: number) => {
+    const clampedScore = Math.max(0, Math.min(100, Math.round(Number(rawScore) || 0)));
+    setStudents(prev => {
+      const updated = prev.map(s => {
+        if (s.id !== studentId) return s;
+        return {
+          ...s,
+          skills: {
+            ...s.skills,
+            [skill]: clampedScore
+          }
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(updated));
+      return updated;
+    });
+    api.updateStudentSkill(studentId, skill, clampedScore).catch(err => {
       console.warn('[Classora Backend] updateStudentSkill failed:', err);
     });
-    addToast(`Updated ${skill} competency score`, 'success');
+    addToast(`Updated ${skill} competency score: ${clampedScore}/100`, 'success');
   }, [addToast]);
 
-  const updateStudentAssignmentScore = useCallback((studentId: string, assignmentId: string, score: number) => {
-    setStudents(prev => prev.map(s => {
-      if (s.id !== studentId) return s;
-      return {
-        ...s,
-        assignments: s.assignments.map(a => {
-          if (a.id !== assignmentId) return a;
-          return {
-            ...a,
-            score: Math.max(0, Math.min(a.maxScore, score)),
-            status: 'Graded' as const
-          };
-        })
-      };
-    }));
-    api.updateStudentAssignment(studentId, assignmentId, score).catch(err => {
+  const updateStudentAssignmentScore = useCallback((studentId: string, assignmentId: string, rawScore: number) => {
+    let finalClampedScore = 0;
+    let colMax = 25;
+    let colTitle = '';
+
+    setStudents(prev => {
+      const updated = prev.map(s => {
+        if (s.id !== studentId) return s;
+        return {
+          ...s,
+          assignments: (s.assignments || []).map(a => {
+            if (a.id !== assignmentId) return a;
+            colTitle = a.title;
+            colMax = getCriteriaMaxScore(a.id, a.title, a.maxScore || 25);
+            finalClampedScore = Math.max(0, Math.min(colMax, Math.round(Number(rawScore) || 0)));
+            return {
+              ...a,
+              score: finalClampedScore,
+              maxScore: colMax,
+              status: 'Graded' as const
+            };
+          })
+        };
+      });
+      localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(updated));
+      return updated;
+    });
+
+    api.updateStudentAssignment(studentId, assignmentId, finalClampedScore).catch(err => {
       console.warn('[Classora Backend] updateStudentAssignment failed:', err);
     });
-    addToast('Assessment evaluated & score saved', 'success');
+
+    if (rawScore > colMax) {
+      addToast(`Entered ${rawScore} exceeds limit for ${colTitle || 'assignment'}. Clamped to max ${colMax}.`, 'warning');
+    } else if (rawScore < 0) {
+      addToast('Score cannot be negative. Set to 0.', 'warning');
+    } else {
+      addToast(`Assessment evaluated: ${finalClampedScore}/${colMax} saved`, 'success');
+    }
   }, [addToast]);
 
   const addFacultyFeedback = useCallback((studentId: string, remarkText: string) => {

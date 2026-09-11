@@ -251,24 +251,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 74,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -276,7 +276,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -341,32 +341,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -431,32 +431,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 27,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -521,32 +521,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 73,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 14,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 75,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -611,32 +611,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -701,24 +701,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 97,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -726,7 +726,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -791,32 +791,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 74,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 15,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -881,32 +881,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 81,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -971,32 +971,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 98,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1061,32 +1061,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 75,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1151,24 +1151,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -1176,7 +1176,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1241,32 +1241,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 99,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 93,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1331,32 +1331,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1421,32 +1421,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1511,32 +1511,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 99,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 94,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1601,24 +1601,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 15,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -1626,7 +1626,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1691,32 +1691,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1781,32 +1781,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 91,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 99,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 95,
-        "maxScore": 100
+        "score": 29,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1871,32 +1871,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -1961,32 +1961,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 91,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 27,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2051,24 +2051,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -2076,7 +2076,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2141,32 +2141,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 81,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2231,32 +2231,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 27,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2321,32 +2321,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 73,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 14,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2411,32 +2411,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2501,24 +2501,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 93,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -2526,7 +2526,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2591,32 +2591,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 74,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 15,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2681,32 +2681,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 81,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2771,32 +2771,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 94,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2861,32 +2861,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 75,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -2951,24 +2951,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -2976,7 +2976,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3041,32 +3041,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 95,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 93,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3131,32 +3131,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3221,32 +3221,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3311,32 +3311,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 94,
-        "maxScore": 100
+        "score": 28,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3401,24 +3401,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 76,
-        "maxScore": 100
+        "score": 15,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -3426,7 +3426,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3491,32 +3491,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 92,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 26,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3581,32 +3581,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 91,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 96,
-        "maxScore": 100
+        "score": 19,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 97,
-        "maxScore": 100
+        "score": 24,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 95,
-        "maxScore": 100
+        "score": 29,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3671,32 +3671,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 82,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3761,32 +3761,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 85,
-        "maxScore": 100
+        "score": 21,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 87,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 27,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3851,24 +3851,24 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 80,
-        "maxScore": 100
+        "score": 16,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 78,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
@@ -3876,7 +3876,7 @@ export const initialStudents: Student[] = [
         "dueDate": "2026-09-08",
         "status": "Submitted",
         "score": null,
-        "maxScore": 100
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -3941,32 +3941,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 84,
-        "maxScore": 100
+        "score": 17,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 89,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 83,
-        "maxScore": 100
+        "score": 25,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -4031,32 +4031,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 86,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 88,
-        "maxScore": 100
+        "score": 22,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 90,
-        "maxScore": 100
+        "score": 27,
+        "maxScore": 30
       }
     ],
     "crRemarks": [
@@ -4121,32 +4121,32 @@ export const initialStudents: Student[] = [
         "title": "Diagnostic Baseline Fluency Assessment",
         "dueDate": "2026-08-06",
         "status": "Graded",
-        "score": 73,
-        "maxScore": 100
+        "score": 18,
+        "maxScore": 25
       },
       {
         "id": "ASG-102",
         "title": "Tenses Mastery & Sentence Construction Quiz",
         "dueDate": "2026-08-20",
         "status": "Graded",
-        "score": 72,
-        "maxScore": 100
+        "score": 14,
+        "maxScore": 20
       },
       {
         "id": "ASG-103",
         "title": "Elevator Pitch & Self-Introduction Video",
         "dueDate": "2026-09-01",
         "status": "Graded",
-        "score": 79,
-        "maxScore": 100
+        "score": 20,
+        "maxScore": 25
       },
       {
         "id": "ASG-104",
         "title": "Group Discussion 1 Synthesis & Rebuttal Memo",
         "dueDate": "2026-09-08",
         "status": "Graded",
-        "score": 77,
-        "maxScore": 100
+        "score": 23,
+        "maxScore": 30
       }
     ],
     "crRemarks": [

@@ -20,6 +20,98 @@ import { soundFx } from '../../utils/soundEffects';
 import { fireStarConfetti, fireGrandCelebration } from '../../utils/confettiUtils';
 import { useToast } from '../../context/ToastContext';
 
+import { StudentAssignment } from '../../types';
+
+interface CriteriaScoreInputProps {
+  studentId: string;
+  assignment?: StudentAssignment;
+  maxLimit: number;
+  label: string;
+  isEditing: boolean;
+  onSave: (studentId: string, assignmentId: string, score: number) => void;
+}
+
+const CriteriaScoreInput: React.FC<CriteriaScoreInputProps> = ({
+  studentId,
+  assignment,
+  maxLimit,
+  label,
+  isEditing,
+  onSave
+}) => {
+  const currentVal = assignment?.score ?? null;
+  const [val, setVal] = React.useState<number | string>(currentVal !== null ? currentVal : '');
+  const [isOutOfRange, setIsOutOfRange] = React.useState(false);
+
+  React.useEffect(() => {
+    setVal(assignment?.score !== null && assignment?.score !== undefined ? assignment.score : '');
+    setIsOutOfRange(false);
+  }, [assignment?.score]);
+
+  if (!isEditing) {
+    return (
+      <div className="flex flex-col items-center">
+        <span className="font-bold text-slate-800 text-xs">
+          {assignment?.score !== null && assignment?.score !== undefined ? assignment.score : '—'}
+        </span>
+        <span className="text-[10px] text-slate-400 font-medium">/ {maxLimit}</span>
+      </div>
+    );
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (raw === '') {
+      setVal('');
+      setIsOutOfRange(false);
+      return;
+    }
+    const num = Number(raw);
+    if (isNaN(num)) return;
+    if (num > maxLimit) {
+      setIsOutOfRange(true);
+      setVal(maxLimit);
+    } else if (num < 0) {
+      setIsOutOfRange(true);
+      setVal(0);
+    } else {
+      setIsOutOfRange(false);
+      setVal(num);
+    }
+  };
+
+  const handleCommit = () => {
+    if (!assignment) return;
+    const num = val === '' ? 0 : Number(val);
+    const clamped = Math.max(0, Math.min(maxLimit, Math.round(num)));
+    setVal(clamped);
+    setIsOutOfRange(false);
+    onSave(studentId, assignment.id, clamped);
+  };
+
+  return (
+    <div className="flex flex-col items-center">
+      <input
+        type="number"
+        min={0}
+        max={maxLimit}
+        value={val}
+        placeholder={`0-${maxLimit}`}
+        onChange={handleChange}
+        onBlur={handleCommit}
+        onKeyDown={(e) => { if (e.key === 'Enter') handleCommit(); }}
+        className={`w-16 px-2 py-1 text-center font-bold text-slate-900 bg-white border rounded-lg focus:outline-none transition-all ${
+          isOutOfRange
+            ? 'border-rose-500 ring-2 ring-rose-200'
+            : 'border-indigo-300 focus:ring-2 focus:ring-indigo-500 shadow-xs'
+        }`}
+        title={`${label}: strictly limited to 0 - ${maxLimit}`}
+      />
+      <span className="text-[10px] text-indigo-600 font-bold mt-0.5">Max {maxLimit}</span>
+    </div>
+  );
+};
+
 export const TeacherPortalView: React.FC = () => {
   const { addToast } = useToast();
   const {
@@ -430,10 +522,22 @@ export const TeacherPortalView: React.FC = () => {
               <thead className="bg-slate-50/80 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-4">Student</th>
-                  <th className="py-3 px-3 text-center">English Test_C (25)</th>
-                  <th className="py-3 px-3 text-center">Tenses Quiz_C (20)</th>
-                  <th className="py-3 px-3 text-center">Presentation (25)</th>
-                  <th className="py-3 px-3 text-center">Group Discussion (30)</th>
+                  <th className="py-3 px-3 text-center">
+                    <div className="font-bold text-slate-700">English Test_C</div>
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">Max: 25</span>
+                  </th>
+                  <th className="py-3 px-3 text-center">
+                    <div className="font-bold text-slate-700">Tenses Quiz_C</div>
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Max: 20</span>
+                  </th>
+                  <th className="py-3 px-3 text-center">
+                    <div className="font-bold text-slate-700">Presentation</div>
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">Max: 25</span>
+                  </th>
+                  <th className="py-3 px-3 text-center">
+                    <div className="font-bold text-slate-700">Group Discussion</div>
+                    <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Max: 30</span>
+                  </th>
                   <th className="py-3 px-3 text-center">Attendance %</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
@@ -472,68 +576,52 @@ export const TeacherPortalView: React.FC = () => {
                         </div>
                       </td>
 
-                      {/* Test C */}
+                      {/* Test C (Limit 25) */}
                       <td className="py-3.5 px-3 text-center">
-                        {isEditing && a1 ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="25"
-                            defaultValue={a1.score || 0}
-                            onBlur={(e) => updateStudentAssignmentScore(student.id, a1.id, Number(e.target.value))}
-                            className="w-16 px-2 py-1 text-center font-bold text-slate-900 bg-white border border-indigo-300 rounded-lg focus:outline-none"
-                          />
-                        ) : (
-                          <span className="font-bold text-slate-800">{a1?.score ?? '—'}</span>
-                        )}
+                        <CriteriaScoreInput
+                          studentId={student.id}
+                          assignment={a1}
+                          maxLimit={25}
+                          label="English Test_C"
+                          isEditing={isEditing}
+                          onSave={updateStudentAssignmentScore}
+                        />
                       </td>
 
-                      {/* Quiz C */}
+                      {/* Quiz C (Limit 20) */}
                       <td className="py-3.5 px-3 text-center">
-                        {isEditing && a2 ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="20"
-                            defaultValue={a2.score || 0}
-                            onBlur={(e) => updateStudentAssignmentScore(student.id, a2.id, Number(e.target.value))}
-                            className="w-16 px-2 py-1 text-center font-bold text-slate-900 bg-white border border-indigo-300 rounded-lg focus:outline-none"
-                          />
-                        ) : (
-                          <span className="font-bold text-slate-800">{a2?.score ?? '—'}</span>
-                        )}
+                        <CriteriaScoreInput
+                          studentId={student.id}
+                          assignment={a2}
+                          maxLimit={20}
+                          label="Tenses Quiz_C"
+                          isEditing={isEditing}
+                          onSave={updateStudentAssignmentScore}
+                        />
                       </td>
 
-                      {/* Presentation */}
+                      {/* Presentation (Limit 25) */}
                       <td className="py-3.5 px-3 text-center">
-                        {isEditing && a3 ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="25"
-                            defaultValue={a3.score || 0}
-                            onBlur={(e) => updateStudentAssignmentScore(student.id, a3.id, Number(e.target.value))}
-                            className="w-16 px-2 py-1 text-center font-bold text-slate-900 bg-white border border-indigo-300 rounded-lg focus:outline-none"
-                          />
-                        ) : (
-                          <span className="font-bold text-slate-800">{a3?.score ?? '—'}</span>
-                        )}
+                        <CriteriaScoreInput
+                          studentId={student.id}
+                          assignment={a3}
+                          maxLimit={25}
+                          label="Presentation"
+                          isEditing={isEditing}
+                          onSave={updateStudentAssignmentScore}
+                        />
                       </td>
 
-                      {/* Group Discussion */}
+                      {/* Group Discussion (Limit 30) */}
                       <td className="py-3.5 px-3 text-center">
-                        {isEditing && a4 ? (
-                          <input
-                            type="number"
-                            min="0"
-                            max="30"
-                            defaultValue={a4.score || 0}
-                            onBlur={(e) => updateStudentAssignmentScore(student.id, a4.id, Number(e.target.value))}
-                            className="w-16 px-2 py-1 text-center font-bold text-slate-900 bg-white border border-indigo-300 rounded-lg focus:outline-none"
-                          />
-                        ) : (
-                          <span className="font-bold text-slate-800">{a4?.score ?? '—'}</span>
-                        )}
+                        <CriteriaScoreInput
+                          studentId={student.id}
+                          assignment={a4}
+                          maxLimit={30}
+                          label="Group Discussion"
+                          isEditing={isEditing}
+                          onSave={updateStudentAssignmentScore}
+                        />
                       </td>
 
                       {/* Attendance % */}
