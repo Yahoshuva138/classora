@@ -236,3 +236,39 @@ export function exportFullAttendanceMatrixCSV(
   downloadCSV('SST_Official_Attendance_Matrix_Term1_2026.csv', content);
 }
 
+/**
+ * Generate a pre-filled CSV template for bulk attendance marking
+ */
+export function generateBulkAttendanceTemplateCSV(
+  students: import('../types').Student[],
+  sessionTopic: string = 'Session Attendance'
+): string {
+  const headers = [
+    'Roll No',
+    'Student Name',
+    'Email',
+    'Batch',
+    'Status (Present/Absent/Late/Excused)',
+    'Remarks'
+  ];
+
+  const rows = students
+    .filter(s => !s.isArchived)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map(s => [
+      `"${s.id}"`,
+      `"${s.name}"`,
+      `"${s.email}"`,
+      `"${s.batch}"`,
+      `"Present"`,
+      `""`
+    ]);
+
+  return [
+    `# Classora Bulk Attendance Upload Template - ${sessionTopic}`,
+    `# Instructions: Edit the Status column to Present, Absent, Late, or Excused (or P, A, L, E). Do not modify the Roll No column.`,
+    headers.join(','),
+    ...rows.map(r => r.join(','))
+  ].join('\n');
+}
+

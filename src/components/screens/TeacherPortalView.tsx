@@ -11,7 +11,8 @@ import {
   Send,
   Download,
   ShieldCheck,
-  Save
+  Save,
+  UploadCloud
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { exportGradebookCSV } from '../../utils/exportUtils';
@@ -19,6 +20,7 @@ import { Card3D } from '../common/Card3D';
 import { soundFx } from '../../utils/soundEffects';
 import { fireStarConfetti, fireGrandCelebration } from '../../utils/confettiUtils';
 import { useToast } from '../../context/ToastContext';
+import { BulkAttendanceUploadModal } from '../common/BulkAttendanceUploadModal';
 
 import { StudentAssignment } from '../../types';
 
@@ -135,6 +137,7 @@ export const TeacherPortalView: React.FC = () => {
   const [selectedBatch, setSelectedBatch] = useState<string>('all');
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
+  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
 
   // Quick announcement broadcast state
   const [announcementText, setAnnouncementText] = useState('');
@@ -757,12 +760,22 @@ export const TeacherPortalView: React.FC = () => {
 
           {/* Quick Session Attendance Rates */}
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
-            <h3 className="font-bold text-slate-900 text-base mb-1">
-              Course Lecture Attendance Audit
-            </h3>
-            <p className="text-xs text-slate-500 mb-4">
-              CR marked logs across all 11 curriculum lectures
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 className="font-bold text-slate-900 text-base mb-0.5">
+                  Course Lecture Attendance Audit
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Official attendance records across all 12 curriculum lectures & labs
+                </p>
+              </div>
+              <button
+                onClick={() => setIsBulkUploadOpen(true)}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 self-start sm:self-auto hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <UploadCloud className="w-4 h-4" /> Upload Attendance Sheet
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {sessions.map(session => {
@@ -872,6 +885,12 @@ export const TeacherPortalView: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* BULK ATTENDANCE UPLOAD MODAL */}
+      <BulkAttendanceUploadModal
+        isOpen={isBulkUploadOpen}
+        onClose={() => setIsBulkUploadOpen(false)}
+      />
     </div>
   );
 };

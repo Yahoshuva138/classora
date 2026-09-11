@@ -15,7 +15,8 @@ import {
   TrendingDown,
   TrendingUp,
   AlertTriangle,
-  ShieldAlert
+  ShieldAlert,
+  UploadCloud
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AttendanceStatus } from '../../types';
@@ -24,6 +25,7 @@ import { useToast } from '../../context/ToastContext';
 import { formatDate } from '../../utils/formatters';
 import { soundFx } from '../../utils/soundEffects';
 import { fireQuickConfetti, fireGrandCelebration } from '../../utils/confettiUtils';
+import { BulkAttendanceUploadModal } from '../common/BulkAttendanceUploadModal';
 
 export const AttendanceScreen: React.FC = () => {
   const {
@@ -48,6 +50,7 @@ export const AttendanceScreen: React.FC = () => {
   const [batchFilter, setBatchFilter] = useState('All');
   const [groupFilter, setGroupFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
 
   // Currently selected session (or fallback to latest)
   const activeSession = useMemo(() => {
@@ -174,6 +177,13 @@ export const AttendanceScreen: React.FC = () => {
                   title="Reset all marks for this session"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-slate-500" /> Reset
+                </button>
+                <button
+                  onClick={() => setIsBulkUploadOpen(true)}
+                  className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95"
+                  title="Upload Excel or CSV attendance spreadsheet"
+                >
+                  <UploadCloud className="w-4 h-4" /> Upload Sheet
                 </button>
                 <button
                   onClick={() => {
@@ -463,6 +473,13 @@ export const AttendanceScreen: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* BULK ATTENDANCE UPLOAD MODAL */}
+      <BulkAttendanceUploadModal
+        isOpen={isBulkUploadOpen}
+        onClose={() => setIsBulkUploadOpen(false)}
+        defaultSessionId={activeSession?.id}
+      />
     </div>
   );
 };

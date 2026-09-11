@@ -51,8 +51,8 @@
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Examination Hall 1",
-      "status": "Upcoming",
-      "notes": "Diagnostic baseline fluency & grammar assessment.",
+      "status": "Completed",
+      "notes": "Diagnostic baseline fluency, syntax, and placement assessment.",
       "sessionType": "Assessment & Mock Interview"
     },
     {
@@ -61,31 +61,31 @@
       "date": "2026-08-07",
       "startTime": "02:30 PM",
       "endTime": "04:00 PM",
-      "faculty": "Prof. Vikram Malhotra (Corporate Communication)",
+      "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Seminar Hall B",
-      "status": "Upcoming",
-      "notes": "Icebreaking & elevator conversations.",
+      "status": "Completed",
+      "notes": "Icebreaking, elevator conversations, and spontaneous introduction.",
       "sessionType": "Communication Lab"
     },
     {
       "id": "SES-103",
-      "topic": "Sentence Construction & Word Forms",
-      "date": "2026-08-11",
+      "topic": "Tenses and Impromptu Speeches",
+      "date": "2026-08-12",
       "startTime": "09:30 AM",
       "endTime": "11:00 AM",
-      "faculty": "Ms. Ananya Roy (IELTS & Business English)",
+      "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Language Lab 101",
-      "status": "Upcoming",
-      "notes": "Syntax mapping, clause combination.",
+      "status": "Completed",
+      "notes": "Oral fluency drill, impromptu speech delivery, and tense accuracy.",
       "sessionType": "Grammar & Syntax"
     },
     {
       "id": "SES-104",
-      "topic": "Introduction to Phonetics & IPA Symbols",
+      "topic": "Tenses and Impromtu Speeches II",
       "date": "2026-08-14",
       "startTime": "11:30 AM",
       "endTime": "01:00 PM",
@@ -93,96 +93,82 @@
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Language Lab 102",
-      "status": "Upcoming",
-      "notes": "Vowel and consonant chart exploration.",
+      "status": "Completed",
+      "notes": "Spontaneous narrative construction and complex tense consistency.",
       "sessionType": "Pronunciation Lab"
     },
     {
       "id": "SES-105",
-      "topic": "Listening Comprehension Lab",
-      "date": "2026-08-18",
+      "topic": "Tenses-3",
+      "date": "2026-08-19",
       "startTime": "02:00 PM",
       "endTime": "03:30 PM",
-      "faculty": "Mr. Arjun Das (Grammar & Syntax Expert)",
+      "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Audio Lab 2",
-      "status": "Upcoming",
-      "notes": "Note-taking from academic lecture audio.",
-      "sessionType": "Communication Lab"
-    },
-    {
-      "id": "SES-106",
-      "topic": "Tenses in Context & Time Markers",
-      "date": "2026-08-21",
-      "startTime": "10:00 AM",
-      "endTime": "11:30 AM",
-      "faculty": "Ms. Ananya Roy (IELTS & Business English)",
-      "batch": "English C - Term 1",
-      "mode": "Offline",
-      "location": "Room 204",
-      "status": "Upcoming",
-      "notes": "Past simple vs. present perfect.",
+      "status": "Completed",
+      "notes": "Compound, perfect, and conditional tenses in formal academic discourse.",
       "sessionType": "Grammar & Syntax"
     },
     {
-      "id": "SES-107",
-      "topic": "Elevator Pitch & Self Introduction",
-      "date": "2026-08-25",
-      "startTime": "09:30 AM",
-      "endTime": "11:00 AM",
-      "faculty": "Prof. Vikram Malhotra (Corporate Communication)",
-      "batch": "English C - Term 1",
-      "mode": "Offline",
-      "location": "Auditorium 3",
-      "status": "Upcoming",
-      "notes": "Individual 60-second video introductions.",
-      "sessionType": "Assessment & Mock Interview"
-    },
-    {
-      "id": "SES-108",
-      "topic": "Active Listening & Note-Taking",
-      "date": "2026-08-28",
-      "startTime": "11:30 AM",
-      "endTime": "01:00 PM",
-      "faculty": "Mr. Arjun Das (Grammar & Syntax Expert)",
+      "id": "SES-106",
+      "topic": "Understanding Everyday English Conversations 1",
+      "date": "2026-08-21",
+      "startTime": "10:00 AM",
+      "endTime": "11:30 AM",
+      "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Room 204",
-      "status": "Upcoming",
-      "notes": "Cornell note-taking method.",
-      "sessionType": "Vocabulary Building"
-    },
-    {
-      "id": "SES-109",
-      "topic": "Email Etiquette & Professional Correspondence",
-      "date": "2026-09-01",
-      "startTime": "02:00 PM",
-      "endTime": "03:30 PM",
-      "faculty": "Ms. Ananya Roy (IELTS & Business English)",
-      "batch": "English C - Term 1",
-      "mode": "Offline",
-      "location": "Computer Lab 4",
-      "status": "Upcoming",
-      "notes": "Formal vs. informal registers.",
+      "status": "Completed",
+      "notes": "Listening comprehension from dialogue audio, colloquial expressions, and role-play.",
       "sessionType": "Communication Lab"
     },
     {
-      "id": "SES-110",
-      "topic": "Group Discussion 1 & Debate",
+      "id": "SES-107",
+      "topic": "Understanding Everyday English Conversations 2",
+      "date": "2026-09-02",
+      "startTime": "09:30 AM",
+      "endTime": "11:00 AM",
+      "faculty": "Noor Nigar (Course Instructor)",
+      "batch": "English C - Term 1",
+      "mode": "Offline",
+      "location": "Auditorium 3",
+      "status": "Completed",
+      "notes": "Idiomatic phrasing, register switching (formal vs informal), and active rebuttal.",
+      "sessionType": "Communication Lab"
+    },
+    {
+      "id": "SES-108",
+      "topic": "Students' Presentation",
       "date": "2026-09-04",
-      "startTime": "10:00 AM",
-      "endTime": "12:00 PM",
+      "startTime": "11:30 AM",
+      "endTime": "01:00 PM",
       "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Seminar Hall A",
-      "status": "Upcoming",
-      "notes": "Group discussion moderation, turn management, and active rebuttal.",
+      "status": "Completed",
+      "notes": "Individual presentation delivery, body language, and slide structure critique.",
+      "sessionType": "Assessment & Mock Interview"
+    },
+    {
+      "id": "SES-109",
+      "topic": "Group Discussion 1",
+      "date": "2026-09-04",
+      "startTime": "02:00 PM",
+      "endTime": "03:30 PM",
+      "faculty": "Noor Nigar (Course Instructor)",
+      "batch": "English C - Term 1",
+      "mode": "Offline",
+      "location": "Language Lab 102",
+      "status": "Completed",
+      "notes": "Moderated team debates, argumentation, consensus building, and turn management.",
       "sessionType": "Group Discussion"
     },
     {
-      "id": "SES-111",
+      "id": "SES-110",
       "topic": "Conditionals",
       "date": "2026-09-09",
       "startTime": "02:00 PM",
@@ -191,22 +177,36 @@
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Language Lab 102",
-      "status": "Upcoming",
-      "notes": "Zero, first, second, and third conditionals in formal discourse.",
+      "status": "In Progress",
+      "notes": "Zero, first, second, and third conditionals in formal professional discourse.",
       "sessionType": "Grammar & Syntax"
     },
     {
-      "id": "SES-112",
-      "topic": "Advanced Conditionals & Negotiation Lab",
+      "id": "SES-111",
+      "topic": "Listening for Understanding",
       "date": "2026-09-11",
       "startTime": "02:00 PM",
       "endTime": "03:30 PM",
-      "faculty": "Prof. Vikram Malhotra (Corporate Communication)",
+      "faculty": "Noor Nigar (Course Instructor)",
       "batch": "English C - Term 1",
       "mode": "Offline",
       "location": "Language Lab 102",
       "status": "Upcoming",
-      "notes": "Mixed conditionals & real-time counter-arguments.",
+      "notes": "Academic lecture note-taking, Cornell method, auditory comprehension.",
+      "sessionType": "Communication Lab"
+    },
+    {
+      "id": "SES-112",
+      "topic": "Advanced Conditionals & Negotiation Lab",
+      "date": "2026-09-15",
+      "startTime": "02:00 PM",
+      "endTime": "03:30 PM",
+      "faculty": "Noor Nigar (Course Instructor)",
+      "batch": "English C - Term 1",
+      "mode": "Offline",
+      "location": "Language Lab 102",
+      "status": "Upcoming",
+      "notes": "Mixed conditionals, counter-argumentation, and corporate negotiation tactics.",
       "sessionType": "Communication Lab"
     }
   ],
@@ -2896,7 +2896,2465 @@
       "historicalScores": []
     }
   ],
-  "initialAttendanceRecords": [],
+  "initialAttendanceRecords": [
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10535",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10283",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10438",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10438",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10424",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10424",
+      "status": "Late",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10424",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10624",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10624",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10624",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10068",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10068",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10068",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10462",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10477",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10477",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10565",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10647",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10311",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10483",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10036",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10437",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10269",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10269",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10269",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10269",
+      "status": "Absent",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10269",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10269",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10269",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10269",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10409",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10409",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10443",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10443",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10443",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10065",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10478",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10478",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10478",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10525",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10525",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10410",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10472",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10452",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10452",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10401",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10401",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10347",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10457",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10457",
+      "status": "Absent",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10457",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10457",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10457",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10457",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10457",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10457",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10412",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10412",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10323",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10323",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10458",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10121",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10189",
+      "status": "Absent",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10189",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10189",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10189",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10189",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10189",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10189",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10189",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10648",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10648",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10648",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10648",
+      "status": "Absent",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10648",
+      "status": "Absent",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10648",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10648",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10648",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10292",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10292",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10292",
+      "status": "Absent",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10318",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10516",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10516",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10238",
+      "status": "Absent",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10238",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10404",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10512",
+      "status": "Absent",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10512",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10521",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10450",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10664",
+      "status": "Present",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Official instructor report mark"
+    },
+    {
+      "sessionId": "SES-102",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-08-07T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-103",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-08-12T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-104",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-08-14T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-105",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-08-19T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-106",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-08-21T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-107",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-09-02T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-108",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    },
+    {
+      "sessionId": "SES-109",
+      "studentId": "26bcs10718",
+      "status": "Excused",
+      "timestamp": "2026-09-04T10:00:00.000Z",
+      "remarks": "Late Admission (Enrolled post-commencement)"
+    }
+  ],
   "initialFollowUps": [],
   "initialTasks": [],
   "initialStudentRequests": []
