@@ -185,19 +185,17 @@ export const SSTAuthGate: React.FC = () => {
   const [cohortRoster, setCohortRoster] = useState<{ id: string; name: string; email: string; rollNo: string; group: string }[]>([]);
   const [rosterSearch, setRosterSearch] = useState('');
 
-  // 3D Library Book Intro for English / Library Lovers
-  const [showBookIntro, setShowBookIntro] = useState<boolean>(() => {
+  // 3D Library Book Intro for English / Library Lovers — Plays on EVERY page load / refresh
+  const [showBookIntro, setShowBookIntro] = useState<boolean>(true);
+
+  // Clear any legacy sessionStorage lock so refresh always plays
+  useEffect(() => {
     try {
-      return sessionStorage.getItem('classora_book_seen') !== 'true';
-    } catch {
-      return true;
-    }
-  });
+      sessionStorage.removeItem('classora_book_seen');
+    } catch {}
+  }, []);
 
   const handleBookComplete = () => {
-    try {
-      sessionStorage.setItem('classora_book_seen', 'true');
-    } catch {}
     setShowBookIntro(false);
   };
 

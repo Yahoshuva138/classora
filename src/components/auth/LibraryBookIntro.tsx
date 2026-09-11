@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Sparkles, ArrowRight, Volume2, VolumeX } from 'lucide-react';
 import { soundFx } from '../../utils/soundEffects';
 
@@ -30,6 +30,15 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
       onComplete();
     }, 3800);
   };
+
+  // Automatically start opening book on page refresh after a brief theatrical pause
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startBookSequence();
+    }, 1100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSkip = () => {
     if (soundEnabled) soundFx.playPop();
