@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Calendar,
   Clock,
@@ -46,6 +46,8 @@ import { useToast } from '../../context/ToastContext';
 export const StudentPortalView: React.FC = () => {
   const { addToast } = useToast();
   const {
+    activeTab,
+    setActiveTab,
     students,
     sessions,
     attendanceRecords,
@@ -59,7 +61,53 @@ export const StudentPortalView: React.FC = () => {
     activeTeacher
   } = useApp();
 
-  const [activeSubTab, setActiveSubTab] = useState<'overview' | 'attendance' | 'grades' | 'requests'>('overview');
+  // Map AppContext activeTab to StudentPortal subTabs
+  const mapActiveTabToSubTab = (tab: string): 'overview' | 'attendance' | 'grades' | 'requests' => {
+    switch (tab) {
+      case 'student-attendance':
+        return 'attendance';
+      case 'student-grades':
+        return 'grades';
+      case 'student-support':
+        return 'requests';
+      default:
+        return 'overview';
+    }
+  };
+
+  const mapSubTabToActiveTab = (subTab: 'overview' | 'attendance' | 'grades' | 'requests'): string => {
+    switch (subTab) {
+      case 'attendance':
+        return 'student-attendance';
+      case 'grades':
+        return 'student-grades';
+      case 'requests':
+        return 'student-support';
+      default:
+        return 'student-overview';
+    }
+  };
+
+  const [activeSubTab, setActiveSubTabState] = useState<'overview' | 'attendance' | 'grades' | 'requests'>(() => {
+    return mapActiveTabToSubTab(activeTab);
+  });
+
+  // Whenever global activeTab changes (e.g. from Sidebar or MobileNav), sync activeSubTab
+  useEffect(() => {
+    if (activeTab.startsWith('student-')) {
+      setActiveSubTabState(mapActiveTabToSubTab(activeTab));
+    }
+  }, [activeTab]);
+
+  // When switching subTab inside the portal, update both local state and global activeTab
+  const setActiveSubTab = (tab: 'overview' | 'attendance' | 'grades' | 'requests') => {
+    soundFx.playPop();
+    setActiveSubTabState(tab);
+    const targetGlobalTab = mapSubTabToActiveTab(tab);
+    if (activeTab !== targetGlobalTab) {
+      setActiveTab(targetGlobalTab);
+    }
+  };
   
   // Student Request Form state
   const [reqType, setReqType] = useState<StudentRequest['type']>('Leave / Absence Excuse');

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   GraduationCap,
   Users,
@@ -117,6 +117,8 @@ const CriteriaScoreInput: React.FC<CriteriaScoreInputProps> = ({
 export const TeacherPortalView: React.FC = () => {
   const { addToast } = useToast();
   const {
+    activeTab,
+    setActiveTab,
     students,
     sessions,
     attendanceRecords,
@@ -132,7 +134,53 @@ export const TeacherPortalView: React.FC = () => {
     openStudentProfile
   } = useApp();
 
-  const [activeSubTab, setActiveSubTab] = useState<'overview' | 'gradebook' | 'audit' | 'feedback'>('overview');
+  // Map AppContext activeTab to TeacherPortal subTabs
+  const mapActiveTabToSubTab = (tab: string): 'overview' | 'gradebook' | 'audit' | 'feedback' => {
+    switch (tab) {
+      case 'teacher-gradebook':
+        return 'gradebook';
+      case 'teacher-attendance':
+        return 'audit';
+      case 'teacher-feedback':
+        return 'feedback';
+      default:
+        return 'overview';
+    }
+  };
+
+  const mapSubTabToActiveTab = (subTab: 'overview' | 'gradebook' | 'audit' | 'feedback'): string => {
+    switch (subTab) {
+      case 'gradebook':
+        return 'teacher-gradebook';
+      case 'audit':
+        return 'teacher-attendance';
+      case 'feedback':
+        return 'teacher-feedback';
+      default:
+        return 'teacher-overview';
+    }
+  };
+
+  const [activeSubTab, setActiveSubTabState] = useState<'overview' | 'gradebook' | 'audit' | 'feedback'>(() => {
+    return mapActiveTabToSubTab(activeTab);
+  });
+
+  // Whenever global activeTab changes (e.g. from Sidebar or MobileNav), sync activeSubTab
+  useEffect(() => {
+    if (activeTab.startsWith('teacher-')) {
+      setActiveSubTabState(mapActiveTabToSubTab(activeTab));
+    }
+  }, [activeTab]);
+
+  // When switching subTab inside the portal, update both local state and global activeTab
+  const setActiveSubTab = (tab: 'overview' | 'gradebook' | 'audit' | 'feedback') => {
+    soundFx.playPop();
+    setActiveSubTabState(tab);
+    const targetGlobalTab = mapSubTabToActiveTab(tab);
+    if (activeTab !== targetGlobalTab) {
+      setActiveTab(targetGlobalTab);
+    }
+  };
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBatch, setSelectedBatch] = useState<string>('all');
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
