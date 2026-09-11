@@ -109,116 +109,595 @@ router.get('/bootstrap', async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// AUTHENTICATION & SINGLE SIGN-ON (@sst.scaler.com ONLY)
+// AUTHENTICATION & SINGLE SIGN-ON
 // -------------------------------------------------------------
 
-const activeSessions = new Map();
+const googleClient = new OAuth2Client(
+  process.env.VITE_GOOGLE_CLIENT_ID
+);
 
-router.post('/auth/google', async (req, res) => {
+const SESSION_SECRET =
+  process.env.SESSION_SECRET;
+
+if (!SESSION_SECRET) {
+  console.warn(
+    '[Classora Auth] SESSION_SECRET is not configured.'
+  );
+}
+
+const SESSION_COOKIE_NAME =
+  'classora_session';
+
+const SESSION_MAX_AGE =
+  7 * 24 * 60 * 60 * 1000; // 7 days
+
+
+function base64UrlEncode(value) {
+  return Buffer.from(value)
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+
+function base64UrlDecode(value) {
+  return Buffer.from(
+    value
+      .replace(/-/g, '+')
+      .replace(/_/g, '/'),
+    'base64'
+  );
+}
+
+
+function signSession(payload) {
+  if (!SESSION_SECRET) {
+    throw new Error(
+      'SESSION_SECRET is not configured.'
+    );
+  }
+
+  const encodedPayload =
+    base64UrlEncode(
+      JSON.stringify(payload)
+    );
+
+  const signature =
+    crypto
+      .createHmac(
+        'sha256',
+        SESSION_SECRET
+      )
+      .update(encodedPayload)
+      .digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
+
+  return `${encodedPayload}.${signature}`;
+}
+
+
+function verifySession(token) {
+  if (!token || !SESSION_SECRET) {
+    return null;
+  }
+
   try {
-    const { email, name, avatar } = req.body;
+    const parts = token.split('.');
 
-    if (!email) {
-      return res.status(400).json({ success: false, error: 'Institutional email address is required.' });
+    if (parts.length !== 2) {
+      return null;
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const [
+      encodedPayload,
+      receivedSignature
+    ] = parts;
 
-    // STRICT DOMAIN RESTRICTION: Must end with @sst.scaler.com or @scaler.com or @sst.scler.com
-    const isSstDomain = /@(sst\.)?scaler\.com$/i.test(cleanEmail) || /@sst\.scler\.com$/i.test(cleanEmail);
-    if (!isSstDomain) {
-      return res.status(403).json({
+    const expectedSignature =
+      crypto
+        .createHmac(
+          'sha256',
+          SESSION_SECRET
+        )
+        .update(encodedPayload)
+        .digest('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/g, '');
+
+    const receivedBuffer =
+      Buffer.from(receivedSignature);
+
+    const expectedBuffer =
+      Buffer.from(expectedSignature);
+
+    if (
+      receivedBuffer.length !==
+      expectedBuffer.length
+    ) {
+      return null;
+    }
+
+    if (
+      !crypto.timingSafeEqual(
+        receivedBuffer,
+        expectedBuffer
+      )
+    ) {
+      return null;
+    }
+
+    const payload =
+      JSON.parse(
+        base64UrlDecode(
+          encodedPayload
+        ).toString('utf8')
+      );
+
+    if (
+      !payload.exp ||
+      Date.now() >= payload.exp
+    ) {
+      return null;
+    }
+
+    return payload;
+
+  } catch {
+    return null;
+  }
+}
+
+
+function parseCookies(req) {
+  const header =
+    req.headers.cookie;
+
+  if (!header) {
+    return {};
+  }
+
+  return header
+    .split(';')
+    .reduce((cookies, part) => {
+      const index =
+        part.indexOf('=');
+
+      if (index === -1) {
+        return cookies;
+      }
+
+      const key =
+        part
+          .slice(0, index)
+          .trim();
+
+      const value =
+        part
+          .slice(index + 1)
+          .trim();
+
+      cookies[key] =
+        decodeURIComponent(value);
+
+      return cookies;
+    }, {});
+}
+
+
+function setSessionCookie(
+  res,
+  user
+) {
+  const payload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    studentId: user.studentId || null,
+    iat: Date.now(),
+    exp:
+      Date.now() +
+      SESSION_MAX_AGE
+  };
+
+  const token =
+    signSession(payload);
+
+  const isProduction =
+    process.env.NODE_ENV ===
+    'production';
+
+  const cookie =
+    [
+      `${SESSION_COOKIE_NAME}=${encodeURIComponent(token)}`,
+      'Path=/',
+      `Max-Age=${Math.floor(
+        SESSION_MAX_AGE / 1000
+      )}`,
+      'HttpOnly',
+      'SameSite=Lax',
+      isProduction
+        ? 'Secure'
+        : ''
+    ]
+      .filter(Boolean)
+      .join('; ');
+
+  res.setHeader(
+    'Set-Cookie',
+    cookie
+  );
+}
+
+
+function clearSessionCookie(res) {
+  const isProduction =
+    process.env.NODE_ENV ===
+    'production';
+
+  const cookie =
+    [
+      `${SESSION_COOKIE_NAME}=`,
+      'Path=/',
+      'Max-Age=0',
+      'HttpOnly',
+      'SameSite=Lax',
+      isProduction
+        ? 'Secure'
+        : ''
+    ]
+      .filter(Boolean)
+      .join('; ');
+
+  res.setHeader(
+    'Set-Cookie',
+    cookie
+  );
+}
+
+
+async function authenticateRequest(
+  req,
+  res,
+  next
+) {
+  try {
+    const cookies =
+      parseCookies(req);
+
+    const token =
+      cookies[
+        SESSION_COOKIE_NAME
+      ];
+
+    const session =
+      verifySession(token);
+
+    if (!session) {
+      return res.status(401).json({
         success: false,
-        error: 'Access Denied: Classora is strictly restricted to Scaler School of Technology institutional emails (@sst.scaler.com).'
+        error:
+          'Authentication required.'
       });
     }
 
-    let role = 'Student';
-    let studentId = undefined;
-    let userName = name || cleanEmail.split('@')[0];
+    const user =
+      await model(
+        'users',
+        User
+      ).findOne({
+        id: session.userId,
+        email: session.email
+      });
 
-    // Check if CR
-    if (cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail === 'aarav.sharma@sst.scaler.com') {
-      role = 'CR';
-      userName = userName || 'Aarav Sharma';
-    } 
-    // Check if Faculty / Course Coordinator
-    else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail === 'priya.nair@sst.scaler.com') {
-      role = 'Teacher';
-      userName = userName || 'Dr. Priya Nair';
-    } 
-    // Match Student from official 44 students
-    else {
-      role = 'Student';
-      const allStudents = await model('students', Student).find({ isArchived: { $ne: true } });
-      
-      const rollMatch = cleanEmail.match(/26bcs\d+/i);
-      const rollNo = rollMatch ? rollMatch[0].toLowerCase() : null;
+    if (!user) {
+      clearSessionCookie(res);
 
-      const matchedStudent = allStudents.find(s => 
-        (s.email && s.email.toLowerCase() === cleanEmail) ||
-        (rollNo && s.id.toLowerCase() === rollNo) ||
-        (rollNo && s.rollNo && s.rollNo.toLowerCase() === rollNo) ||
-        (s.name && cleanEmail.includes(s.name.toLowerCase().replace(/\s+/g, '')))
-      );
-
-      if (matchedStudent) {
-        studentId = matchedStudent.id;
-        userName = matchedStudent.name;
-      } else if (allStudents.length > 0) {
-        studentId = allStudents[0].id;
-        userName = allStudents[0].name;
-      }
+      return res.status(401).json({
+        success: false,
+        error:
+          'User account no longer exists.'
+      });
     }
 
-    const userSession = {
-      id: `sst-${Date.now()}`,
-      name: userName,
-      email: cleanEmail,
-      role,
-      studentId,
-      avatar: avatar || '',
-      isGoogleAuthenticated: true,
-      authenticatedAt: new Date().toISOString()
-    };
+    req.user = user;
 
-    activeSessions.set(cleanEmail, userSession);
+    next();
 
-    res.json({
-      success: true,
-      message: `Authenticated as ${userName} (${role}) via SST Google SSO`,
-      data: userSession
+  } catch (err) {
+    console.error(
+      '[Auth Middleware]',
+      err
+    );
+
+    return res.status(401).json({
+      success: false,
+      error:
+        'Invalid authentication session.'
     });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
   }
-});
+}
 
-router.get('/auth/me', (req, res) => {
-  const email = (req.query.email || '').toString().trim().toLowerCase();
-  if (email && activeSessions.has(email)) {
-    return res.json({ success: true, data: activeSessions.get(email) });
-  }
-  res.json({ success: false, data: null });
-});
 
-router.post('/resync-official', async (req, res) => {
-  try {
-    await executeFullSeed();
-    res.json({ success: true, message: 'Classora database synchronized with official SST 2026 cohort' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+function requireRoles(...roles) {
+  return async (
+    req,
+    res,
+    next
+  ) => {
+    await authenticateRequest(
+      req,
+      res,
+      () => {}
+    );
 
-router.post('/reset-demo', async (req, res) => {
-  try {
-    await executeFullSeed();
-    res.json({ success: true, message: 'Classora database reset to official state' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (!req.user) {
+      return;
+    }
+
+    if (
+      !roles.includes(
+        req.user.role
+      )
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          'Access denied.'
+      });
+    }
+
+    next();
+  };
+    }
+                        // -------------------------------------------------------------
+// GOOGLE LOGIN
+// -------------------------------------------------------------
+
+router.post(
+  '/auth/google',
+  async (req, res) => {
+    try {
+      const {
+        credential
+      } = req.body;
+
+      if (!credential) {
+        return res.status(400).json({
+          success: false,
+          error:
+            'Google authentication credential is required.'
+        });
+      }
+
+      // Verify Google ID token
+      const ticket =
+        await googleClient.verifyIdToken({
+          idToken: credential,
+          audience:
+            process.env
+              .VITE_GOOGLE_CLIENT_ID
+        });
+
+      const payload =
+        ticket.getPayload();
+
+      if (!payload) {
+        return res.status(401).json({
+          success: false,
+          error:
+            'Invalid Google authentication.'
+        });
+      }
+
+      const email =
+        payload.email
+          ?.trim()
+          .toLowerCase();
+
+      if (
+        !email ||
+        payload.email_verified !== true
+      ) {
+        return res.status(403).json({
+          success: false,
+          error:
+            'Google email is not verified.'
+        });
+      }
+
+      // ONLY the official SST domain
+      const isSstDomain =
+        /^[^@\s]+@sst\.scaler\.com$/i
+          .test(email);
+
+      if (!isSstDomain) {
+        return res.status(403).json({
+          success: false,
+          error:
+            'Access denied. Use your @sst.scaler.com account.'
+        });
+      }
+
+      const googleName =
+        payload.name ||
+        email.split('@')[0];
+
+      const avatar =
+        payload.picture || '';
+
+      // Find existing registered account
+      const user =
+        await model(
+          'users',
+          User
+        ).findOne({
+          email
+        });
+
+      if (!user) {
+        return res.status(403).json({
+          success: false,
+          error:
+            'Account not registered. Please register your Classora account first.'
+        });
+      }
+
+      if (
+        user.isRegistered !== true
+      ) {
+        return res.status(403).json({
+          success: false,
+          error:
+            'Your Classora account is not registered yet.'
+        });
+      }
+
+      // Never trust role from frontend.
+      // Role comes only from database.
+      const authenticatedUser = {
+        id: user.id,
+        name:
+          user.name || googleName,
+        email: user.email,
+        role: user.role,
+        studentId:
+          user.studentId || null,
+        avatar:
+          avatar || user.avatar || ''
+      };
+
+      // Update Google profile information
+      await model(
+        'users',
+        User
+      ).updateOne(
+        {
+          email
+        },
+        {
+          $set: {
+            avatar:
+              avatar || user.avatar || '',
+            isGoogleAuthenticated:
+              true
+          }
+        }
+      );
+
+      setSessionCookie(
+        res,
+        authenticatedUser
+      );
+
+      await logActivity({
+        actorName:
+          authenticatedUser.name,
+        actorRole:
+          authenticatedUser.role,
+        action:
+          'Google Authentication',
+        details:
+          `${authenticatedUser.name} authenticated using verified Google SST account.`,
+        category:
+          'security',
+        targetId:
+          authenticatedUser.studentId,
+        targetName:
+          authenticatedUser.name
+      });
+
+      return res.json({
+        success: true,
+        message:
+          `Welcome, ${authenticatedUser.name}!`,
+        data: {
+          id:
+            authenticatedUser.id,
+          name:
+            authenticatedUser.name,
+          email:
+            authenticatedUser.email,
+          role:
+            authenticatedUser.role,
+          studentId:
+            authenticatedUser.studentId,
+          avatar:
+            authenticatedUser.avatar,
+          isGoogleAuthenticated:
+            true,
+          mustChangePassword:
+            user.mustChangePassword === true
+        }
+      });
+
+    } catch (err) {
+      console.error(
+        '[Google Authentication Error]',
+        err
+      );
+
+      return res.status(401).json({
+        success: false,
+        error:
+          'Google authentication failed.'
+      });
+    }
   }
-});
+);
+// -------------------------------------------------------------
+// CURRENT USER
+// -------------------------------------------------------------
+
+router.get(
+  '/auth/me',
+  authenticateRequest,
+  async (req, res) => {
+    const user =
+      req.user;
+
+    return res.json({
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        studentId:
+          user.studentId || null,
+        avatar:
+          user.avatar || '',
+        isGoogleAuthenticated:
+          user.isGoogleAuthenticated === true,
+        mustChangePassword:
+          user.mustChangePassword === true
+      }
+    });
+  }
+);
+
+
+// -------------------------------------------------------------
+// LOGOUT
+// -------------------------------------------------------------
+
+router.post(
+  '/auth/logout',
+  (req, res) => {
+    clearSessionCookie(res);
+
+    return res.json({
+      success: true,
+      message:
+        'Logged out successfully.'
+    });
+  }
+);
+
+      
 
 // -------------------------------------------------------------
 // 2. STUDENTS API
