@@ -342,6 +342,14 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ newRole, callerEmail, callerRole })
     });
+  },
+
+  // User Profile & Account Customization
+  async updateUserProfile(userIdOrEmail: string, profile: { avatar?: string; bio?: string; headline?: string; publicLinks?: any; name?: string }): Promise<{ success: boolean; user: any; student?: any; message?: string }> {
+    return await request<{ success: boolean; user: any; student?: any; message?: string }>(`/auth/users/${encodeURIComponent(userIdOrEmail)}/profile`, {
+      method: 'PUT',
+      body: JSON.stringify(profile)
+    });
   }
 };
 

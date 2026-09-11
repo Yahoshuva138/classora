@@ -80,6 +80,9 @@ export interface Student {
   currentLevel: string;
   initialRemarks: string;
   avatar?: string;
+  bio?: string;
+  headline?: string;
+  publicLinks?: UserSocialLinks;
   lastActivity: string;
   skills: StudentSkillScores;
   previousOverallScore: number; // to show improvement/trend
@@ -190,6 +193,14 @@ export interface StudentRequest {
   resolvedDate?: string;
 }
 
+export interface UserSocialLinks {
+  github?: string;
+  linkedin?: string;
+  portfolio?: string;
+  twitter?: string;
+  leetcode?: string;
+}
+
 export interface GoogleUser {
   id: string;
   name: string;
@@ -199,6 +210,9 @@ export interface GoogleUser {
   isGoogleAuthenticated: boolean;
   studentId?: string;
   mustChangePassword?: boolean;
+  bio?: string;
+  headline?: string;
+  publicLinks?: UserSocialLinks;
 }
 
 export interface ActivityLog {

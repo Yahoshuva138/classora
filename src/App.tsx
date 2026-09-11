@@ -27,6 +27,8 @@ import { GoogleAuthModal } from './components/auth/GoogleAuthModal';
 import { ChangePasswordModal } from './components/auth/ChangePasswordModal';
 import { OnboardingTourModal } from './components/common/OnboardingTourModal';
 import { KeyboardShortcutsModal } from './components/common/KeyboardShortcutsModal';
+import { UserProfileCustomizationModal } from './components/common/UserProfileCustomizationModal';
+import { PublicProfileModal } from './components/common/PublicProfileModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ShieldAlert, Key } from 'lucide-react';
 
@@ -180,6 +182,8 @@ const AuthenticatedApp: React.FC = () => {
         onClose={() => setIsShortcutsOpen(false)}
       />
       <RoleManagementModal />
+      <UserProfileCustomizationModal />
+      <PublicProfileModal />
     </div>
   );
 };

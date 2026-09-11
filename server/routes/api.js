@@ -332,6 +332,7 @@ router.post('/students', async (req, res) => {
     const rollNo = req.body.rollNo || req.body.id || `ENG-2026-${Math.floor(Math.random() * 900 + 100)}`;
     const studentData = {
       ...req.body,
+      phone: req.body.phone || '+91 98000 00000',
       rollNo,
       id: rollNo,
       skills: req.body.skills || {
@@ -1029,6 +1030,67 @@ router.patch('/auth/users/:id/role', async (req, res) => {
         role: newRole,
         studentId: targetUser.studentId
       }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// USER PROFILE & ACCOUNT SPECIALIZATION (AVATAR & PUBLIC LINKS)
+// -------------------------------------------------------------
+router.put('/auth/users/:id/profile', async (req, res) => {
+  try {
+    const rawId = req.params.id;
+    const { avatar, bio, headline, publicLinks, name } = req.body;
+
+    const query = {
+      $or: [
+        { id: rawId },
+        { email: rawId.toLowerCase() },
+        { studentId: rawId },
+        ...(mongoose.isValidObjectId(rawId) ? [{ _id: rawId }] : [])
+      ]
+    };
+
+    const updateFields = {};
+    if (avatar !== undefined) updateFields.avatar = avatar;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (headline !== undefined) updateFields.headline = headline;
+    if (publicLinks !== undefined) updateFields.publicLinks = publicLinks;
+    if (name !== undefined && name.trim()) updateFields.name = name.trim();
+
+    await model('users', User).updateOne(query, { $set: updateFields });
+    const updatedUser = await model('users', User).findOne(query, { password: 0 });
+
+    // Also update student if this user corresponds to a student record
+    let updatedStudent = null;
+    const studentQuery = {
+      $or: [
+        { id: rawId },
+        { rollNo: rawId },
+        { email: (updatedUser ? updatedUser.email : rawId).toLowerCase() },
+        ...(updatedUser?.studentId ? [{ id: updatedUser.studentId }, { rollNo: updatedUser.studentId }] : [])
+      ]
+    };
+
+    const studentUpdateFields = {};
+    if (avatar !== undefined) studentUpdateFields.avatar = avatar;
+    if (bio !== undefined) studentUpdateFields.bio = bio;
+    if (headline !== undefined) studentUpdateFields.headline = headline;
+    if (publicLinks !== undefined) studentUpdateFields.publicLinks = publicLinks;
+    if (name !== undefined && name.trim()) studentUpdateFields.name = name.trim();
+
+    if (Object.keys(studentUpdateFields).length > 0) {
+      await model('students', Student).updateOne(studentQuery, { $set: studentUpdateFields });
+      updatedStudent = await model('students', Student).findOne(studentQuery);
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile and public links updated successfully',
+      user: updatedUser,
+      student: updatedStudent
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

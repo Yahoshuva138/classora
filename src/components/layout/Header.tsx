@@ -17,7 +17,8 @@ import {
   Keyboard,
   Key,
   Crown,
-  Users
+  Users,
+  ExternalLink
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Classora3DLogo, GoogleIcon } from '../common/Classora3DLogo';
@@ -55,6 +56,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
     setIsShortcutsOpen,
     isRoleManagementModalOpen,
     setIsRoleManagementModalOpen,
+    setIsProfileCustomizationOpen,
+    openPublicProfile,
     soundEnabled,
     toggleSound,
     soundVolume,
@@ -548,9 +551,42 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 truncate">{profile.email}</p>
-                <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
-                  <ShieldCheck className="w-3 h-3" /> {profile.badgeText}
-                </span>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                    <ShieldCheck className="w-3 h-3" /> {profile.badgeText}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      openPublicProfile(currentUser.studentId || currentUser.id || currentUser.email);
+                    }}
+                    className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+                    title="View public profile card"
+                  >
+                    <span>View Public Card</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="mt-2.5 pt-2 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      setIsProfileCustomizationOpen(true);
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 hover:from-blue-100 hover:to-indigo-100 text-xs font-bold text-indigo-900 flex items-center justify-between border border-indigo-100/80 transition cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Edit Profile & Avatar</span>
+                    </span>
+                    <span className="text-[10px] bg-indigo-200/60 text-indigo-800 px-1.5 py-0.2 rounded font-mono">
+                      Specialized
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div className="py-1">

@@ -21,7 +21,8 @@ import {
   StudentSkillScores,
   CRRemark,
   GoogleUser,
-  ActivityLog
+  ActivityLog,
+  UserSocialLinks
 } from '../types';
 import {
   initialStudents,
@@ -80,6 +81,14 @@ interface AppContextType {
   isChangePasswordModalOpen: boolean;
   setIsChangePasswordModalOpen: (open: boolean) => void;
   updateCurrentUser: (updates: Partial<GoogleUser>) => void;
+
+  // Profile Customization & Public Showcase
+  isProfileCustomizationOpen: boolean;
+  setIsProfileCustomizationOpen: (open: boolean) => void;
+  publicProfileTarget: { user?: GoogleUser; student?: Student } | null;
+  openPublicProfile: (targetIdOrStudent: string | Student) => void;
+  closePublicProfile: () => void;
+  updateUserProfile: (updates: { avatar?: string; bio?: string; headline?: string; publicLinks?: UserSocialLinks; name?: string }) => Promise<void>;
 
   // Interactivity, Audio & Guided Tour
   isOnboardingOpen: boolean;
@@ -486,6 +495,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [isGoogleAuthModalOpen, setIsGoogleAuthModalOpen] = useState<boolean>(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false);
+  const [isProfileCustomizationOpen, setIsProfileCustomizationOpen] = useState<boolean>(false);
+  const [publicProfileTarget, setPublicProfileTarget] = useState<{ user?: GoogleUser; student?: Student } | null>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [isRoleManagementModalOpen, setIsRoleManagementModalOpen] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => soundFx.enabled);
@@ -1525,6 +1536,153 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   }, []);
 
+  const openPublicProfile = useCallback((target: string | Student) => {
+    if (typeof target === 'string') {
+      const trimmed = target.trim().toLowerCase();
+      const foundStudent = students.find(s =>
+        s.id.toLowerCase() === trimmed ||
+        (s.rollNo && s.rollNo.toLowerCase() === trimmed) ||
+        s.email.toLowerCase() === trimmed
+      );
+      if (foundStudent) {
+        setPublicProfileTarget({ student: foundStudent });
+        return;
+      }
+      if (currentUser.id === target || currentUser.email.toLowerCase() === trimmed) {
+        setPublicProfileTarget({ user: currentUser });
+        return;
+      }
+      if (activeTeacher.email.toLowerCase() === trimmed) {
+        setPublicProfileTarget({
+          user: {
+            id: 'teacher-nn',
+            name: activeTeacher.name,
+            email: activeTeacher.email,
+            avatar: currentUser.email === activeTeacher.email ? currentUser.avatar : '',
+            role: 'Teacher',
+            isGoogleAuthenticated: true,
+            headline: 'Course Coordinator & Faculty • English Language & Communication Skills',
+            bio: 'Lead Instructor for English Communication Skills at Scaler School of Technology.',
+            publicLinks: currentUser.publicLinks || {}
+          }
+        });
+        return;
+      }
+      // If student not found directly, create minimal preview if formatted like roll number
+      if (/^26bcs\d{5}$/i.test(trimmed)) {
+        setPublicProfileTarget({
+          student: {
+            id: target,
+            rollNo: target,
+            name: `Student (${target.toUpperCase()})`,
+            email: `${target.toLowerCase()}@sst.scaler.com`,
+            phone: '+91 98000 00000',
+            batch: 'SST 2026 Cohort',
+            group: 'Group 1',
+            joiningDate: '2024-08-01',
+            currentLevel: 'Intermediate (B1)',
+            initialRemarks: 'Enrolled SST 2026 student.',
+            lastActivity: 'Active',
+            skills: { communication: 80, grammar: 80, vocabulary: 80, pronunciation: 80, participation: 80, assignments: 80, assessments: 80 },
+            previousOverallScore: 80,
+            assignments: [],
+            crRemarks: [],
+            historicalScores: []
+          }
+        });
+        return;
+      }
+    } else {
+      setPublicProfileTarget({ student: target });
+    }
+  }, [students, currentUser, activeTeacher]);
+
+  const closePublicProfile = useCallback(() => {
+    setPublicProfileTarget(null);
+    if (typeof window !== 'undefined' && window.location.search.includes('profile=')) {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const profileParam = params.get('profile');
+      if (profileParam) {
+        const timer = setTimeout(() => {
+          openPublicProfile(profileParam);
+        }, 300);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [openPublicProfile]);
+
+  const updateUserProfile = useCallback(async (updates: {
+    avatar?: string;
+    bio?: string;
+    headline?: string;
+    publicLinks?: UserSocialLinks;
+    name?: string;
+  }) => {
+    setCurrentUser(prev => {
+      const updated: GoogleUser = {
+        ...prev,
+        avatar: updates.avatar !== undefined ? updates.avatar : prev.avatar,
+        bio: updates.bio !== undefined ? updates.bio : prev.bio,
+        headline: updates.headline !== undefined ? updates.headline : prev.headline,
+        name: updates.name !== undefined ? updates.name : prev.name,
+        publicLinks: {
+          ...(prev.publicLinks || {}),
+          ...(updates.publicLinks || {})
+        }
+      };
+      localStorage.setItem(STORAGE_KEYS.GOOGLE_USER, JSON.stringify(updated));
+      return updated;
+    });
+
+    const studentTargetId = currentUser.studentId || (currentUser.role === 'Student' || currentUser.role === 'CR' ? currentUser.id : null);
+    setStudents(prev => {
+      let changed = false;
+      const next = prev.map(s => {
+        if (
+          (studentTargetId && s.id === studentTargetId) ||
+          (currentUser.email && s.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+          (s.id === currentUser.id)
+        ) {
+          changed = true;
+          return {
+            ...s,
+            avatar: updates.avatar !== undefined ? updates.avatar : s.avatar,
+            bio: updates.bio !== undefined ? updates.bio : s.bio,
+            headline: updates.headline !== undefined ? updates.headline : s.headline,
+            name: updates.name !== undefined ? updates.name : s.name,
+            publicLinks: {
+              ...(s.publicLinks || {}),
+              ...(updates.publicLinks || {})
+            }
+          };
+        }
+        return s;
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(next));
+      }
+      return next;
+    });
+
+    const targetIdentifier = currentUser.id || currentUser.email;
+    if (targetIdentifier) {
+      try {
+        await api.updateUserProfile(targetIdentifier, updates);
+      } catch (err) {
+        console.warn('[Classora Backend] updateUserProfile failed:', err);
+      }
+    }
+
+    addToast('Profile, display photo, and public links updated!', 'success');
+  }, [currentUser, addToast]);
+
   const signOutGoogle = useCallback(() => {
     const unauthUser: GoogleUser = {
       id: '',
@@ -1605,9 +1763,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         signOutGoogle,
         isGoogleAuthModalOpen,
         setIsGoogleAuthModalOpen,
-        isChangePasswordModalOpen,
+         isChangePasswordModalOpen,
         setIsChangePasswordModalOpen,
         updateCurrentUser,
+        isProfileCustomizationOpen,
+        setIsProfileCustomizationOpen,
+        publicProfileTarget,
+        openPublicProfile,
+        closePublicProfile,
+        updateUserProfile,
         isOnboardingOpen,
         setIsOnboardingOpen,
         isShortcutsOpen,

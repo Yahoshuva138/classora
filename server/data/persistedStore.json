@@ -409,7 +409,7 @@
       "avatar": "",
       "joiningDate": "2026-08-01",
       "currentLevel": "Intermediate (B1)",
-      "initialRemarks": "",
+      "initialRemarks": "Official SST 2026 Cohort • Role: Student.",
       "lastActivity": "Ready for live attendance",
       "skills": {
         "communication": 0,
@@ -456,7 +456,8 @@
         }
       ],
       "crRemarks": [],
-      "historicalScores": []
+      "historicalScores": [],
+      "updatedAt": "2026-09-11T19:42:04.319Z"
     },
     {
       "id": "26bcs10624",
@@ -897,7 +898,7 @@
       "avatar": "",
       "joiningDate": "2026-08-01",
       "currentLevel": "Intermediate (B1)",
-      "initialRemarks": "",
+      "initialRemarks": "Official SST 2026 Cohort • Role: Student.",
       "lastActivity": "Ready for live attendance",
       "skills": {
         "communication": 0,
@@ -944,7 +945,8 @@
         }
       ],
       "crRemarks": [],
-      "historicalScores": []
+      "historicalScores": [],
+      "updatedAt": "2026-09-11T19:42:04.289Z"
     },
     {
       "id": "26bcs10483",
@@ -2663,7 +2665,7 @@
       "batch": "English C - Term 1",
       "discussionGroup": "Group 5",
       "group": "Group 5",
-      "avatar": "",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&auto=format&fit=crop&q=80",
       "joiningDate": "2026-08-01",
       "currentLevel": "Intermediate (B1)",
       "initialRemarks": "",
@@ -2713,7 +2715,17 @@
         }
       ],
       "crRemarks": [],
-      "historicalScores": []
+      "historicalScores": [],
+      "headline": "SST CSE 2026 • AI / Systems Enthusiast • Course Admin",
+      "bio": "Pioneering intelligent agentic education platforms and real-time student analytics at Scaler School of Technology.",
+      "publicLinks": {
+        "github": "https://github.com/Yahoshuva138",
+        "linkedin": "https://linkedin.com/in/yahoshuva-kesaboyina",
+        "portfolio": "https://yahoshuva.dev",
+        "leetcode": "https://leetcode.com/u/yahoshuva",
+        "twitter": "https://x.com/yahoshuva"
+      },
+      "updatedAt": "2026-09-11T19:40:11.265Z"
     },
     {
       "id": "26bcs10450",
@@ -5300,6 +5312,16 @@
       "status": "Present",
       "timestamp": "2026-09-04T10:00:00.000Z",
       "remarks": "Official instructor report mark"
+    },
+    {
+      "_id": "mem_1789155702716_x1d5fd3io",
+      "createdAt": "2026-09-11T19:41:42.716Z",
+      "updatedAt": "2026-09-11T19:42:04.123Z",
+      "sessionId": "SES-101",
+      "studentId": "26bcs10296",
+      "status": "Present",
+      "remarks": "",
+      "timestamp": "2026-09-11T19:42:04.123Z"
     }
   ],
   "followups": [],
@@ -5348,12 +5370,22 @@
       "email": "yahoshuva.26bcs10296@sst.scaler.com",
       "role": "Admin",
       "studentId": "26bcs10296",
-      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=240&auto=format&fit=crop&q=80",
       "personaKey": "primary_admin_yahoshuva",
       "isGoogleAuthenticated": true,
       "password": "SST@2026",
       "isRegistered": true,
-      "mustChangePassword": true
+      "mustChangePassword": true,
+      "headline": "SST CSE 2026 • AI / Systems Enthusiast • Course Admin",
+      "bio": "Pioneering intelligent agentic education platforms and real-time student analytics at Scaler School of Technology.",
+      "publicLinks": {
+        "github": "https://github.com/Yahoshuva138",
+        "linkedin": "https://linkedin.com/in/yahoshuva-kesaboyina",
+        "portfolio": "https://yahoshuva.dev",
+        "leetcode": "https://leetcode.com/u/yahoshuva",
+        "twitter": "https://x.com/yahoshuva"
+      },
+      "updatedAt": "2026-09-11T19:40:11.264Z"
     },
     {
       "id": "usr_26bcs10535",
@@ -5409,7 +5441,8 @@
       "password": "SST@2026",
       "isRegistered": true,
       "registeredAt": "2026-09-11T13:21:36.597Z",
-      "mustChangePassword": true
+      "mustChangePassword": true,
+      "updatedAt": "2026-09-11T19:42:04.319Z"
     },
     {
       "id": "usr_26bcs10624",
@@ -5521,7 +5554,8 @@
       "password": "SST@2026",
       "isRegistered": true,
       "registeredAt": "2026-09-11T13:21:36.597Z",
-      "mustChangePassword": true
+      "mustChangePassword": true,
+      "updatedAt": "2026-09-11T19:42:04.289Z"
     },
     {
       "id": "usr_26bcs10483",
@@ -6013,6 +6047,146 @@
       "category": "attendance",
       "targetId": "SES-110",
       "targetName": "Session SES-110"
+    },
+    {
+      "_id": "mem_1789155702724_gx515124u",
+      "createdAt": "2026-09-11T19:41:42.724Z",
+      "updatedAt": "2026-09-11T19:41:42.724Z",
+      "id": "act_1789155702724_54hje",
+      "timestamp": "2026-09-11T19:41:42.724Z",
+      "actorName": "Noor Nigar",
+      "actorRole": "Teacher",
+      "action": "Attendance Recorded",
+      "details": "Official attendance recorded for SES-101: 1 Present, 0 Absent, 0 Late, 0 Excused.",
+      "category": "attendance",
+      "targetId": "SES-101",
+      "targetName": "Session SES-101"
+    },
+    {
+      "_id": "mem_1789155702812_kj3padzaq",
+      "createdAt": "2026-09-11T19:41:42.812Z",
+      "updatedAt": "2026-09-11T19:41:42.812Z",
+      "id": "act_1789155702812_9t55c",
+      "timestamp": "2026-09-11T19:41:42.812Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from Student to CR.",
+      "category": "security",
+      "targetId": "usr_26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789155702819_gxx35hxil",
+      "createdAt": "2026-09-11T19:41:42.819Z",
+      "updatedAt": "2026-09-11T19:41:42.819Z",
+      "id": "act_1789155702819_zjzfm",
+      "timestamp": "2026-09-11T19:41:42.819Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from CR to Student.",
+      "category": "security",
+      "targetId": "usr_26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789155702835_co2v522yt",
+      "createdAt": "2026-09-11T19:41:42.835Z",
+      "updatedAt": "2026-09-11T19:41:42.835Z",
+      "id": "act_1789155702835_9fue4",
+      "timestamp": "2026-09-11T19:41:42.835Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Student to Teacher.",
+      "category": "security",
+      "targetId": "usr_26bcs10424",
+      "targetName": "Aditya Shaw"
+    },
+    {
+      "_id": "mem_1789155702840_umjl1fhkh",
+      "createdAt": "2026-09-11T19:41:42.840Z",
+      "updatedAt": "2026-09-11T19:41:42.840Z",
+      "id": "act_1789155702840_lrbow",
+      "timestamp": "2026-09-11T19:41:42.840Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Teacher to Student.",
+      "category": "security",
+      "targetId": "usr_26bcs10424",
+      "targetName": "Aditya Shaw"
+    },
+    {
+      "_id": "mem_1789155724118_t0xt4wu8c",
+      "createdAt": "2026-09-11T19:42:04.118Z",
+      "updatedAt": "2026-09-11T19:42:04.118Z",
+      "id": "act_1789155724118_k53p2",
+      "timestamp": "2026-09-11T19:42:04.118Z",
+      "actorName": "Noor Nigar",
+      "actorRole": "Teacher",
+      "action": "Attendance Recorded",
+      "details": "Official attendance recorded for SES-101: 1 Present, 0 Absent, 0 Late, 0 Excused.",
+      "category": "attendance",
+      "targetId": "SES-101",
+      "targetName": "Session SES-101"
+    },
+    {
+      "_id": "mem_1789155724273_8r67n91a6",
+      "createdAt": "2026-09-11T19:42:04.273Z",
+      "updatedAt": "2026-09-11T19:42:04.273Z",
+      "id": "act_1789155724273_kw0s8",
+      "timestamp": "2026-09-11T19:42:04.273Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from Student to CR.",
+      "category": "security",
+      "targetId": "usr_26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789155724289_erwak5w8g",
+      "createdAt": "2026-09-11T19:42:04.289Z",
+      "updatedAt": "2026-09-11T19:42:04.289Z",
+      "id": "act_1789155724289_1qeoj",
+      "timestamp": "2026-09-11T19:42:04.289Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from CR to Student.",
+      "category": "security",
+      "targetId": "usr_26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789155724305_pinbnh5tc",
+      "createdAt": "2026-09-11T19:42:04.305Z",
+      "updatedAt": "2026-09-11T19:42:04.305Z",
+      "id": "act_1789155724304_xdhzd",
+      "timestamp": "2026-09-11T19:42:04.305Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Student to Teacher.",
+      "category": "security",
+      "targetId": "usr_26bcs10424",
+      "targetName": "Aditya Shaw"
+    },
+    {
+      "_id": "mem_1789155724319_ngb7g54nh",
+      "createdAt": "2026-09-11T19:42:04.319Z",
+      "updatedAt": "2026-09-11T19:42:04.319Z",
+      "id": "act_1789155724319_ezvbd",
+      "timestamp": "2026-09-11T19:42:04.319Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Teacher to Student.",
+      "category": "security",
+      "targetId": "usr_26bcs10424",
+      "targetName": "Aditya Shaw"
     }
   ],
   "attendancerecords": [

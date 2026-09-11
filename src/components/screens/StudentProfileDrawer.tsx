@@ -15,7 +15,15 @@ import {
   FileText,
   Plus,
   Printer,
-  Calculator
+  Calculator,
+  Share2,
+  ExternalLink,
+  Code2,
+  Globe,
+  User,
+  AtSign,
+  Edit3,
+  Camera
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -31,7 +39,7 @@ import {
   Radar
 } from 'recharts';
 import { useApp } from '../../context/AppContext';
-import { RiskBadge, AttendancePill, FollowUpBadge } from '../common/StatusBadge';
+import { RiskBadge, FollowUpBadge } from '../common/StatusBadge';
 import { formatDate } from '../../utils/formatters';
 import { AttendanceSimulatorWidget } from '../common/AttendanceSimulatorWidget';
 import { PrintableStudentDocument } from '../common/PrintableStudentDocument';
@@ -47,7 +55,11 @@ export const StudentProfileDrawer: React.FC = () => {
     followUps,
     addCRRemark,
     markAttendance,
-    addFollowUp
+    addFollowUp,
+    currentUser,
+    userRole,
+    setIsProfileCustomizationOpen,
+    openPublicProfile
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
@@ -126,19 +138,43 @@ export const StudentProfileDrawer: React.FC = () => {
           {/* Header */}
           <div className="p-6 border-b border-slate-200 bg-slate-50/80 shrink-0">
             <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-bold flex items-center justify-center text-xl shadow-md shadow-blue-500/20">
-                  {student.name.slice(0, 2).toUpperCase()}
+              <div className="flex items-start space-x-3.5 sm:space-x-4 min-w-0">
+                <div className="relative shrink-0">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-black flex items-center justify-center text-xl shadow-md shadow-blue-500/20 overflow-hidden ring-2 ring-blue-100">
+                    {student.avatar ? (
+                      <img src={student.avatar} alt={student.name} className="w-full h-full object-cover" />
+                    ) : (
+                      student.name.slice(0, 2).toUpperCase()
+                    )}
+                  </div>
+                  {(currentUser.id === student.id || currentUser.studentId === student.id || userRole === 'Admin') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeStudentProfile();
+                        setIsProfileCustomizationOpen(true);
+                      }}
+                      className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-slate-900 text-white hover:bg-blue-600 transition shadow-xs cursor-pointer"
+                      title="Edit photo & links"
+                    >
+                      <Camera className="w-3 h-3 text-amber-300" />
+                    </button>
+                  )}
                 </div>
-                <div>
-                  <div className="flex items-center space-x-2.5">
-                    <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+                <div className="min-w-0">
+                  <div className="flex items-center space-x-2.5 flex-wrap">
+                    <h2 className="text-xl font-bold text-slate-900 tracking-tight truncate">
                       {student.name}
                     </h2>
                     <RiskBadge status={stats.status} />
                   </div>
-                  <p className="text-xs text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-slate-700">{student.id}</span>
+                  {student.headline && (
+                    <p className="text-xs font-semibold text-indigo-700 mt-0.5 truncate">
+                      {student.headline}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                    <span className="font-semibold text-slate-700 font-mono">{student.id}</span>
                     <span>•</span>
                     <span>{student.batch}</span>
                     <span>•</span>
@@ -148,9 +184,93 @@ export const StudentProfileDrawer: React.FC = () => {
                     <span>•</span>
                     <span className="font-medium text-blue-600">{student.currentLevel}</span>
                   </p>
+                  {student.bio && (
+                    <p className="text-[11px] text-slate-500 italic mt-1 line-clamp-1">
+                      "{student.bio}"
+                    </p>
+                  )}
+
+                  {/* Public Social Links */}
+                  {student.publicLinks && (student.publicLinks.github || student.publicLinks.linkedin || student.publicLinks.portfolio || student.publicLinks.leetcode || student.publicLinks.twitter) && (
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      {student.publicLinks.github && (
+                        <a
+                          href={student.publicLinks.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-slate-900 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-slate-800 transition"
+                        >
+                          <Code2 className="w-3 h-3 text-teal-300" /> GitHub
+                        </a>
+                      )}
+                      {student.publicLinks.linkedin && (
+                        <a
+                          href={student.publicLinks.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-blue-600 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-blue-700 transition"
+                        >
+                          <User className="w-3 h-3 text-blue-100" /> LinkedIn
+                        </a>
+                      )}
+                      {student.publicLinks.portfolio && (
+                        <a
+                          href={student.publicLinks.portfolio}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-emerald-600 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-emerald-700 transition"
+                        >
+                          <Globe className="w-3 h-3 text-emerald-100" /> Portfolio
+                        </a>
+                      )}
+                      {student.publicLinks.leetcode && (
+                        <a
+                          href={student.publicLinks.leetcode}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-amber-500 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-amber-600 transition"
+                        >
+                          <Code2 className="w-3 h-3 text-amber-100" /> LeetCode
+                        </a>
+                      )}
+                      {student.publicLinks.twitter && (
+                        <a
+                          href={student.publicLinks.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2 py-0.5 rounded-lg bg-sky-500 text-white text-[10px] font-bold flex items-center gap-1 hover:bg-sky-600 transition"
+                        >
+                          <AtSign className="w-3 h-3 text-sky-100" /> Twitter
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1.5 shrink-0">
+                {(currentUser.id === student.id || currentUser.studentId === student.id || userRole === 'Admin') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeStudentProfile();
+                      setIsProfileCustomizationOpen(true);
+                    }}
+                    title="Edit Profile & Avatar"
+                    className="px-2.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold transition-colors flex items-center gap-1 border border-blue-200 cursor-pointer"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => openPublicProfile(student.id)}
+                  title="Share Public Profile Link & Card"
+                  className="px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors flex items-center gap-1 border border-indigo-200 cursor-pointer"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Share</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -177,7 +297,7 @@ export const StudentProfileDrawer: React.FC = () => {
                 </button>
                 <button
                   onClick={closeStudentProfile}
-                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-200/70 hover:text-slate-700 transition-colors"
+                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-200/70 hover:text-slate-700 transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>

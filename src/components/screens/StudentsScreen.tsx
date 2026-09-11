@@ -14,7 +14,8 @@ import {
   Download,
   CheckCircle2,
   Mail,
-  Phone
+  Phone,
+  Share2
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Student } from '../../types';
@@ -34,7 +35,8 @@ export const StudentsScreen: React.FC = () => {
     deleteStudent,
     addFollowUp,
     userRole,
-    setIsRoleManagementModalOpen
+    setIsRoleManagementModalOpen,
+    openPublicProfile
   } = useApp();
 
   const canManageStudents = userRole === 'Teacher' || userRole === 'Admin';
@@ -333,8 +335,12 @@ export const StudentsScreen: React.FC = () => {
                       onClick={() => openStudentProfile(stat.student.id)}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-xs shrink-0">
-                          {stat.student.name.slice(0, 2).toUpperCase()}
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-100 to-indigo-100 text-blue-700 font-bold flex items-center justify-center text-xs shrink-0 overflow-hidden ring-1 ring-slate-200">
+                          {stat.student.avatar ? (
+                            <img src={stat.student.avatar} alt={stat.student.name} className="w-full h-full object-cover" />
+                          ) : (
+                            stat.student.name.slice(0, 2).toUpperCase()
+                          )}
                         </div>
                         <div>
                           <div className="font-bold text-slate-900 hover:text-blue-600 transition-colors">
@@ -429,9 +435,19 @@ export const StudentsScreen: React.FC = () => {
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-1">
                         <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openPublicProfile(stat.student.id);
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer"
+                          title="View Public Profile Card"
+                        >
+                          <Share2 className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => openStudentProfile(stat.student.id)}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors"
-                          title="View Profile"
+                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                          title="View Profile Drawer"
                         >
                           <Eye className="w-4 h-4" />
                         </button>

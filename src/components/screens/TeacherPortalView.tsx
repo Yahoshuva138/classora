@@ -12,7 +12,11 @@ import {
   Download,
   ShieldCheck,
   Save,
-  UploadCloud
+  UploadCloud,
+  Camera,
+  Share2,
+  Edit3,
+  Sparkles
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { exportGradebookCSV } from '../../utils/exportUtils';
@@ -131,7 +135,10 @@ export const TeacherPortalView: React.FC = () => {
     updateStudentSkillScore,
     addFacultyFeedback,
     activeTeacher,
-    openStudentProfile
+    openStudentProfile,
+    currentUser,
+    setIsProfileCustomizationOpen,
+    openPublicProfile
   } = useApp();
 
   // Map AppContext activeTab to TeacherPortal subTabs
@@ -258,9 +265,23 @@ export const TeacherPortalView: React.FC = () => {
       {/* Faculty Hero Banner */}
       <div className="bg-gradient-to-r from-indigo-900 via-blue-900 to-slate-900 rounded-3xl p-6 lg:p-8 text-white shadow-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl font-bold text-indigo-200 shrink-0 shadow-inner">
-              👨‍🏫
+          <div className="flex items-start sm:items-center space-x-4">
+            <div className="relative group shrink-0">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-2xl font-black text-indigo-200 overflow-hidden shadow-inner ring-2 ring-white/20">
+                {currentUser.role === 'Teacher' && currentUser.avatar ? (
+                  <img src={currentUser.avatar} alt={activeTeacher.name} className="w-full h-full object-cover" />
+                ) : (
+                  activeTeacher.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'NN'
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsProfileCustomizationOpen(true)}
+                className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-slate-900/90 text-white hover:bg-indigo-600 hover:scale-110 transition shadow-md border border-white/20 cursor-pointer"
+                title="Customize faculty photo & links"
+              >
+                <Camera className="w-3.5 h-3.5 text-indigo-300" />
+              </button>
             </div>
             <div>
               <div className="flex items-center space-x-2">
@@ -290,6 +311,25 @@ export const TeacherPortalView: React.FC = () => {
               <p className="text-xs text-indigo-200/90 font-medium mt-1">
                 {activeTeacher.designation} • <span className="text-white font-semibold">English Language & Communication Skills (Subject - 2 • 4 Weeks)</span>
               </p>
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => openPublicProfile(activeTeacher.email)}
+                  className="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-bold flex items-center gap-1.5 border border-white/20 transition cursor-pointer"
+                  title="View Public Profile Card"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Public Card</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileCustomizationOpen(true)}
+                  className="px-2.5 py-1 rounded-lg bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-100 text-xs font-bold flex items-center gap-1.5 border border-indigo-400/30 transition cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-indigo-200" />
+                  <span>Customize Profile</span>
+                </button>
+              </div>
             </div>
           </div>
 

@@ -23,7 +23,13 @@ import {
   UserCheck,
   ShieldCheck,
   Download,
-  ChevronDown
+  ChevronDown,
+  Camera,
+  Share2,
+  Edit3,
+  Globe,
+  Code2,
+  User
 } from 'lucide-react';
 import { AttendanceSimulatorWidget } from '../common/AttendanceSimulatorWidget';
 import { PrintableStudentDocument } from '../common/PrintableStudentDocument';
@@ -59,7 +65,10 @@ export const StudentPortalView: React.FC = () => {
     currentStudentStats,
     studentRequests,
     submitStudentRequest,
-    activeTeacher
+    activeTeacher,
+    currentUser,
+    setIsProfileCustomizationOpen,
+    openPublicProfile
   } = useApp();
 
   // Map AppContext activeTab to StudentPortal subTabs
@@ -268,15 +277,29 @@ export const StudentPortalView: React.FC = () => {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
           {/* Left: Student Identity */}
           <div className="flex items-start sm:items-center space-x-3.5 sm:space-x-4">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-xl sm:text-2xl font-black text-emerald-200 shrink-0 shadow-inner">
-              {student.name.split(' ').map(n => n[0]).join('')}
+            <div className="relative group shrink-0">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-xl sm:text-2xl font-black text-emerald-200 overflow-hidden shadow-inner ring-2 ring-white/20">
+                {student.avatar ? (
+                  <img src={student.avatar} alt={student.name} className="w-full h-full object-cover" />
+                ) : (
+                  student.name.split(' ').map(n => n[0]).join('')
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsProfileCustomizationOpen(true)}
+                className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-slate-900/90 text-white hover:bg-emerald-600 hover:scale-110 transition shadow-md border border-white/20 cursor-pointer"
+                title="Customize display photo & profile links"
+              >
+                <Camera className="w-3.5 h-3.5 text-emerald-300" />
+              </button>
             </div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/30 text-emerald-200 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
                   Student Portal
                 </span>
-                <span className="text-[11px] text-teal-200 font-medium">ID: {student.id}</span>
+                <span className="text-[11px] text-teal-200 font-medium font-mono">ID: {student.id}</span>
                 <span className="text-teal-400/60 hidden sm:inline">•</span>
                 <span className="text-[11px] font-bold text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-full border border-amber-300/30">
                   {student.group || 'Group 1'}
@@ -295,12 +318,72 @@ export const StudentPortalView: React.FC = () => {
                   {stats.attendancePercentage}% • {stats.status}
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white mt-1.5 truncate">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white mt-1 truncate">
                 {student.name}
               </h1>
-              <p className="text-xs text-emerald-100/80 mt-0.5">
-                Course: <span className="font-semibold text-white">English Language & Communication Skills</span> • Subject - 2 • 4 Weeks
-              </p>
+              {student.headline ? (
+                <p className="text-xs text-amber-200 font-semibold mt-0.5 truncate max-w-lg">
+                  {student.headline}
+                </p>
+              ) : (
+                <p className="text-xs text-emerald-100/80 mt-0.5">
+                  Course: <span className="font-semibold text-white">English Language & Communication Skills</span> • Subject - 2 • 4 Weeks
+                </p>
+              )}
+              {student.bio && (
+                <p className="text-[11px] text-emerald-100/90 italic mt-0.5 line-clamp-1 max-w-lg">
+                  "{student.bio}"
+                </p>
+              )}
+
+              {/* Public Links & Action Chips */}
+              <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                {student.publicLinks?.github && (
+                  <a
+                    href={student.publicLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-0.5 rounded-lg bg-black/30 hover:bg-black/50 text-white text-[10px] font-bold flex items-center gap-1 border border-white/10 transition"
+                  >
+                    <Code2 className="w-3 h-3 text-teal-300" /> GitHub
+                  </a>
+                )}
+                {student.publicLinks?.linkedin && (
+                  <a
+                    href={student.publicLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-0.5 rounded-lg bg-blue-900/40 hover:bg-blue-900/60 text-white text-[10px] font-bold flex items-center gap-1 border border-blue-400/30 transition"
+                  >
+                    <User className="w-3 h-3 text-blue-300" /> LinkedIn
+                  </a>
+                )}
+                {student.publicLinks?.portfolio && (
+                  <a
+                    href={student.publicLinks.portfolio}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2 py-0.5 rounded-lg bg-emerald-900/40 hover:bg-emerald-900/60 text-white text-[10px] font-bold flex items-center gap-1 border border-emerald-400/30 transition"
+                  >
+                    <Globe className="w-3 h-3 text-emerald-300" /> Portfolio
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => openPublicProfile(student.id)}
+                  className="px-2.5 py-0.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[10px] font-bold flex items-center gap-1 border border-white/20 transition cursor-pointer"
+                  title="View Shareable Public Card"
+                >
+                  <Share2 className="w-3 h-3 text-amber-300" /> Public Card
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileCustomizationOpen(true)}
+                  className="px-2.5 py-0.5 rounded-lg bg-emerald-500/30 hover:bg-emerald-500/50 text-emerald-100 text-[10px] font-bold flex items-center gap-1 border border-emerald-400/30 transition cursor-pointer"
+                >
+                  <Edit3 className="w-3 h-3 text-emerald-200" /> Edit Profile
+                </button>
+              </div>
             </div>
           </div>
 
@@ -700,15 +783,23 @@ export const StudentPortalView: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-2.5">
-                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${
-                          isSelf ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
+                      <div
+                        className="flex items-center space-x-2.5 cursor-pointer hover:opacity-90 transition"
+                        onClick={() => openPublicProfile(peer.id)}
+                        title={`View ${peer.name}'s public profile & links`}
+                      >
+                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs overflow-hidden shrink-0 ${
+                          isSelf ? 'bg-emerald-600 text-white ring-2 ring-emerald-500/30' : 'bg-slate-200 text-slate-700'
                         }`}>
-                          {peer.name.split(' ').map(n => n[0]).join('')}
+                          {peer.avatar ? (
+                            <img src={peer.avatar} alt={peer.name} className="w-full h-full object-cover" />
+                          ) : (
+                            peer.name.split(' ').map(n => n[0]).join('')
+                          )}
                         </div>
                         <div>
                           <div className="flex items-center space-x-1.5">
-                            <span className="font-bold text-slate-900 text-xs line-clamp-1">{peer.name}</span>
+                            <span className="font-bold text-slate-900 text-xs line-clamp-1 hover:text-blue-600 transition">{peer.name}</span>
                             {isSelf && (
                               <span className="text-[10px] font-bold px-1.5 py-0.2 bg-emerald-600 text-white rounded-md">
                                 You

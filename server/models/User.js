@@ -12,7 +12,16 @@ const UserSchema = new mongoose.Schema({
   personaKey: { type: String, default: '' },
   isRegistered: { type: Boolean, default: false },
   registeredAt: { type: String, default: null },
-  mustChangePassword: { type: Boolean, default: false }
+  mustChangePassword: { type: Boolean, default: false },
+  bio: { type: String, default: '' },
+  headline: { type: String, default: '' },
+  publicLinks: {
+    github: { type: String, default: '' },
+    linkedin: { type: String, default: '' },
+    portfolio: { type: String, default: '' },
+    twitter: { type: String, default: '' },
+    leetcode: { type: String, default: '' }
+  }
 }, {
   timestamps: true
 });
