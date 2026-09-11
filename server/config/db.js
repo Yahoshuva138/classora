@@ -41,18 +41,20 @@ export async function connectDB() {
     console.warn(`⚠️ [Classora DB] Native MongoDB not reachable (${err.message}).`);
   }
 
-  // --- Tier 2: Try In-Memory MongoDB Server if package is present ---
-  try {
-    console.log(`[Classora DB] Attempting Tier 2: mongodb-memory-server...`);
-    const { MongoMemoryServer } = await import('mongodb-memory-server');
-    memoryServerInstance = await MongoMemoryServer.create();
-    const memUri = memoryServerInstance.getUri();
-    await mongoose.connect(memUri);
-    currentDbTier = 'TIER_2_MEMORY_SERVER';
-    console.log(`🚀 [Classora DB] Tier 2 Active: In-memory MongoDB running at ${memUri}`);
-    return { tier: currentDbTier, uri: memUri };
-  } catch (err) {
-    console.warn(`⚠️ [Classora DB] In-memory Mongo server unavailable (${err.message}).`);
+  // --- Tier 2: Try In-Memory MongoDB Server if explicitly enabled via USE_MEMORY_SERVER ---
+  if (process.env.USE_MEMORY_SERVER === 'true') {
+    try {
+      console.log(`[Classora DB] Attempting Tier 2: mongodb-memory-server...`);
+      const { MongoMemoryServer } = await import('mongodb-memory-server');
+      memoryServerInstance = await MongoMemoryServer.create();
+      const memUri = memoryServerInstance.getUri();
+      await mongoose.connect(memUri);
+      currentDbTier = 'TIER_2_MEMORY_SERVER';
+      console.log(`🚀 [Classora DB] Tier 2 Active: In-memory MongoDB running at ${memUri}`);
+      return { tier: currentDbTier, uri: memUri };
+    } catch (err) {
+      console.warn(`⚠️ [Classora DB] In-memory Mongo server unavailable (${err.message}).`);
+    }
   }
 
   // --- Tier 3: Zero-Dependency Pure JS In-Memory Store ---

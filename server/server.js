@@ -78,11 +78,23 @@ async function startServer() {
     await checkAndAutoSeed();
 
     // 3. Start HTTP Server
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`🚀 [Classora Server] Listening on http://localhost:${PORT}`);
       console.log(`📊 [Classora Server] REST API Base URL: http://localhost:${PORT}/api`);
       console.log(`🛡️ [Classora Server] Active Persistence Tier: ${dbStatus.tier}`);
       console.log('==================================================');
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`\n❌ [Classora Server Error] Port ${PORT} is already in use by another running process.`);
+        console.error(`👉 Solution: Run "npm run kill:server" or close other terminals running Classora.`);
+        console.error(`👉 Alternatively, change PORT in .env (e.g. PORT=5001).\n`);
+        process.exit(1);
+      } else {
+        console.error('❌ [Classora Server Error]:', err);
+        process.exit(1);
+      }
     });
   } catch (error) {
     console.error('❌ Failed to start Classora server:', error);
