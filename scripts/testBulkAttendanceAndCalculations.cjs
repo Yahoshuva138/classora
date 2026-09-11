@@ -17,11 +17,11 @@ assert.strictEqual(seedData.initialStudents.length, 44, 'Student count must be 4
 console.log(`- Seed Sessions count: ${seedData.initialSessions.length} (Expected 12)`);
 assert.strictEqual(seedData.initialSessions.length, 12, 'Session count must be 12');
 
-console.log(`- Seed Attendance count: ${seedData.initialAttendanceRecords.length} (Expected 351)`);
-assert.strictEqual(seedData.initialAttendanceRecords.length, 351, 'Attendance count must be 351');
+console.log(`- Seed Attendance count: ${seedData.initialAttendanceRecords.length} (Expected 343)`);
+assert.strictEqual(seedData.initialAttendanceRecords.length, 343, 'Attendance count must be 343');
 
-console.log(`- Persisted Attendance count: ${persistedStore.attendance.length} (Expected 351)`);
-assert.strictEqual(persistedStore.attendance.length, 351, 'Persisted attendance count must be 351');
+console.log(`- Persisted Attendance count: ${persistedStore.attendance.length} (Expected 343)`);
+assert.strictEqual(persistedStore.attendance.length, 343, 'Persisted attendance count must be 343');
 console.log('✅ Store counts verified successfully.');
 
 // 2. Verify Attendance Calculations
@@ -45,8 +45,8 @@ assert.strictEqual(aCount, 67, 'Absent count must be 67');
 console.log(`- Late: ${lCount} (Report: 1)`);
 assert.strictEqual(lCount, 1, 'Late count must be 1');
 
-console.log(`- Excused: ${eCount} (Late Enrollee Satwinderjeet: 8)`);
-assert.strictEqual(eCount, 8, 'Excused count must be 8');
+console.log(`- Excused: ${eCount} (Unrecorded/Missing left as-is: 0)`);
+assert.strictEqual(eCount, 0, 'Excused count must be 0');
 
 const rawPct = ((pCount + 0.5 * lCount) / (pCount + aCount + lCount)) * 100;
 console.log(`- Authentic Cohort Attendance: ${rawPct.toFixed(1)}% (Expected 80.3%)`);

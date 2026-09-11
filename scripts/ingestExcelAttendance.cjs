@@ -227,18 +227,8 @@ rows.forEach(r => {
   });
 });
 
-colMap.forEach(cm => {
-  attendanceRecords.push({
-    sessionId: cm.sessionId,
-    studentId: '26bcs10718',
-    status: 'Excused',
-    timestamp: cm.date + 'T10:00:00.000Z',
-    remarks: 'Late Admission (Enrolled post-commencement)'
-  });
-});
-
-console.log('✅ Extracted ' + attendanceRecords.length + ' authentic attendance records.');
-console.log('   Present: ' + pCount + ', Absent: ' + aCount + ', Late: ' + lCount + ', Excused: 8');
+console.log('✅ Extracted ' + attendanceRecords.length + ' authentic attendance records from sheet.');
+console.log('   Present: ' + pCount + ', Absent: ' + aCount + ', Late: ' + lCount);
 const cohortPct = ((pCount + 0.5 * lCount) / (pCount + aCount + lCount) * 100).toFixed(1);
 console.log('   Cohort Attendance Rate: ' + cohortPct + '%');
 

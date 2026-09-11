@@ -5301,62 +5301,6 @@ export const initialAttendanceRecords: AttendanceRecord[] = [
     "status": "Present",
     "timestamp": "2026-09-04T10:00:00.000Z",
     "remarks": "Official instructor report mark"
-  },
-  {
-    "sessionId": "SES-102",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-08-07T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-103",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-08-12T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-104",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-08-14T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-105",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-08-19T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-106",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-08-21T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-107",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-09-02T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-108",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-09-04T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
-  },
-  {
-    "sessionId": "SES-109",
-    "studentId": "26bcs10718",
-    "status": "Excused",
-    "timestamp": "2026-09-04T10:00:00.000Z",
-    "remarks": "Late Admission (Enrolled post-commencement)"
   }
 ];
 
