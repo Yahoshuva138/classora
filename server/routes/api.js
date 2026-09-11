@@ -207,7 +207,7 @@ router.post('/auth/google', async (req, res) => {
       userName = userName || 'Aarav Sharma';
     } 
     // Check if Faculty / Course Coordinator
-    else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail === 'noor.nigar@scaler.com' || cleanEmail === 'noor.nigar@sst.scaler.com' || cleanEmail === 'priya.nair@sst.scaler.com') {
+    else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail === 'noor.nigar@scaler.com') {
       role = 'Teacher';
       userName = userName || (cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar');
     } 

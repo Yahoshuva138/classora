@@ -354,18 +354,6 @@ const users = [
     mustChangePassword: true
   },
   {
-    id: 'goog-faculty-sst',
-    name: 'Noor Nigar',
-    email: 'noor.nigar@sst.scaler.com',
-    role: 'Teacher',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
-    personaKey: 'coordinator_faculty_sst',
-    isGoogleAuthenticated: true,
-    password: DEFAULT_COHORT_PASSWORD,
-    isRegistered: true,
-    mustChangePassword: true
-  },
-  {
     id: 'goog-cr',
     name: 'Aarav Sharma',
     email: 'aarav.sharma@sst.scaler.com',

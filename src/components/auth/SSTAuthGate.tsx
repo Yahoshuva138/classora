@@ -63,8 +63,6 @@ function getOfflineCohortUser(email: string, passwordAttempt?: string): GoogleUs
 
   if (
     clean === 'noor.nigar@scaler.com' ||
-    clean === 'noor.nigar@sst.scaler.com' ||
-    clean === 'priya.nair@sst.scaler.com' ||
     (clean.endsWith('@scaler.com') && !clean.endsWith('@sst.scaler.com')) ||
     clean.includes('noor') ||
     clean.includes('nigar') ||

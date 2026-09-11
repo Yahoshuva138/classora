@@ -65,6 +65,9 @@ export const RoleManagementModal: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isRoleManagementModalOpen, setIsRoleManagementModalOpen]);
 
+  const isAdmin = userRole === 'Admin';
+  const isTeacher = userRole === 'Teacher';
+
   // Role stats
   const stats = useMemo(() => {
     const total = users.length;
@@ -78,6 +81,11 @@ export const RoleManagementModal: React.FC = () => {
   // Filtered users
   const filteredUsers = useMemo(() => {
     return users.filter(u => {
+      // If Teacher is viewing the Faculty CR Appointment Console, only show Students and CRs
+      if (!isAdmin && (u.role === 'Teacher' || u.role === 'Admin')) {
+        return false;
+      }
+
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
@@ -88,12 +96,9 @@ export const RoleManagementModal: React.FC = () => {
       const matchesRole = roleFilter === 'All' || u.role === roleFilter;
       return matchesSearch && matchesRole;
     });
-  }, [users, searchQuery, roleFilter]);
+  }, [users, searchQuery, roleFilter, isAdmin]);
 
   if (!isRoleManagementModalOpen) return null;
-
-  const isAdmin = userRole === 'Admin';
-  const isTeacher = userRole === 'Teacher';
 
   const handleRoleChange = async (targetUser: GoogleUser, newRole: UserRole) => {
     if (targetUser.role === newRole) return;
@@ -353,11 +358,6 @@ export const RoleManagementModal: React.FC = () => {
                           >
                             <span>Relieve to Student</span>
                           </button>
-                        )}
-                        {(user.role === 'Teacher' || user.role === 'Admin') && (
-                          <span className="text-[11px] text-slate-400 italic px-2">
-                            Faculty / Admin (Locked)
-                          </span>
                         )}
                       </div>
                     ) : null}
