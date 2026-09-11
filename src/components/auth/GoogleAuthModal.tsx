@@ -117,27 +117,34 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
         </button>
 
         {/* Modal Header (Compact & Fixed at top) */}
-        <div className="shrink-0 p-4 sm:p-5 pb-3 text-center border-b border-slate-100 bg-white relative">
-          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-center mx-auto mb-2">
-            <GoogleIcon className="w-6 h-6" />
+        <div className="shrink-0 p-5 pb-4 text-center border-b border-slate-100 bg-white relative">
+          <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-center mx-auto mb-2.5">
+            <GoogleIcon className="w-6 h-6 shrink-0" size={24} />
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
             Institutional Google Gateway
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Scaler School of Technology • <strong className="text-slate-800">@sst.scaler.com</strong>
+          <p className="text-xs text-slate-500 mt-1">
+            Scaler School of Technology • <strong className="text-slate-800 font-semibold">@sst.scaler.com</strong>
           </p>
         </div>
 
         {/* Active Auth State Notification if already logged in */}
         {currentUser.isGoogleAuthenticated && (
-          <div className="shrink-0 p-3 sm:p-3.5 bg-emerald-50 border-b border-emerald-100 flex items-center justify-between gap-2">
-            <div className="flex items-center space-x-2 text-xs min-w-0">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <div className="truncate">
-                <span className="font-bold text-emerald-950">Active Session:</span>
+          <div className="shrink-0 p-3.5 bg-emerald-50/80 border-b border-emerald-100 flex items-center justify-between gap-3">
+            <div className="flex items-center space-x-2.5 text-xs min-w-0">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-emerald-950 text-xs">Active Session</span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-emerald-200/60 text-emerald-800">
+                    {currentUser.role}
+                  </span>
+                </div>
                 <p className="text-emerald-800 text-[11px] font-mono truncate">{currentUser.email}</p>
-                <p className="text-emerald-700 text-[10px] truncate">{currentUser.name} • {currentUser.role}</p>
+                <p className="text-emerald-700 text-[10px] font-medium truncate">{currentUser.name}</p>
               </div>
             </div>
             <button
@@ -145,9 +152,9 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                 signOutGoogle();
                 onClose();
               }}
-              className="shrink-0 text-[11px] font-bold text-rose-700 hover:text-rose-800 bg-white px-2.5 py-1.5 rounded-lg border border-rose-200 shadow-2xs flex items-center gap-1 cursor-pointer transition-colors"
+              className="shrink-0 text-[11px] font-bold text-rose-700 hover:text-rose-800 bg-white hover:bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
             >
-              <LogOut className="w-3 h-3" />
+              <LogOut className="w-3.5 h-3.5" />
               <span>Sign out</span>
             </button>
           </div>
@@ -168,24 +175,24 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
             onClick={triggerGoogleSignIn}
             className="w-full h-11 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 transition-all shadow-xs flex items-center justify-center gap-2.5 hover:scale-[1.005] active:scale-[0.99] cursor-pointer"
           >
-            <GoogleIcon className="w-4.5 h-4.5 shrink-0" />
+            <GoogleIcon className="w-5 h-5 shrink-0" size={20} />
             <span>Sign In with Google (Browser Account)</span>
           </button>
 
-          <div className="relative my-3">
+          <div className="relative my-3.5">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-[10px] uppercase">
-              <span className="bg-white px-2.5 text-slate-400 font-bold tracking-wider">
+              <span className="bg-white px-3 text-slate-400 font-bold tracking-wider">
                 Or enter institutional email
               </span>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-3 text-left text-xs">
+          <form onSubmit={handleSubmit} className="space-y-3.5 text-left text-xs">
             <div>
-              <label className="block font-semibold text-slate-700 mb-1 text-xs">
+              <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
                 Institutional Email Address
               </label>
               <input
@@ -194,12 +201,12 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                 value={customEmail}
                 onChange={e => setCustomEmail(e.target.value)}
                 placeholder="name.26bcs10xxx@sst.scaler.com"
-                className="w-full h-9 sm:h-10 px-3 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
+                className="w-full h-10 px-3.5 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1 text-xs">
+              <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
                 Full Name (Optional)
               </label>
               <input
@@ -207,12 +214,12 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                 value={customName}
                 onChange={e => setCustomName(e.target.value)}
                 placeholder="e.g. Yahoshuva Kesaboyina"
-                className="w-full h-9 sm:h-10 px-3 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
+                className="w-full h-10 px-3.5 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
               />
             </div>
 
             <div>
-              <label className="block font-semibold text-slate-700 mb-1 text-xs">
+              <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
                 Role / Capacity
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -220,11 +227,14 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                   <button
                     key={r}
                     type="button"
-                    onClick={() => setCustomRole(r)}
-                    className={`py-1.5 sm:py-2 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+                    onClick={() => {
+                      soundFx.playPop();
+                      setCustomRole(r);
+                    }}
+                    className={`py-2 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
                       customRole === r
                         ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
                     {r}
@@ -236,7 +246,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
             <button
               type="submit"
               disabled={isLoading || !customEmail.trim()}
-              className="w-full h-10 sm:h-11 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-2 disabled:opacity-50 cursor-pointer"
+              className="w-full h-11 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-3 disabled:opacity-50 cursor-pointer"
             >
               <span>{isLoading ? 'Verifying...' : 'Sign In with SST Email'}</span>
               <ArrowRight className="w-4 h-4" />
