@@ -91,7 +91,21 @@ npm run build
 
 ## 🚢 Production Deployment
 
-### Option 1: Render / Railway / Cyclic / VPS (Unified Deployment)
+### Option 1: Vercel (1-Click Full-Stack Serverless)
+Classora includes native Vercel configuration (`vercel.json` and `api/index.js`):
+
+1. Go to [vercel.com](https://vercel.com) and import your repository **`Yahoshuva138/classora`**.
+2. Vercel will automatically detect **Vite**:
+   - **Framework Preset**: `Vite`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. Under **Environment Variables**, add:
+   - `VITE_GOOGLE_CLIENT_ID` = `518296317424-9b2p4qkkm7q7n8rsv0v1k8m5mflvsq01.apps.googleusercontent.com`
+   - `VITE_API_URL` = `/api`
+   - *(Optional)* `MONGODB_URI` = your MongoDB Atlas connection string (falls back to built-in in-memory store if omitted).
+4. Click **Deploy**. Vercel will build the frontend and deploy the serverless API automatically!
+
+### Option 2: Render / Railway / Cyclic / VPS (Unified Long-Running Process)
 Since `server/server.js` serves both the compiled frontend and the API:
 
 1. **Build Command**: `npm run build`
@@ -99,10 +113,6 @@ Since `server/server.js` serves both the compiled frontend and the API:
 3. **Environment Variables**:
    - `NODE_ENV=production`
    - `PORT=5000` (or the port provided by the host)
-
-### Option 2: Split Deployment (Vercel / Netlify Frontend + Backend Host)
-- **Frontend**: Deploy root directory to Vercel/Netlify with Build Command: `npm run build` and Output Directory: `dist`. Set `VITE_API_URL=https://your-backend-api.com/api`.
-- **Backend**: Deploy to Render/Railway/Fly.io with Start Command: `node server/server.js`.
 
 ---
 
