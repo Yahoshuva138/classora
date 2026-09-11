@@ -33,8 +33,8 @@ const HistoricalScoreSchema = new mongoose.Schema({
   grammar:       { type: Number, required: true },
   vocabulary:    { type: Number, required: true }
 }, { _id: false });
-
 const StudentSchema = new mongoose.Schema({
+  id: { type: String, index: true },
   rollNo: { type: String, required: true, unique: true, index: true },
   name: { type: String, required: true, index: true },
   email: { type: String, required: true, unique: true, lowercase: true },
@@ -59,15 +59,27 @@ const StudentSchema = new mongoose.Schema({
   isArchived: { type: Boolean, default: false, index: true }
 }, {
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
+  id: false,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret.rollNo || ret.id || ret._id?.toString();
+      ret.rollNo = ret.rollNo || ret.id;
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret.rollNo || ret.id || ret._id?.toString();
+      ret.rollNo = ret.rollNo || ret.id;
+      return ret;
+    }
+  }
 });
 
-StudentSchema.virtual('id').get(function() {
-  return this.rollNo;
-});
-StudentSchema.virtual('id').set(function(v) {
-  this.rollNo = v;
+StudentSchema.virtual('canonicalId').get(function() {
+  return this.rollNo || this.id;
 });
 
 export const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema);

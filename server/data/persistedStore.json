@@ -2899,7 +2899,17 @@
       "historicalScores": []
     }
   ],
-  "attendance": [],
+  "attendance": [
+    {
+      "_id": "mem_1789134381770_vepfxluxp",
+      "createdAt": "2026-09-11T13:46:21.770Z",
+      "updatedAt": "2026-09-11T13:46:21.770Z",
+      "sessionId": "SES-110",
+      "studentId": "26bcs10093",
+      "status": "Present",
+      "timestamp": "2026-09-11T13:46:21.770Z"
+    }
+  ],
   "followups": [],
   "tasks": [],
   "requests": [],
@@ -3579,6 +3589,50 @@
       "category": "system",
       "targetId": "ENG-101",
       "targetName": "English Language & Communication Skills"
+    }
+  ],
+  "activity_logs": [
+    {
+      "_id": "mem_1789134381758_mj146lb19",
+      "createdAt": "2026-09-11T13:46:21.758Z",
+      "updatedAt": "2026-09-11T13:46:21.758Z",
+      "id": "act_1789134381758_zvla9",
+      "timestamp": "2026-09-11T13:46:21.758Z",
+      "actorName": "Noor Nigar",
+      "actorRole": "Teacher",
+      "action": "Account Login",
+      "details": "Noor Nigar (noor.nigar@scaler.com) successfully logged into Classora Academic OS. [Needs password update: true]",
+      "category": "security",
+      "targetId": null,
+      "targetName": "Noor Nigar"
+    },
+    {
+      "_id": "mem_1789134381762_zc70yfzru",
+      "createdAt": "2026-09-11T13:46:21.762Z",
+      "updatedAt": "2026-09-11T13:46:21.762Z",
+      "id": "act_1789134381762_lh1aq",
+      "timestamp": "2026-09-11T13:46:21.762Z",
+      "actorName": "Noor Nigar",
+      "actorRole": "Teacher",
+      "action": "Account Login",
+      "details": "Noor Nigar (noor.nigar@sst.scaler.com) successfully logged into Classora Academic OS. [Needs password update: true]",
+      "category": "security",
+      "targetId": null,
+      "targetName": "Noor Nigar"
+    },
+    {
+      "_id": "mem_1789134381770_qxw4y9i5a",
+      "createdAt": "2026-09-11T13:46:21.770Z",
+      "updatedAt": "2026-09-11T13:46:21.770Z",
+      "id": "act_1789134381770_adhx1",
+      "timestamp": "2026-09-11T13:46:21.770Z",
+      "actorName": "Noor Nigar",
+      "actorRole": "Teacher",
+      "action": "Attendance Recorded",
+      "details": "Official attendance recorded for SES-110: 1 Present, 0 Absent, 0 Late, 0 Excused.",
+      "category": "attendance",
+      "targetId": "SES-110",
+      "targetName": "Session SES-110"
     }
   ]
 }

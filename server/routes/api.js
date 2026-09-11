@@ -90,10 +90,18 @@ router.get('/bootstrap', async (req, res) => {
       activityLogs = presetActivityLogs;
     }
 
+    const cleanStudents = (students || []).map(s => {
+      const obj = typeof s.toObject === 'function' ? s.toObject() : { ...s };
+      const canonicalId = obj.rollNo || obj.id || obj._id?.toString();
+      obj.id = canonicalId;
+      obj.rollNo = canonicalId;
+      return obj;
+    });
+
     res.json({
       success: true,
       data: {
-        students,
+        students: cleanStudents,
         sessions,
         attendanceRecords,
         followUps,
@@ -231,7 +239,14 @@ router.get('/students', async (req, res) => {
       filter.batch = req.query.batch;
     }
     const students = await model('students', Student).find(filter);
-    res.json({ success: true, count: students.length, data: students });
+    const cleanStudents = (students || []).map(s => {
+      const obj = typeof s.toObject === 'function' ? s.toObject() : { ...s };
+      const canonicalId = obj.rollNo || obj.id || obj._id?.toString();
+      obj.id = canonicalId;
+      obj.rollNo = canonicalId;
+      return obj;
+    });
+    res.json({ success: true, count: cleanStudents.length, data: cleanStudents });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

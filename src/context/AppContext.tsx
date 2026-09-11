@@ -209,10 +209,43 @@ export function getCriteriaMaxScore(assignmentId?: string, title?: string, fallb
   return fallbackMax;
 }
 
-// Local-first smart reconciliation to guarantee data persistence across restarts
+export function deduplicateStudents(list: Student[]): Student[] {
+  if (!list || !Array.isArray(list)) return [];
+  const seenIds = new Set<string>();
+  const seenEmails = new Set<string>();
+  const result: Student[] = [];
+
+  for (const s of list) {
+    if (!s) continue;
+    const rawId = (s.rollNo || s.id || '').trim().toLowerCase();
+    const rawEmail = (s.email || '').trim().toLowerCase();
+
+    // If an item has an ObjectId as id (24-hex char) and also has a rollNo, normalize id to rollNo
+    const canonicalId = (s.rollNo || s.id || '').trim();
+    const cleanStudent: Student = {
+      ...s,
+      id: canonicalId,
+      rollNo: canonicalId
+    };
+
+    if (seenIds.has(rawId) || (rawEmail && seenEmails.has(rawEmail))) {
+      continue; // Duplicate! Skip.
+    }
+
+    if (rawId) seenIds.add(rawId);
+    if (rawEmail) seenEmails.add(rawEmail);
+    result.push(cleanStudent);
+  }
+
+  return result;
+}
+
+// Local-first smart reconciliation to guarantee data persistence without doubling roster
 function reconcileStudents(localList: Student[], serverList: Student[]): Student[] {
-  if (!serverList || serverList.length === 0) return localList;
-  if (!localList || localList.length === 0) return serverList;
+  if (!serverList || serverList.length === 0) return deduplicateStudents(localList);
+
+  const cleanServerList = deduplicateStudents(serverList);
+  if (!localList || localList.length === 0) return cleanServerList;
 
   let modifiedScores: Record<string, { score: number; updatedAt: number }> = {};
   try {
@@ -220,12 +253,28 @@ function reconcileStudents(localList: Student[], serverList: Student[]): Student
     if (raw) modifiedScores = JSON.parse(raw);
   } catch {}
 
-  const localMap = new Map(localList.map(s => [s.id, s]));
-  const processedStudentIds = new Set<string>();
+  const serverIdSet = new Set<string>();
+  const serverEmailSet = new Set<string>();
 
-  const mergedServerStudents = serverList.map(serverStudent => {
-    processedStudentIds.add(serverStudent.id);
-    const localStudent = localMap.get(serverStudent.id);
+  for (const s of cleanServerList) {
+    const idKey = (s.rollNo || s.id || '').trim().toLowerCase();
+    const emailKey = (s.email || '').trim().toLowerCase();
+    if (idKey) serverIdSet.add(idKey);
+    if (emailKey) serverEmailSet.add(emailKey);
+  }
+
+  const localMap = new Map<string, Student>();
+  for (const ls of localList) {
+    const idKey = (ls.rollNo || ls.id || '').trim().toLowerCase();
+    const emailKey = (ls.email || '').trim().toLowerCase();
+    if (idKey) localMap.set(idKey, ls);
+    if (emailKey) localMap.set(emailKey, ls);
+  }
+
+  const mergedServerStudents = cleanServerList.map(serverStudent => {
+    const sId = (serverStudent.rollNo || serverStudent.id || '').trim().toLowerCase();
+    const sEmail = (serverStudent.email || '').trim().toLowerCase();
+    const localStudent = localMap.get(sId) || (sEmail ? localMap.get(sEmail) : undefined);
     if (!localStudent) return serverStudent;
 
     // Merge assignments
@@ -245,57 +294,69 @@ function reconcileStudents(localList: Student[], serverList: Student[]): Student
         };
       }
 
-    // Priority 2: Server assignment score is authoritative (real-time live database)
-    return serverAsg;
+      // Priority 2: Server assignment score is authoritative (real-time live database)
+      return serverAsg;
+    });
+
+    // Real-time skills from server with user modifications applied
+    const mergedSkills: StudentSkillScores = {
+      ...(serverStudent.skills || {
+        communication: 0,
+        grammar: 0,
+        vocabulary: 0,
+        pronunciation: 0,
+        participation: 0,
+        assignments: 0,
+        assessments: 0,
+      })
+    };
+
+    const skillKeys: Array<keyof StudentSkillScores> = [
+      'communication', 'grammar', 'vocabulary', 'pronunciation', 'participation', 'assignments', 'assessments'
+    ];
+    for (const sk of skillKeys) {
+      const modKey = `${serverStudent.id}_${sk}`;
+      if (modifiedScores[modKey]?.score !== undefined) {
+        mergedSkills[sk] = modifiedScores[modKey].score;
+      }
+    }
+
+    // Merge remarks (union without duplicates)
+    const serverRemarkIds = new Set((serverStudent.crRemarks || []).map(r => r.id));
+    const extraLocalRemarks = (localStudent.crRemarks || []).filter(r => !serverRemarkIds.has(r.id));
+    const mergedRemarks = [...extraLocalRemarks, ...(serverStudent.crRemarks || [])];
+
+    const canonicalId = serverStudent.rollNo || serverStudent.id;
+
+    return {
+      ...serverStudent,
+      id: canonicalId,
+      rollNo: canonicalId,
+      skills: mergedSkills,
+      assignments: mergedAssignments,
+      crRemarks: mergedRemarks,
+      phone: localStudent.phone || serverStudent.phone,
+      batch: localStudent.batch || serverStudent.batch,
+      currentLevel: localStudent.currentLevel || serverStudent.currentLevel,
+    };
   });
 
-  // Real-time skills from server with user modifications applied
-  const mergedSkills: StudentSkillScores = {
-    ...(serverStudent.skills || {
-      communication: 0,
-      grammar: 0,
-      vocabulary: 0,
-      pronunciation: 0,
-      participation: 0,
-      assignments: 0,
-      assessments: 0,
-    })
-  };
+  // Only keep genuinely new local students that do NOT exist in serverList by ID, rollNo, or email
+  const isMongoObjectId = (id: string) => /^[a-f\d]{24}$/i.test(id);
+  const extraLocalStudents = localList.filter(ls => {
+    const lsId = (ls.rollNo || ls.id || '').trim().toLowerCase();
+    const lsEmail = (ls.email || '').trim().toLowerCase();
+    if (!lsId) return false;
+    if (isMongoObjectId(ls.id)) return false; // Legacy ObjectId duplicate!
+    return !serverIdSet.has(lsId) && (!lsEmail || !serverEmailSet.has(lsEmail));
+  });
 
-  const skillKeys: Array<keyof StudentSkillScores> = [
-    'communication', 'grammar', 'vocabulary', 'pronunciation', 'participation', 'assignments', 'assessments'
-  ];
-  for (const sk of skillKeys) {
-    const modKey = `${serverStudent.id}_${sk}`;
-    if (modifiedScores[modKey]?.score !== undefined) {
-      mergedSkills[sk] = modifiedScores[modKey].score;
-    }
-  }
-
-  // Merge remarks (union without duplicates)
-  const serverRemarkIds = new Set((serverStudent.crRemarks || []).map(r => r.id));
-  const extraLocalRemarks = (localStudent.crRemarks || []).filter(r => !serverRemarkIds.has(r.id));
-  const mergedRemarks = [...extraLocalRemarks, ...(serverStudent.crRemarks || [])];
-
-  return {
-    ...serverStudent,
-    skills: mergedSkills,
-    assignments: mergedAssignments,
-    crRemarks: mergedRemarks,
-    phone: localStudent.phone || serverStudent.phone,
-    batch: localStudent.batch || serverStudent.batch,
-    currentLevel: localStudent.currentLevel || serverStudent.currentLevel,
-  };
-});
-
-// Keep any newly added local students that weren't in serverList
-const extraLocalStudents = localList.filter(ls => !processedStudentIds.has(ls.id));
-
-const result = [...mergedServerStudents, ...extraLocalStudents];
-try {
-  localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(result));
-} catch {}
-return result;
+  const combined = [...mergedServerStudents, ...extraLocalStudents];
+  const finalResult = deduplicateStudents(combined);
+  try {
+    localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(finalResult));
+  } catch {}
+  return finalResult;
 }
 
 function reconcileAttendance(localRecs: AttendanceRecord[], serverRecs: AttendanceRecord[]): AttendanceRecord[] {
@@ -478,7 +539,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Initialize state from localStorage or mock defaults
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-    return saved ? JSON.parse(saved) : initialStudents;
+    if (saved) {
+      try {
+        const parsed: Student[] = JSON.parse(saved);
+        return deduplicateStudents(parsed);
+      } catch {}
+    }
+    return deduplicateStudents(initialStudents);
   });
 
   const [sessions, setSessions] = useState<Session[]>(() => {
