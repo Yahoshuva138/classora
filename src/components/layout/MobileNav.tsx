@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -10,10 +11,12 @@ import {
   ShieldCheck,
   BookOpen,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Settings
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Sidebar } from './Sidebar';
+import { soundFx } from '../../utils/soundEffects';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -24,6 +27,15 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
   const { activeTab, setActiveTab, userRole } = useApp();
 
   const getBottomTabs = () => {
+    if (userRole === 'Admin') {
+      return [
+        { id: 'dashboard', label: 'Command', icon: LayoutDashboard },
+        { id: 'students', label: 'Students', icon: Users },
+        { id: 'attendance', label: 'Attendance', icon: CheckSquare },
+        { id: 'groups', label: 'Groups', icon: Users },
+        { id: 'settings', label: 'Settings', icon: Settings },
+      ];
+    }
     if (userRole === 'Student') {
       return [
         { id: 'student-overview', label: 'Overview', icon: BookOpen },
@@ -66,7 +78,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
             <div className="absolute top-3 right-3">
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                 aria-label="Close navigation"
               >
                 <X className="w-5 h-5" />
@@ -85,7 +97,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           
           let activeClasses = 'text-blue-600 font-bold';
           let activePill = 'bg-blue-50';
-          if (userRole === 'Teacher') {
+          if (userRole === 'Admin') {
+            activeClasses = 'text-amber-600 font-bold';
+            activePill = 'bg-amber-50';
+          } else if (userRole === 'Teacher') {
             activeClasses = 'text-indigo-600 font-bold';
             activePill = 'bg-indigo-50';
           } else if (userRole === 'Student') {
@@ -96,8 +111,11 @@ export const MobileNav: React.FC<MobileNavProps> = ({ isOpen, onClose }) => {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all duration-150 ${
+              onClick={() => {
+                soundFx.playPop();
+                setActiveTab(tab.id);
+              }}
+              className={`flex flex-col items-center justify-center flex-1 py-1 rounded-xl transition-all duration-150 cursor-pointer touch-manipulation active:scale-95 ${
                 isActive ? `${activeClasses} ${activePill}` : 'text-slate-500 hover:text-slate-800'
               }`}
             >

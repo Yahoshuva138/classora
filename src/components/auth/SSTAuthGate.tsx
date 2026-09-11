@@ -260,6 +260,37 @@ export const SSTAuthGate: React.FC = () => {
     setErrorMessage(null);
   };
 
+  // 1-Click Quick Role Presets handler for instant test switching
+  const handleSelectRolePreset = (role: 'Admin' | 'Teacher' | 'CR' | 'Student') => {
+    soundFx.playPop();
+    setAuthMode('login');
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    if (role === 'Admin') {
+      setEmail('yahoshuva.26bcs10296@sst.scaler.com');
+      setFirstName('Yahoshuva');
+      setLastName('Kesaboyina');
+      setPassword('SST@2026');
+    } else if (role === 'Teacher') {
+      setEmail('noor.nigar@scaler.com');
+      setFirstName('Noor');
+      setLastName('Nigar');
+      setPassword('SST@2026');
+    } else if (role === 'CR') {
+      setEmail('aarav.sharma@sst.scaler.com');
+      setFirstName('Aarav');
+      setLastName('Sharma');
+      setPassword('SST@2026');
+    } else {
+      const sample = cohortRoster[0] || { email: 'abhiram.26bcs10535@sst.scaler.com', name: 'Abhiram Wayakar' };
+      const parts = sample.name.split(' ');
+      setEmail(sample.email);
+      setFirstName(parts[0] || 'Abhiram');
+      setLastName(parts.slice(1).join(' ') || 'Wayakar');
+      setPassword('SST@2026');
+    }
+  };
+
   // Form submit handler (Real Registration or Login)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -385,8 +416,8 @@ export const SSTAuthGate: React.FC = () => {
         {/* ========================================================= */}
         {/* LEFT COLUMN: Visual Brand Banner with Desert Dunes Art     */}
         {/* ========================================================= */}
-        <div className="relative md:w-[48%] p-3.5 sm:p-4 flex flex-col">
-          <div className="relative w-full h-full rounded-[22px] overflow-hidden flex flex-col justify-between p-6 sm:p-8 shadow-inner">
+        <div className="relative md:w-[46%] lg:w-[48%] p-3 sm:p-4 flex flex-col shrink-0">
+          <div className="relative w-full h-44 sm:h-56 md:h-full min-h-[175px] md:min-h-[580px] rounded-[22px] overflow-hidden flex flex-col justify-between p-4 sm:p-6 md:p-8 shadow-inner">
             {/* Dune Twilight Photography Background */}
             <div
               className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 hover:scale-105"
@@ -402,9 +433,9 @@ export const SSTAuthGate: React.FC = () => {
             {/* Top Brand & Navigation Header */}
             <div className="relative z-10 flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                {/* Stylized Modern ΛMU Logo */}
+                {/* Stylized Modern ΛNU Logo */}
                 <span className="text-2xl sm:text-3xl font-black tracking-widest text-white select-none font-sans drop-shadow-md">
-                  ΛMU
+                  ΛNU
                 </span>
                 <span className="text-[10px] text-white/70 font-mono tracking-widest uppercase bg-white/10 px-2 py-0.5 rounded backdrop-blur-sm border border-white/10">
                   SST
@@ -426,20 +457,20 @@ export const SSTAuthGate: React.FC = () => {
             </div>
 
             {/* Bottom Hero Typography & Carousel Indicators */}
-            <div className="relative z-10 space-y-4 pt-16 sm:pt-24">
+            <div className="relative z-10 space-y-2 sm:space-y-4 pt-4 sm:pt-8 md:pt-24">
               <div className="transition-all duration-300">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-white leading-tight font-serif drop-shadow-lg">
+                <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-white leading-tight font-serif drop-shadow-lg">
                   {slides[activeSlide].title}
-                  <br />
+                  <br className="hidden sm:inline" />{' '}
                   <span className="font-normal">{slides[activeSlide].subtitle}</span>
                 </h2>
-                <p className="text-[11px] text-white/60 font-sans tracking-wide mt-2">
+                <p className="text-[10px] sm:text-[11px] text-white/60 font-sans tracking-wide mt-1 sm:mt-2 hidden sm:block">
                   {slides[activeSlide].quote}
                 </p>
               </div>
 
               {/* 3 Horizontal Dash Indicators (Active is elongated pill) */}
-              <div className="flex items-center space-x-2 pt-2">
+              <div className="flex items-center space-x-2 pt-1 sm:pt-2">
                 {slides.map((_, idx) => (
                   <button
                     key={idx}
@@ -464,10 +495,74 @@ export const SSTAuthGate: React.FC = () => {
         {/* ========================================================= */}
         {/* RIGHT COLUMN: Luxury Dark Purple Authentication Form      */}
         {/* ========================================================= */}
-        <div className="md:w-[52%] p-6 sm:p-10 lg:p-14 flex flex-col justify-center bg-[#231e36]">
+        <div className="md:w-[54%] lg:w-[52%] p-5 sm:p-8 lg:p-12 flex flex-col justify-center bg-[#231e36]">
           <div className="max-w-md w-full mx-auto">
+            {/* Quick 1-Click Role Presets Bar */}
+            <div className="mb-5 sm:mb-6 bg-white/[0.03] p-2.5 rounded-2xl border border-white/[0.07]">
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 flex items-center gap-1">
+                  <span>⚡</span> Quick Persona Select
+                </span>
+                <span className="text-[10px] text-indigo-300 font-medium">1-Click Fast Login</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleSelectRolePreset('Admin')}
+                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                    email === 'yahoshuva.26bcs10296@sst.scaler.com' || email === 'admin@sst.scaler.com'
+                      ? 'bg-amber-500/25 text-amber-300 border-amber-500/50 shadow-xs'
+                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Super Admin: Yahoshuva Kesaboyina"
+                >
+                  <span>👑</span>
+                  <span>Admin</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRolePreset('Teacher')}
+                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                    email === 'noor.nigar@scaler.com'
+                      ? 'bg-indigo-500/25 text-indigo-300 border-indigo-500/50 shadow-xs'
+                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Faculty: Noor Nigar"
+                >
+                  <span>👩‍🏫</span>
+                  <span>Teacher</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRolePreset('CR')}
+                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                    email === 'aarav.sharma@sst.scaler.com'
+                      ? 'bg-blue-500/25 text-blue-300 border-blue-500/50 shadow-xs'
+                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Lead CR: Aarav Sharma"
+                >
+                  <span>🎓</span>
+                  <span>Lead CR</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRolePreset('Student')}
+                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                    email.includes('26bcs') && email !== 'yahoshuva.26bcs10296@sst.scaler.com'
+                      ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/50 shadow-xs'
+                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
+                  }`}
+                  title="Enrolled Cohort Student"
+                >
+                  <span>👨‍🎓</span>
+                  <span>Student</span>
+                </button>
+              </div>
+            </div>
+
             {/* Form Title & Mode Switcher */}
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-5 sm:mb-7">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white mb-2 font-sans">
                 {authMode === 'register' ? 'Create an account' : 'Log in to account'}
               </h1>
@@ -553,7 +648,7 @@ export const SSTAuthGate: React.FC = () => {
                       value={firstName}
                       onChange={e => setFirstName(e.target.value)}
                       placeholder="First name"
-                      className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-3 text-xs sm:text-sm outline-none transition shadow-inner"
+                      className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                     />
                   </div>
                   <div>
@@ -562,7 +657,7 @@ export const SSTAuthGate: React.FC = () => {
                       value={lastName}
                       onChange={e => setLastName(e.target.value)}
                       placeholder="Last name"
-                      className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-3 text-xs sm:text-sm outline-none transition shadow-inner"
+                      className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                     />
                   </div>
                 </div>
@@ -576,7 +671,7 @@ export const SSTAuthGate: React.FC = () => {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Email (@sst.scaler.com)"
-                  className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-3 text-xs sm:text-sm outline-none transition shadow-inner"
+                  className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                 />
               </div>
 
@@ -588,7 +683,7 @@ export const SSTAuthGate: React.FC = () => {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder={authMode === 'register' ? 'Choose a password (min 4 chars)' : 'Enter your password'}
-                  className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-3 pr-11 text-xs sm:text-sm outline-none transition shadow-inner"
+                  className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 pr-11 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                 />
                 <button
                   type="button"

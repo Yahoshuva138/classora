@@ -3,8 +3,8 @@
     {
       "singletonKey": "GLOBAL_SETTINGS",
       "onTrackThreshold": 85,
-      "needsAttentionThreshold": 70,
-      "atRiskThreshold": 70,
+      "needsAttentionThreshold": 75,
+      "atRiskThreshold": 75,
       "lateAttendanceWeight": 0.5,
       "scoringScale": "100",
       "batches": [

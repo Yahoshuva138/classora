@@ -2,8 +2,8 @@ import { Student, Session, AttendanceRecord, FollowUp, CRTask, AppSettings, Stud
 
 export const initialSettings: AppSettings = {
   "onTrackThreshold": 85,
-  "needsAttentionThreshold": 70,
-  "atRiskThreshold": 70,
+  "needsAttentionThreshold": 75,
+  "atRiskThreshold": 75,
   "lateAttendanceWeight": 0.5,
   "scoringScale": "100",
   "batches": [

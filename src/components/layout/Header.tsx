@@ -209,11 +209,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
     }
     if (userRole === 'Teacher') {
       return {
-        initials: 'PN',
+        initials: activeTeacher.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'NN',
         name: activeTeacher.name,
-        roleTitle: 'Course Coordinator & Faculty',
+        roleTitle: 'Course Instructor & Faculty',
         email: activeTeacher.email,
-        badgeText: 'Course Coordinator',
+        badgeText: 'Course Instructor',
         bg: 'bg-indigo-600'
       };
     }
