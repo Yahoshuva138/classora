@@ -1,65 +1,101 @@
 import mongoose from 'mongoose';
-import { memoryStore } from '../services/memoryStore.js';
 
 let currentDbTier = 'NONE';
-let memoryServerInstance = null;
 
-// Global cache for Vercel Serverless Function instances
-let cached = global._mongooseCache;
-if (!cached) {
-  cached = global._mongooseCache = { conn: null, promise: null };
-}
+// Reuse the connection between Vercel invocations
+// when the same serverless instance stays warm.
+const cached =
+  global._classoraMongooseCache ||
+  (global._classoraMongooseCache = {
+    conn: null,
+    promise: null
+  });
 
 export async function connectDB() {
-  // Return cached Mongoose connection if already connected (Serverless optimization)
-  if (cached.conn && mongoose.connection.readyState === 1) {
+  // Already connected
+  if (
+    cached.conn &&
+    mongoose.connection.readyState === 1
+  ) {
     currentDbTier = 'TIER_1_MONGODB';
-    return { tier: currentDbTier, uri: 'cached://mongodb' };
+
+    return {
+      tier: currentDbTier,
+      uri: 'cached://mongodb'
+    };
   }
 
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/classora';
-  const isCloudUri = uri.startsWith('mongodb+srv://') || uri.includes('@');
+  const uri = process.env.MONGODB_URI;
 
-  // --- Tier 1: Try Cloud or Local MongoDB URI ---
+  if (!uri) {
+    currentDbTier = 'NONE';
+
+    throw new Error(
+      'MONGODB_URI is not configured. Add MONGODB_URI to the Vercel Environment Variables.'
+    );
+  }
+
   try {
-    console.log(`[Classora DB] Connecting to MongoDB (${isCloudUri ? 'Cloud Atlas' : 'Local'})...`);
-    
+    const isCloudUri =
+      uri.startsWith('mongodb+srv://') ||
+      uri.includes('@');
+
+    console.log(
+      `[Classora DB] Connecting to MongoDB ${
+        isCloudUri ? 'Cloud Atlas' : 'MongoDB'
+      }...`
+    );
+
     if (!cached.promise) {
-      const timeoutMs = isCloudUri ? 10000 : 2000;
-      cached.promise = mongoose.connect(uri, {
-        serverSelectionTimeoutMS: timeoutMs,
-        maxPoolSize: 10, // Recommended for serverless
-      }).then((m) => m);
+      cached.promise = mongoose
+        .connect(uri, {
+          serverSelectionTimeoutMS: 10000,
+          maxPoolSize: 10,
+          minPoolSize: 0,
+          maxIdleTimeMS: 30000,
+          serverApi: {
+            version: '1',
+            strict: true,
+            deprecationErrors: true
+          }
+        })
+        .then((mongooseInstance) => {
+          return mongooseInstance;
+        })
+        .catch((error) => {
+          cached.promise = null;
+          throw error;
+        });
     }
 
     cached.conn = await cached.promise;
+
     currentDbTier = 'TIER_1_MONGODB';
-    console.log(`✅ [Classora DB] Tier 1 Active: Successfully connected to MongoDB`);
-    return { tier: currentDbTier, uri: isCloudUri ? 'mongodb+srv://[cloud-cluster]' : uri };
+
+    console.log(
+      '✅ [Classora DB] MongoDB connection established.'
+    );
+
+    return {
+      tier: currentDbTier,
+      uri: isCloudUri
+        ? 'mongodb+srv://[cloud-cluster]'
+        : 'mongodb://[configured]'
+    };
   } catch (err) {
+    cached.conn = null;
     cached.promise = null;
-    console.warn(`⚠️ [Classora DB] Native MongoDB not reachable (${err.message}).`);
-  }
+    currentDbTier = 'NONE';
 
-  // --- Tier 2: Try In-Memory MongoDB Server if package is present ---
-  try {
-    console.log(`[Classora DB] Attempting Tier 2: mongodb-memory-server...`);
-    const { MongoMemoryServer } = await import('mongodb-memory-server');
-    memoryServerInstance = await MongoMemoryServer.create();
-    const memUri = memoryServerInstance.getUri();
-    await mongoose.connect(memUri);
-    currentDbTier = 'TIER_2_MEMORY_SERVER';
-    console.log(`🚀 [Classora DB] Tier 2 Active: In-memory MongoDB running at ${memUri}`);
-    return { tier: currentDbTier, uri: memUri };
-  } catch (err) {
-    console.warn(`⚠️ [Classora DB] In-memory Mongo server unavailable (${err.message}).`);
-  }
+    console.error(
+      '❌ [Classora DB] MongoDB connection failed:',
+      err.message
+    );
 
-  // --- Tier 3: Zero-Dependency Pure JS In-Memory Store ---
-  currentDbTier = 'TIER_3_MEMORY_STORE';
-  console.log(`🛡️ [Classora DB] Tier 3 Active: High-speed In-Memory JavaScript Store.`);
-  console.log(`ℹ️ [Classora DB] Zero crash guarantee: Express REST API is fully operational!`);
-  return { tier: currentDbTier, uri: 'memory://internal-js-store' };
+    throw new Error(
+      `MongoDB connection failed: ${err.message}`
+    );
+  }
 }
 
 export function getDbTier() {
@@ -67,21 +103,30 @@ export function getDbTier() {
 }
 
 export function isUsingMongoose() {
-  return currentDbTier === 'TIER_1_MONGODB' || currentDbTier === 'TIER_2_MEMORY_SERVER';
+  return (
+    currentDbTier === 'TIER_1_MONGODB'
+  );
 }
 
-export function getCollection(name, MongooseModel) {
+export function getCollection(
+  name,
+  MongooseModel
+) {
   if (isUsingMongoose() && MongooseModel) {
     return MongooseModel;
   }
-  return memoryStore.collection(name);
+
+  throw new Error(
+    `MongoDB is not available. Cannot access collection "${name}".`
+  );
 }
 
 export async function disconnectDB() {
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
   }
-  if (memoryServerInstance) {
-    await memoryServerInstance.stop();
-  }
+
+  cached.conn = null;
+  cached.promise = null;
+  currentDbTier = 'NONE';
 }
