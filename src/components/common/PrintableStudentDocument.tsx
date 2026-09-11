@@ -258,9 +258,9 @@ export const PrintableStudentDocument: React.FC<PrintableStudentDocumentProps> =
                   <div className="text-slate-500 text-[11px]">{activeTeacher.designation}</div>
                 </div>
                 <div>
-                  <div className="font-serif italic text-base text-slate-800 mb-1">Aarav Sharma</div>
+                  <div className="font-serif italic text-base text-slate-800 mb-1">Yahoshuva Kesaboyina</div>
                   <div className="border-t border-slate-400 pt-1 font-bold text-slate-900">
-                    Aarav Sharma
+                    Yahoshuva Kesaboyina
                   </div>
                   <div className="text-slate-500 text-[11px]">Class Representative (English CR)</div>
                 </div>
@@ -346,9 +346,9 @@ export const PrintableStudentDocument: React.FC<PrintableStudentDocumentProps> =
                     <div className="text-slate-500 text-[11px]">{activeTeacher.designation}</div>
                   </div>
                   <div>
-                    <div className="font-serif italic text-base text-slate-800 mb-1">Aarav Sharma</div>
+                    <div className="font-serif italic text-base text-slate-800 mb-1">Yahoshuva Kesaboyina</div>
                     <div className="border-t border-slate-400/60 pt-1 font-bold text-slate-900">
-                      Aarav Sharma
+                      Yahoshuva Kesaboyina
                     </div>
                     <div className="text-slate-500 text-[11px]">Class Representative (English CR)</div>
                   </div>

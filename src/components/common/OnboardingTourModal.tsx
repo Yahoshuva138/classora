@@ -88,7 +88,7 @@ export const OnboardingTourModal: React.FC<OnboardingTourModalProps> = ({
                 🎓
               </div>
               <div className="text-left text-xs">
-                <strong className="text-slate-900 block font-bold">Class Representative (Aarav Sharma)</strong>
+                <strong className="text-slate-900 block font-bold">Class Representative (Yahoshuva Kesaboyina)</strong>
                 <span className="text-slate-500 text-[11px]">Rapid attendance marking console, daily task checklist, absentee outreach.</span>
               </div>
             </div>

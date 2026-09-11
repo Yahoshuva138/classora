@@ -544,7 +544,7 @@ export const DashboardScreen: React.FC = () => {
                 <div className="text-center py-8 text-slate-400">
                   <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400 mb-1.5" />
                   <p className="font-bold text-slate-700 text-xs">No pending operational tasks</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">CR Aarav Sharma or Teacher Noor Nigar can log tasks in real time.</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">CR Yahoshuva Kesaboyina or Teacher Noor Nigar can log tasks in real time.</p>
                 </div>
               ) : (
                 pendingTasksToday.map(task => {

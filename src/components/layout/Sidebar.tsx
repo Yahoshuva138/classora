@@ -248,7 +248,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
               ? `Student: ${currentStudent.name}`
               : userRole === 'Teacher'
               ? `Faculty: ${activeTeacher.name}`
-              : 'Lead CR: Aarav Sharma'}
+              : `Lead CR: ${currentUser.name || 'Yahoshuva Kesaboyina'}`}
           </span>
           <span className="text-emerald-400 font-medium text-[10px]">● Online</span>
         </div>

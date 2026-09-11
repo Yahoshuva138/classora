@@ -908,7 +908,7 @@ export const StudentPortalView: React.FC = () => {
                   Submit Request or Excuse
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Direct message to Lead CR Aarav Sharma & {activeTeacher.name}
+                  Direct message to Lead CR Yahoshuva Kesaboyina & {activeTeacher.name}
                 </p>
               </div>
             </div>
@@ -1018,11 +1018,11 @@ export const StudentPortalView: React.FC = () => {
             {/* Helpful CR Contact card */}
             <div className="mt-6 p-4 rounded-2xl bg-blue-50/60 border border-blue-100 text-xs text-blue-950 flex items-center justify-between">
               <div>
-                <p className="font-bold">Elected English CR: Aarav Sharma</p>
+                <p className="font-bold">Elected English CR: Yahoshuva Kesaboyina</p>
                 <p className="text-[11px] text-blue-800">Batch A • Language Lab 102</p>
               </div>
               <span className="text-[11px] font-bold text-blue-600 bg-white px-2.5 py-1 rounded-lg shadow-2xs border border-blue-200">
-                aarav.sharma@sst.scaler.com
+                yahoshuva.26bcs10296@sst.scaler.com
               </span>
             </div>
           </div>

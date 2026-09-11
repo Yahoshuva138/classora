@@ -316,7 +316,7 @@ export const TeacherPortalView: React.FC = () => {
                   <span className="text-3xl font-black text-slate-900">{students.length}</span>
                   <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">3 Batches</span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">Lead CR: Aarav Sharma</p>
+                <p className="text-[11px] text-slate-500 mt-1">Lead CR: Yahoshuva Kesaboyina</p>
               </div>
             </Card3D>
 
@@ -434,7 +434,7 @@ export const TeacherPortalView: React.FC = () => {
                       className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                       <option value="All Students & CR">All Students & CR (44 Official Students)</option>
-                      <option value="Lead CR Aarav Sharma">Lead CR Aarav Sharma only</option>
+                      <option value="Lead CR Yahoshuva Kesaboyina">Lead CR Yahoshuva Kesaboyina only</option>
                       <option value="At-Risk Students (<70%)">At-Risk Students Only (Under 70% Attendance)</option>
                       <option value="Batch A - Morning">Batch A - Morning</option>
                       <option value="Group 1 Discussion Team">Group 1 Discussion Team</option>
@@ -813,7 +813,7 @@ export const TeacherPortalView: React.FC = () => {
               Record Faculty Observation & Note
             </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Feedback is permanently saved to the student record and visible to Lead CR Aarav Sharma
+              Feedback is permanently saved to the student record and visible to Lead CR Yahoshuva Kesaboyina
             </p>
 
             <form onSubmit={handleAddFeedbackSubmit} className="space-y-4">

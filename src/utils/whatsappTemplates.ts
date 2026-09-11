@@ -12,7 +12,7 @@ export interface BroadcastTemplateOptions {
  */
 export function generateSessionReminderMessage(
   session: Session,
-  crName: string = 'Aarav Sharma (English CR)'
+  crName: string = 'Yahoshuva Kesaboyina (English CR)'
 ): string {
   return `📢 *CLASS REMINDER: English Language & Communication Skills*
 ━━━━━━━━━━━━━━━━━━━━
@@ -34,7 +34,7 @@ _Class Representative: ${crName}_`;
 export function generateDiscussionGroupMessage(
   groupName: string,
   memberNames: string[],
-  crName: string = 'Aarav Sharma (English CR)'
+  crName: string = 'Yahoshuva Kesaboyina (English CR)'
 ): string {
   const membersList = memberNames.map((name, i) => `  ${i + 1}. ${name}`).join('\n');
 
@@ -56,7 +56,7 @@ _Class Representative: ${crName}_`;
 }
 
 export function generateAttendanceAdvisoryMessage(
-  crName: string = 'Aarav Sharma (English CR)'
+  crName: string = 'Yahoshuva Kesaboyina (English CR)'
 ): string {
   return `⚠️ *ACADEMIC NOTICE: Attendance Threshold Regularisation*
 ━━━━━━━━━━━━━━━━━━━━
