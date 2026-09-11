@@ -32,6 +32,7 @@ export const FollowUpsScreen: React.FC = () => {
     addFollowUp,
     updateFollowUp,
     deleteFollowUp,
+    clearAllFollowUps,
     openStudentProfile
   } = useApp();
 
@@ -43,6 +44,7 @@ export const FollowUpsScreen: React.FC = () => {
   // Modals
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isClearAllDialogOpen, setIsClearAllDialogOpen] = useState(false);
   const [editingFollowUp, setEditingFollowUp] = useState<FollowUp | null>(null);
   const [followUpToDelete, setFollowUpToDelete] = useState<FollowUp | null>(null);
 
@@ -199,15 +201,26 @@ export const FollowUpsScreen: React.FC = () => {
             />
           </div>
 
-          <button
-            onClick={() => {
-              resetForm();
-              setIsAddModalOpen(true);
-            }}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-1.5 self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4" /> Create Follow-up
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            {followUps.length > 0 && (
+              <button
+                onClick={() => setIsClearAllDialogOpen(true)}
+                className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+                title="Remove all testing follow-ups"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Clear All ({followUps.length})
+              </button>
+            )}
+            <button
+              onClick={() => {
+                resetForm();
+                setIsAddModalOpen(true);
+              }}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Create Follow-up
+            </button>
+          </div>
         </div>
 
         {/* Filter dropdowns */}
@@ -262,8 +275,14 @@ export const FollowUpsScreen: React.FC = () => {
       {/* Follow-up Cards List */}
       <div className="space-y-3">
         {filteredFollowUps.length === 0 ? (
-          <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center text-slate-500 text-sm">
-            No follow-ups found matching your current filters.
+          <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center space-y-2 shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <h4 className="font-bold text-slate-900 text-sm">All Clear — No Pending Follow-ups</h4>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              There are no pending academic or attendance interventions. Use &ldquo;Create Follow-up&rdquo; to log an intervention manually.
+            </p>
           </div>
         ) : (
           filteredFollowUps.map(f => {
@@ -616,6 +635,20 @@ export const FollowUpsScreen: React.FC = () => {
         title="Delete Follow-up Item"
         message={`Are you sure you want to remove the follow-up record for ${followUpToDelete?.studentName}?`}
         confirmText="Delete Record"
+        isDestructive={true}
+      />
+
+      {/* CONFIRM CLEAR ALL MODAL */}
+      <ConfirmDialog
+        isOpen={isClearAllDialogOpen}
+        onClose={() => setIsClearAllDialogOpen(false)}
+        onConfirm={() => {
+          clearAllFollowUps();
+          setIsClearAllDialogOpen(false);
+        }}
+        title="Clear All Follow-ups"
+        message="Are you sure you want to clear all follow-up records? This will purge all testing and pending follow-ups from the system."
+        confirmText="Clear All Follow-ups"
         isDestructive={true}
       />
     </div>

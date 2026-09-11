@@ -200,6 +200,10 @@ export const api = {
     await request(`/followups/${id}`, { method: 'DELETE' });
   },
 
+  async clearAllFollowUps(): Promise<void> {
+    await request('/followups', { method: 'DELETE' });
+  },
+
   // Tasks
   async getTasks(): Promise<CRTask[]> {
     const res = await request<{ success: boolean; data: CRTask[] }>('/tasks');
