@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, Sparkles, ArrowRight, Volume2, VolumeX } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, Sparkles, ArrowRight, Volume2, VolumeX, ChevronRight } from 'lucide-react';
 import { soundFx } from '../../utils/soundEffects';
 
 interface LibraryBookIntroProps {
@@ -7,38 +7,29 @@ interface LibraryBookIntroProps {
 }
 
 export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }) => {
-  // Stages: 'idle' (closed book) -> 'opening' (cover swinging) -> 'flipping' (pages turning) -> 'unfolding' (transitioning into login)
-  const [stage, setStage] = useState<'idle' | 'opening' | 'flipping' | 'unfolding'>('idle');
+  // Steps:
+  // 0: Closed Tome (Awaiting user click)
+  // 1: Front Cover Swung Open in 3D (Page 1 visible - Awaiting user click)
+  // 2: Page 1 Flipped in 3D (Page 2 visible - Awaiting user click)
+  // 3: Unfolding into Login Portal
+  const [step, setStep] = useState<number>(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  const startBookSequence = () => {
-    if (stage !== 'idle') return;
-    if (soundEnabled) soundFx.playPop();
-    setStage('opening');
-
-    // Sequence timeline
-    setTimeout(() => {
+  const handleAdvance = () => {
+    if (step === 0) {
       if (soundEnabled) soundFx.playPop();
-      setStage('flipping');
-    }, 1200);
-
-    setTimeout(() => {
-      setStage('unfolding');
-    }, 2800);
-
-    setTimeout(() => {
-      onComplete();
-    }, 3800);
+      setStep(1);
+    } else if (step === 1) {
+      if (soundEnabled) soundFx.playPop();
+      setStep(2);
+    } else if (step === 2) {
+      if (soundEnabled) soundFx.playSuccess();
+      setStep(3);
+      setTimeout(() => {
+        onComplete();
+      }, 750);
+    }
   };
-
-  // Automatically start opening book on page refresh after a brief theatrical pause
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startBookSequence();
-    }, 1100);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleSkip = () => {
     if (soundEnabled) soundFx.playPop();
@@ -112,31 +103,30 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
       {/* 2. THE 3D MASTERPIECE TOME / BOOK CONTAINER               */}
       {/* ========================================================= */}
       <div
-        className="relative z-10 flex flex-col items-center justify-center transition-all duration-1000"
+        className="relative z-10 flex flex-col items-center justify-center transition-all duration-700"
         style={{
           perspective: '2200px',
-          transform: stage === 'unfolding' ? 'scale(1.4) translateY(-20px)' : 'scale(1)',
-          opacity: stage === 'unfolding' ? 0 : 1
+          transform: step === 3 ? 'scale(1.35) translateY(-20px)' : 'scale(1)',
+          opacity: step === 3 ? 0 : 1
         }}
       >
         {/* Book shadow on mahogany surface */}
         <div
-          className={`w-[340px] sm:w-[460px] h-[35px] bg-black/70 rounded-full blur-xl transition-all duration-1000 ${
-            stage !== 'idle' ? 'scale-110 opacity-40' : 'scale-95 opacity-80'
+          className={`w-[340px] sm:w-[460px] h-[35px] bg-black/70 rounded-full blur-xl transition-all duration-700 ${
+            step > 0 ? 'scale-110 opacity-40' : 'scale-95 opacity-80'
           }`}
         />
 
-        {/* 3D BOOK STRUCTURE */}
+        {/* 3D BOOK STRUCTURE — Entire Book Clickable */}
         <div
-          onClick={startBookSequence}
-          className={`relative w-[320px] sm:w-[420px] h-[450px] sm:h-[540px] cursor-pointer transition-all duration-700 select-none ${
-            stage === 'idle' ? 'hover:-translate-y-2' : ''
-          }`}
+          onClick={handleAdvance}
+          className="relative w-[320px] sm:w-[420px] h-[450px] sm:h-[540px] cursor-pointer transition-all duration-700 select-none hover:-translate-y-1.5 active:scale-[0.99]"
           style={{
             transformStyle: 'preserve-3d',
-            transform: stage === 'idle' ? 'rotateX(14deg) rotateY(-8deg)' : 'rotateX(8deg) rotateY(0deg)',
-            transition: 'transform 1s cubic-bezier(0.2, 0.8, 0.2, 1)'
+            transform: step === 0 ? 'rotateX(14deg) rotateY(-8deg)' : 'rotateX(8deg) rotateY(0deg)',
+            transition: 'transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)'
           }}
+          title={step === 0 ? 'Click to open book' : step === 1 ? 'Click to turn page' : 'Click to enter portal'}
         >
           {/* BOOK SPINE (Left Bound Edge) */}
           <div
@@ -174,7 +164,7 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
           />
 
           {/* =================================================== */}
-          {/* INSIDE PARCHMENT PAGES (Revealed when cover opens)  */}
+          {/* INSIDE PARCHMENT PAGES (Page 1: Revealed at step 1) */}
           {/* =================================================== */}
           <div
             className="absolute inset-1 rounded-r-xl rounded-l-sm bg-[#f7f1e1] text-[#2c1f10] p-6 sm:p-8 flex flex-col justify-between shadow-2xl border-l border-[#d3c29f]"
@@ -217,49 +207,58 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
             {/* Bottom Page Footer */}
             <div className="border-t border-amber-800/20 pt-3 flex items-center justify-between text-[11px] font-sans text-amber-900/60">
               <span>Section: Subject - 2</span>
-              <span>Classora Academic OS</span>
+              <span className="font-bold text-amber-800">👉 Click page to turn</span>
               <span>Page I</span>
             </div>
           </div>
 
-          {/* FLIPPING PAGE (Flipping in 3D during stage === 'flipping') */}
+          {/* FLIPPING PAGE (Page 2: Flips on step === 2) */}
           <div
             className="absolute inset-1 rounded-r-xl rounded-l-sm bg-[#f2ebd5] text-[#2c1f10] p-6 sm:p-8 flex flex-col justify-between shadow-2xl border-l border-[#d3c29f] transition-all"
             style={{
               transformOrigin: 'left center',
               transformStyle: 'preserve-3d',
-              transition: 'transform 1.3s cubic-bezier(0.25, 1, 0.5, 1)',
-              transform: stage === 'flipping' || stage === 'unfolding' ? 'rotateY(-175deg)' : 'rotateY(0deg)',
+              transition: 'transform 1s cubic-bezier(0.25, 1, 0.5, 1)',
+              transform: step >= 2 ? 'rotateY(-175deg)' : 'rotateY(0deg)',
               backfaceVisibility: 'hidden',
               zIndex: 15
             }}
           >
-            <div className="text-center my-auto space-y-3 font-serif">
+            <div className="border-b border-amber-800/20 pb-3 text-center">
               <span className="text-[10px] font-sans font-bold uppercase tracking-[0.3em] text-amber-800/60 block">
                 Official Roster Authorization
               </span>
-              <h3 className="text-lg sm:text-xl font-bold text-amber-950">
+              <h3 className="text-lg sm:text-xl font-bold text-amber-950 mt-1">
                 Authorized 44-Student Cohort
               </h3>
-              <p className="text-xs text-[#523d24] italic max-w-[260px] mx-auto">
-                &ldquo;A craftsman of thought is first an architect of words.&rdquo;
+            </div>
+
+            <div className="text-center my-auto space-y-3 font-serif">
+              <p className="text-xs sm:text-sm text-[#523d24] italic max-w-[280px] mx-auto leading-relaxed">
+                &ldquo;A craftsman of thought is first an architect of words. Welcome to your command center.&rdquo;
               </p>
-              <div className="p-2.5 rounded-lg bg-amber-900/10 text-[11px] font-sans font-medium text-amber-900">
-                Opening Classora Command Center...
+              <div className="p-3 rounded-xl bg-amber-900/10 text-xs font-sans font-semibold text-amber-900 border border-amber-900/20">
+                Class Representative: Yahoshuva Kesaboyina
               </div>
+            </div>
+
+            <div className="border-t border-amber-800/20 pt-3 flex items-center justify-between text-[11px] font-sans text-amber-900/60">
+              <span>Classora Academic OS</span>
+              <span className="font-bold text-amber-800">👉 Click to enter</span>
+              <span>Page II</span>
             </div>
           </div>
 
           {/* =================================================== */}
-          {/* FRONT HARDCOVER (Swings open like a genuine book)   */}
+          {/* FRONT HARDCOVER (Swings open on step >= 1)          */}
           {/* =================================================== */}
           <div
             className="absolute inset-0 rounded-r-2xl rounded-l-md bg-gradient-to-br from-[#1e1026] via-[#2d183a] to-[#170a1f] p-6 sm:p-8 flex flex-col justify-between border-2 border-amber-500/40 shadow-[0_20px_60px_rgba(0,0,0,0.9)] transition-all"
             style={{
               transformOrigin: 'left center',
               transformStyle: 'preserve-3d',
-              transition: 'transform 1.2s cubic-bezier(0.3, 0, 0.2, 1)',
-              transform: stage !== 'idle' ? 'rotateY(-180deg)' : 'rotateY(0deg)',
+              transition: 'transform 1s cubic-bezier(0.3, 0, 0.2, 1)',
+              transform: step >= 1 ? 'rotateY(-180deg)' : 'rotateY(0deg)',
               backfaceVisibility: 'hidden',
               zIndex: 20
             }}
@@ -309,29 +308,50 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
           </div>
         </div>
 
-        {/* Action Button Below Tome */}
-        {stage === 'idle' && (
-          <div className="mt-8 flex flex-col items-center gap-3 font-sans animate-bounce">
+        {/* ========================================================= */}
+        {/* INTERACTIVE ACTION BUTTON BELOW TOME (CHANGES PER CLICK)  */}
+        {/* ========================================================= */}
+        <div className="mt-8 flex flex-col items-center gap-2.5 font-sans">
+          {step === 0 && (
             <button
-              onClick={startBookSequence}
-              className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-extrabold text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+              onClick={handleAdvance}
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-extrabold text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer animate-pulse"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Open Book to Enter</span>
+              <span>Click to Open Book</span>
               <Sparkles className="w-4 h-4" />
             </button>
-            <span className="text-xs text-amber-300/50">
-              Click book or button to unlock the Classora portal
-            </span>
-          </div>
-        )}
+          )}
 
-        {stage !== 'idle' && (
-          <div className="mt-8 font-sans text-xs text-amber-300/70 animate-pulse tracking-widest uppercase font-bold flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Unfolding Academic Tome...</span>
-          </div>
-        )}
+          {step === 1 && (
+            <button
+              onClick={handleAdvance}
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 font-extrabold text-sm tracking-wide shadow-xl shadow-amber-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer animate-bounce"
+            >
+              <span>Click to Turn Page</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
+
+          {step === 2 && (
+            <button
+              onClick={handleAdvance}
+              className="px-6 py-3 rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 text-slate-950 font-extrabold text-sm tracking-wide shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer animate-pulse"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Click to Enter Classora</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
+
+          <span className="text-xs text-amber-300/60 font-medium">
+            {step === 0
+              ? 'Click the book or button to begin reading'
+              : step === 1
+              ? 'Step 1 of 2 • Click to turn parchment page'
+              : 'Step 2 of 2 • Click to enter login portal'}
+          </span>
+        </div>
       </div>
 
       {/* Warm Ambient Desktop Shadow */}
