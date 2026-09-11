@@ -207,6 +207,56 @@ async function runTests() {
     });
     assert(adminDelete.status === 200, 'DELETE /api/admin/guest-visitors/:id allows Admin with HTTP 200 OK');
 
+    console.log('\n📌 Test Group 5: Any-Email Guest Login Capability');
+
+    // 1. POST /api/auth/login with any arbitrary external email (e.g. @gmail.com)
+    const externalLoginRes = await request('/api/auth/login', {
+      method: 'POST',
+      body: {
+        email: 'test.guest.evaluator@gmail.com',
+        password: 'any-random-password'
+      }
+    });
+    assert(externalLoginRes.status === 200, 'POST /api/auth/login allows external email (test.guest.evaluator@gmail.com) with 200 OK');
+    assert(externalLoginRes.data?.user?.role === 'Guest', 'External email login assigns role === "Guest"');
+    assert(externalLoginRes.data?.user?.email === 'test.guest.evaluator@gmail.com', 'Guest user email matches entered @gmail.com address');
+    assert(externalLoginRes.data?.user?.isGoogleAuthenticated === true, 'Guest user is authenticated for immediate portal access');
+    assert(externalLoginRes.data?.visitor?.guestEmail === 'test.guest.evaluator@gmail.com', 'Guest visitor record created with entered @gmail.com address');
+
+    // 2. POST /api/auth/google with external email (e.g. @yahoo.com)
+    const externalGoogleRes = await request('/api/auth/google', {
+      method: 'POST',
+      body: {
+        email: 'recruiter.talent@yahoo.com',
+        name: 'Jane Recruiter'
+      }
+    });
+    assert(externalGoogleRes.status === 200, 'POST /api/auth/google allows external email (recruiter.talent@yahoo.com) with 200 OK');
+    assert(externalGoogleRes.data?.user?.role === 'Guest', 'External Google SSO assigns role === "Guest"');
+    assert(externalGoogleRes.data?.user?.name === 'Jane Recruiter', 'Guest user name preserved from Google profile');
+    assert(externalGoogleRes.data?.user?.email === 'recruiter.talent@yahoo.com', 'Guest user email matches @yahoo.com');
+
+    // 3. POST /api/auth/guest-session with custom external email
+    const customGuestSessionRes = await request('/api/auth/guest-session', {
+      method: 'POST',
+      body: {
+        guestName: 'Audit Officer',
+        guestEmail: 'auditor@corporation.org'
+      }
+    });
+    assert(customGuestSessionRes.status === 200, 'POST /api/auth/guest-session accepts custom guestEmail');
+    assert(customGuestSessionRes.data?.user?.email === 'auditor@corporation.org', 'Custom guest email properly set in session');
+    assert(customGuestSessionRes.data?.visitor?.guestEmail === 'auditor@corporation.org', 'Custom guest email recorded in visitor document');
+
+    // 4. Verify Admin sees these external guest emails in registry
+    const registryCheckRes = await request('/api/admin/guest-visitors', {
+      headers: { 'x-caller-role': 'Admin' }
+    });
+    const registryEmails = (registryCheckRes.data?.data || []).map(v => v.guestEmail);
+    assert(registryEmails.includes('test.guest.evaluator@gmail.com'), 'Admin registry contains test.guest.evaluator@gmail.com');
+    assert(registryEmails.includes('recruiter.talent@yahoo.com'), 'Admin registry contains recruiter.talent@yahoo.com');
+    assert(registryEmails.includes('auditor@corporation.org'), 'Admin registry contains auditor@corporation.org');
+
     console.log('\n======================================================================');
     console.log(`🏁 TEST SUMMARY: ${passed}/${total} assertions passed (${Math.round((passed / total) * 100)}%)`);
     console.log('======================================================================\n');

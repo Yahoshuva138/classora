@@ -224,8 +224,8 @@ const AuthenticatedApp: React.FC = () => {
 const MainLayout: React.FC = () => {
   const { currentUser } = useApp();
 
-  // Authentication Gate: Require verified SST Google Account
-  if (!currentUser || !currentUser.isGoogleAuthenticated) {
+  // Authentication Gate: Require verified SST Google Account or Guest Visitor
+  if (!currentUser || (!currentUser.isGoogleAuthenticated && currentUser.role !== 'Guest')) {
     return <SSTAuthGate />;
   }
 

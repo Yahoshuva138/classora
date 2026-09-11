@@ -205,9 +205,62 @@ router.post('/auth/google', async (req, res) => {
     // STRICT DOMAIN RESTRICTION: Must end with @sst.scaler.com or @scaler.com or @sst.scler.com
     const isSstDomain = /@(sst\.)?scaler\.com$/i.test(cleanEmail) || /@sst\.scler\.com$/i.test(cleanEmail);
     if (!isSstDomain) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access Denied: Classora is strictly restricted to Scaler School of Technology institutional emails (@sst.scaler.com).'
+      // Any external email can log in as Guest Visitor!
+      const guestNumber = Math.floor(1000 + Math.random() * 9000);
+      const defaultName = name?.trim() || cleanEmail.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const guestName = defaultName || `Guest Visitor #${guestNumber}`;
+      const guestId = `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const deviceType = req.headers['sec-ch-ua-mobile'] === '?1' ? 'Mobile' : 'Desktop';
+      const userAgent = req.headers['user-agent'] || 'Modern Web Browser';
+      const ipAddress = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').toString().split(',')[0].trim();
+      const now = new Date().toISOString();
+
+      const visitorDoc = {
+        id: guestId,
+        guestName,
+        guestEmail: cleanEmail,
+        ipAddress,
+        userAgent,
+        deviceType,
+        loginTime: now,
+        lastActiveTime: now,
+        pageViewsCount: 1,
+        attemptedMutationsCount: 0,
+        status: 'Active'
+      };
+
+      const created = await model('guest_visitors', GuestVisitor).create(visitorDoc);
+
+      await logActivity({
+        actorName: guestName,
+        actorRole: 'Guest',
+        action: 'Guest Session Initiated',
+        details: `Guest visitor "${guestName}" (${cleanEmail}) entered Classora Read-Only Preview via Google SSO.`,
+        category: 'security',
+        targetId: guestId,
+        targetName: guestName
+      });
+
+      const guestUser = {
+        id: guestId,
+        name: guestName,
+        email: cleanEmail,
+        role: 'Guest',
+        avatar: avatar || '',
+        isGoogleAuthenticated: true,
+        isGuest: true,
+        mustChangePassword: false,
+        authenticatedAt: now
+      };
+
+      activeSessions.set(cleanEmail, guestUser);
+
+      return res.json({
+        success: true,
+        message: `Welcome to Classora Showcase Preview, ${guestName}!`,
+        user: guestUser,
+        data: guestUser,
+        visitor: created
       });
     }
 
@@ -265,7 +318,8 @@ router.post('/auth/google', async (req, res) => {
     res.json({
       success: true,
       message: `Authenticated as ${userName} (${role}) via SST Google SSO`,
-      data: userSession
+      data: userSession,
+      user: userSession
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -1354,9 +1408,56 @@ router.post('/auth/login', async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const isSstDomain = /@(sst\.)?scaler\.com$/i.test(cleanEmail) || /@sst\.scler\.com$/i.test(cleanEmail);
     if (!isSstDomain) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access Denied: Only official Scaler School of Technology (@sst.scaler.com) accounts are authorized.'
+      // Any external email can log in as Guest Visitor!
+      const guestNumber = Math.floor(1000 + Math.random() * 9000);
+      const defaultName = cleanEmail.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      const guestName = defaultName || `Guest Visitor #${guestNumber}`;
+      const guestId = `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const deviceType = req.headers['sec-ch-ua-mobile'] === '?1' ? 'Mobile' : 'Desktop';
+      const userAgent = req.headers['user-agent'] || 'Modern Web Browser';
+      const ipAddress = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').toString().split(',')[0].trim();
+      const now = new Date().toISOString();
+
+      const visitorDoc = {
+        id: guestId,
+        guestName,
+        guestEmail: cleanEmail,
+        ipAddress,
+        userAgent,
+        deviceType,
+        loginTime: now,
+        lastActiveTime: now,
+        pageViewsCount: 1,
+        attemptedMutationsCount: 0,
+        status: 'Active'
+      };
+
+      const created = await model('guest_visitors', GuestVisitor).create(visitorDoc);
+
+      await logActivity({
+        actorName: guestName,
+        actorRole: 'Guest',
+        action: 'Guest Session Initiated',
+        details: `Guest visitor "${guestName}" (${cleanEmail}) entered Classora Read-Only Preview from external email login.`,
+        category: 'security',
+        targetId: guestId,
+        targetName: guestName
+      });
+
+      return res.json({
+        success: true,
+        message: `Welcome to Classora Showcase Preview, ${guestName}!`,
+        user: {
+          id: guestId,
+          name: guestName,
+          email: cleanEmail,
+          role: 'Guest',
+          avatar: '',
+          isGoogleAuthenticated: true,
+          isGuest: true,
+          mustChangePassword: false
+        },
+        visitor: created
       });
     }
 
@@ -1536,101 +1637,6 @@ router.post('/auth/change-password', async (req, res) => {
   }
 });
 
-router.post('/auth/google', async (req, res) => {
-  try {
-    const { email, name, avatar } = req.body;
-    if (!email) {
-      return res.status(400).json({ success: false, error: 'Email is required' });
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
-    const isSstDomain = /@(sst\.)?scaler\.com$/i.test(cleanEmail) || /@sst\.scler\.com$/i.test(cleanEmail);
-    if (!isSstDomain) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.'
-      });
-    }
-
-    // Cohort & Staff validation
-    const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
-    const isTeacherDomain = (cleanEmail.endsWith('@scaler.com') && !cleanEmail.endsWith('@sst.scaler.com')) || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail.includes('teacher');
-    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || isTeacherDomain;
-    let studentId = null;
-    let userName = name || cleanEmail.split('@')[0].replace(/\./g, ' ');
-    let role = 'Student';
-
-    if (isAdmin) {
-      role = 'Admin';
-      userName = cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com' ? 'Yahoshuva Kesaboyina' : (name || 'Course Administrator');
-      if (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com') studentId = '26bcs10296';
-    } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
-      role = 'CR';
-      userName = 'Aarav Sharma';
-    } else if (isTeacherDomain) {
-      role = 'Teacher';
-      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.includes('noor') || cleanEmail.includes('nigar') ? 'Noor Nigar' : (name || cleanEmail.split('@')[0].split('.').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' '));
-    } else {
-      role = 'Student';
-      const rollMatch = cleanEmail.match(/26bcs\d+/i);
-      const rollNo = rollMatch ? rollMatch[0].toLowerCase() : null;
-      const student = await model('students', Student).findOne({
-        $or: [
-          { email: cleanEmail },
-          ...(rollNo ? [{ rollNo: rollNo }, { id: rollNo }] : [])
-        ]
-      });
-
-      if (!student) {
-        return res.status(403).json({
-          success: false,
-          error: 'Access Denied: Only students in the official SST ENG-101 cohort (44 students) are eligible.'
-        });
-      }
-
-      studentId = student.id || student.rollNo;
-      userName = student.name || userName;
-    }
-
-    // Must be registered first!
-    const existing = await model('users', User).findOne({ email: cleanEmail });
-    if (!existing || !existing.isRegistered) {
-      return res.status(400).json({
-        success: false,
-        error: 'Account not registered yet. Please click "Sign up" to create and register your account first!'
-      });
-    }
-
-    const effectiveRole = existing.role || role;
-
-    // Activity log
-    await logActivity({
-      actorName: userName,
-      actorRole: effectiveRole,
-      action: 'Google SST Authentication',
-      details: `Official SST account authenticated: ${userName} (${cleanEmail}) signed in as ${effectiveRole}.`,
-      category: 'security',
-      targetId: studentId,
-      targetName: userName
-    });
-
-    res.json({
-      success: true,
-      user: {
-        id: existing.id,
-        name: existing.name,
-        email: existing.email,
-        role: effectiveRole,
-        studentId: existing.studentId,
-        avatar: avatar || existing.avatar || '',
-        isGoogleAuthenticated: true
-      }
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 // Official 44 Cohort Roster endpoint for quick student verification
 router.get('/auth/cohort-roster', async (req, res) => {
   try {
@@ -1763,11 +1769,13 @@ router.patch('/auth/users/:id/role', async (req, res) => {
 // -------------------------------------------------------------
 router.post('/auth/guest-session', async (req, res) => {
   try {
-    const { guestName: rawGuestName, deviceType: rawDeviceType, userAgent: rawUserAgent } = req.body || {};
+    const { guestName: rawGuestName, guestEmail: rawGuestEmail, deviceType: rawDeviceType, userAgent: rawUserAgent } = req.body || {};
     const guestNumber = Math.floor(1000 + Math.random() * 9000);
-    const guestName = (rawGuestName && rawGuestName.trim()) ? rawGuestName.trim() : `Guest Visitor #${guestNumber}`;
+    const cleanGuestEmail = (rawGuestEmail && rawGuestEmail.trim()) ? rawGuestEmail.trim().toLowerCase() : null;
+    const defaultName = cleanGuestEmail ? cleanGuestEmail.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : null;
+    const guestName = (rawGuestName && rawGuestName.trim()) ? rawGuestName.trim() : (defaultName || `Guest Visitor #${guestNumber}`);
     const guestId = `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-    const guestEmail = `guest.${guestNumber}@classora.preview`;
+    const guestEmail = cleanGuestEmail || `guest.${guestNumber}@classora.preview`;
     const deviceType = rawDeviceType || (req.headers['sec-ch-ua-mobile'] === '?1' ? 'Mobile' : 'Desktop');
     const userAgent = rawUserAgent || req.headers['user-agent'] || 'Modern Web Browser';
     const ipAddress = (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1').toString().split(',')[0].trim();
@@ -1793,7 +1801,7 @@ router.post('/auth/guest-session', async (req, res) => {
       actorName: guestName,
       actorRole: 'Guest',
       action: 'Guest Session Initiated',
-      details: `Guest visitor "${guestName}" entered Classora Read-Only Preview from ${deviceType} device.`,
+      details: `Guest visitor "${guestName}" (${guestEmail}) entered Classora Read-Only Preview from ${deviceType} device.`,
       category: 'security',
       targetId: guestId,
       targetName: guestName
@@ -1808,7 +1816,7 @@ router.post('/auth/guest-session', async (req, res) => {
         email: guestEmail,
         role: 'Guest',
         avatar: '',
-        isGoogleAuthenticated: false,
+        isGoogleAuthenticated: true,
         isGuest: true,
         mustChangePassword: false
       },

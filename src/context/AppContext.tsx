@@ -94,7 +94,7 @@ interface AppContextType {
   // Guest Showcase & Admin Visitors Console
   isGuestVisitorsModalOpen: boolean;
   setIsGuestVisitorsModalOpen: (open: boolean) => void;
-  loginAsGuest: (customName?: string) => Promise<void>;
+  loginAsGuest: (customName?: string, customEmail?: string) => Promise<void>;
   currentGuestVisitor: GuestVisitor | null;
 
   // Interactivity, Audio & Guided Tour
@@ -1594,14 +1594,62 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addToast('Faculty feedback recorded on student profile', 'success');
   }, [addToast]);
 
+  const loginAsGuest = useCallback(async (customName?: string, customEmail?: string) => {
+    try {
+      const deviceType = window.innerWidth <= 768 ? 'Mobile' : (window.innerWidth <= 1024 ? 'Tablet' : 'Desktop');
+      const userAgent = navigator.userAgent;
+      const cleanEmail = (customEmail || '').trim().toLowerCase();
+      const guestNumber = Math.floor(1000 + Math.random() * 9000);
+      const defaultName = cleanEmail ? cleanEmail.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : null;
+      const guestName = customName?.trim() || defaultName || `Guest Visitor #${guestNumber}`;
+      const guestEmail = cleanEmail || `guest.${guestNumber}@classora.preview`;
+
+      let guestUser: GoogleUser = {
+        id: `gst_${Date.now()}`,
+        name: guestName,
+        email: guestEmail,
+        avatar: '',
+        role: 'Guest',
+        isGoogleAuthenticated: true,
+      };
+
+      try {
+        const res = await api.recordGuestSession({
+          guestName: guestUser.name,
+          guestEmail: cleanEmail || undefined,
+          deviceType,
+          userAgent
+        });
+        if (res && res.user) {
+          guestUser = { ...res.user, isGoogleAuthenticated: true, role: 'Guest' };
+          if (res.visitor) {
+            setCurrentGuestVisitor(res.visitor);
+            localStorage.setItem('classora_guest_visitor_v2', JSON.stringify(res.visitor));
+          }
+        }
+      } catch (e) {
+        console.warn('[Classora] Backend guest session record notice:', e);
+      }
+
+      setCurrentUser(guestUser);
+      localStorage.setItem(STORAGE_KEYS.GOOGLE_USER, JSON.stringify(guestUser));
+      setUserRole('Guest');
+      setActiveTab('dashboard');
+      soundFx.playCelebration();
+      addToast(`Welcome to Classora Showcase Preview, ${guestUser.name}! (Read-Only Mode)`, 'success');
+    } catch (err: any) {
+      console.error('Failed to log in as guest:', err);
+      addToast('Could not initialize guest preview session.', 'error');
+    }
+  }, [setUserRole, setActiveTab, addToast]);
+
   const signInWithGoogle = useCallback(async (account: Partial<GoogleUser>) => {
     const email = (account.email || '').trim().toLowerCase();
     const isSstDomain = /@(sst\.)?scaler\.com$/i.test(email) || /@sst\.scler\.com$/i.test(email);
 
-    if (!isSstDomain) {
-      soundFx.playPop();
-      addToast('Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are permitted.', 'error');
-      throw new Error('Access Denied: Only Scaler School of Technology (@sst.scaler.com) accounts are authorized.');
+    if (account.role === 'Guest' || !isSstDomain) {
+      await loginAsGuest(account.name, email);
+      return;
     }
 
     let verifiedUser: GoogleUser = {
@@ -1642,7 +1690,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     addToast(`Google Verified: Welcome ${verifiedUser.name} (${verifiedUser.role})`, 'success');
-  }, [setUserRole, setCurrentStudentId, addToast]);
+  }, [loginAsGuest, setUserRole, setCurrentStudentId, addToast]);
 
   const updateCurrentUser = useCallback((updates: Partial<GoogleUser>) => {
     setCurrentUser(prev => {
@@ -1803,48 +1851,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addToast('Profile, display photo, and public links updated!', 'success');
   }, [userRole, currentUser, addToast]);
 
-  const loginAsGuest = useCallback(async (customName?: string) => {
-    try {
-      const deviceType = window.innerWidth <= 768 ? 'Mobile' : (window.innerWidth <= 1024 ? 'Tablet' : 'Desktop');
-      const userAgent = navigator.userAgent;
-      
-      let guestUser: GoogleUser = {
-        id: `gst_${Date.now()}`,
-        name: customName?.trim() || `Guest Visitor #${Math.floor(1000 + Math.random() * 9000)}`,
-        email: `guest.${Date.now()}@classora.preview`,
-        avatar: '',
-        role: 'Guest',
-        isGoogleAuthenticated: false,
-      };
-
-      try {
-        const res = await api.recordGuestSession({
-          guestName: guestUser.name,
-          deviceType,
-          userAgent
-        });
-        if (res && res.user) {
-          guestUser = { ...res.user, isGoogleAuthenticated: false };
-          if (res.visitor) {
-            setCurrentGuestVisitor(res.visitor);
-            localStorage.setItem('classora_guest_visitor_v2', JSON.stringify(res.visitor));
-          }
-        }
-      } catch (e) {
-        console.warn('[Classora] Backend guest session record notice:', e);
-      }
-
-      setCurrentUser(guestUser);
-      localStorage.setItem(STORAGE_KEYS.GOOGLE_USER, JSON.stringify(guestUser));
-      setUserRole('Guest');
-      setActiveTab('dashboard');
-      soundFx.playCelebration();
-      addToast(`Welcome to Classora Showcase Preview, ${guestUser.name}! (Read-Only Mode)`, 'success');
-    } catch (err: any) {
-      console.error('Failed to log in as guest:', err);
-      addToast('Could not initialize guest preview session.', 'error');
-    }
-  }, [setUserRole, setActiveTab, addToast]);
 
   const signOutGoogle = useCallback(() => {
     const unauthUser: GoogleUser = {

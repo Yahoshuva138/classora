@@ -158,12 +158,6 @@ const GoogleGIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }
 export const SSTAuthGate: React.FC = () => {
   const { signInWithGoogle, loginAsGuest } = useApp();
 
-  const handleGuestLogin = async () => {
-    soundFx.playSuccess();
-    fireGrandCelebration();
-    await loginAsGuest();
-  };
-
   // Mode: 'login' ("Log in to account") or 'register' ("Create an account")
   const [authMode, setAuthMode] = useState<'register' | 'login'>('login');
 
@@ -191,6 +185,17 @@ export const SSTAuthGate: React.FC = () => {
 
   // 3D Library Book Intro for English / Library Lovers — Plays on EVERY page load / refresh
   const [showBookIntro, setShowBookIntro] = useState<boolean>(true);
+
+  // Determine if entered email is from an external non-SST domain
+  const isExternalEmail = Boolean(email.trim() && !isSstEmail(email.trim().toLowerCase()));
+
+  const handleGuestLogin = async () => {
+    soundFx.playSuccess();
+    fireGrandCelebration();
+    const cleanEmail = email.trim().toLowerCase();
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ');
+    await loginAsGuest(fullName || undefined, cleanEmail && !isSstEmail(cleanEmail) ? cleanEmail : undefined);
+  };
 
   // Clear any legacy sessionStorage lock so refresh always plays
   useEffect(() => {
@@ -237,17 +242,26 @@ export const SSTAuthGate: React.FC = () => {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  // Seamless SST Google SSO: Authenticates only registered cohort accounts
+  // Seamless SST Google SSO: Authenticates registered cohort accounts or Guest visitors
   const handleGoogleSSO = async () => {
     setErrorMessage(null);
     setSuccessMessage(null);
     setIsLoading(true);
 
     const targetEmail = email.trim().toLowerCase() || 'yahoshuva.26bcs10296@sst.scaler.com';
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || targetEmail.split('@')[0].replace(/\./g, ' ');
+
     if (!isSstEmail(targetEmail)) {
-      soundFx.playPop();
-      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.');
-      setIsLoading(false);
+      try {
+        soundFx.playSuccess();
+        fireGrandCelebration();
+        await loginAsGuest(fullName, targetEmail);
+      } catch (err: any) {
+        soundFx.playPop();
+        setErrorMessage(err.message || 'Could not start guest session.');
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -259,15 +273,14 @@ export const SSTAuthGate: React.FC = () => {
     }
 
     try {
-      const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || 'Yahoshuva Kesaboyina';
       const res = await api.authenticateGoogle(targetEmail, fullName);
 
       soundFx.playSuccess();
       fireGrandCelebration();
 
-      if (res && res.user) {
+      if (res && (res.user || (res as any).data)) {
         await signInWithGoogle({
-          ...res.user,
+          ...(res.user || (res as any).data),
           isGoogleAuthenticated: true
         });
       }
@@ -334,13 +347,25 @@ export const SSTAuthGate: React.FC = () => {
 
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail) {
-      setErrorMessage('Please enter your institutional email address.');
+      setErrorMessage('Please enter your email address.');
       return;
     }
 
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || cleanEmail.split('@')[0].replace(/\./g, ' ');
+
+    // Any external email can log in as Guest Visitor!
     if (!isSstEmail(cleanEmail)) {
-      soundFx.playPop();
-      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for teachers) are authorized.');
+      setIsLoading(true);
+      try {
+        soundFx.playSuccess();
+        fireGrandCelebration();
+        await loginAsGuest(fullName, cleanEmail);
+      } catch (err: any) {
+        soundFx.playPop();
+        setErrorMessage(err.message || 'Could not initialize guest preview session.');
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -356,8 +381,6 @@ export const SSTAuthGate: React.FC = () => {
         return;
       }
     }
-
-    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || cleanEmail.split('@')[0].replace(/\./g, ' ');
 
     setIsLoading(true);
     try {
@@ -727,19 +750,31 @@ export const SSTAuthGate: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="Email (@sst.scaler.com or @scaler.com)"
+                  placeholder="Email (@sst.scaler.com, @scaler.com, or any email)"
                   className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                 />
+                {isExternalEmail && (
+                  <div className="mt-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs flex items-center gap-2 animate-fadeIn">
+                    <Eye className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>External email detected: You will enter as <strong>Guest Visitor</strong> (Read-Only Showcase)</span>
+                  </div>
+                )}
               </div>
 
               {/* Row 3: Password Field with Minimalist Eye Toggle */}
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
+                  required={!isExternalEmail}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder={authMode === 'register' ? 'Choose a password (min 4 chars)' : 'Enter your password'}
+                  placeholder={
+                    isExternalEmail
+                      ? 'Password (Optional for Guest Visitors)'
+                      : authMode === 'register'
+                      ? 'Choose a password (min 4 chars)'
+                      : 'Enter your password'
+                  }
                   className="w-full bg-[#322c4d] border border-white/5 focus:border-[#6c5dd3] focus:ring-1 focus:ring-[#6c5dd3] text-white placeholder:text-white/35 rounded-xl px-4 py-2.5 sm:py-3 pr-11 text-base sm:text-sm min-h-[44px] outline-none transition shadow-inner"
                 />
                 <button
@@ -753,7 +788,7 @@ export const SSTAuthGate: React.FC = () => {
               </div>
 
               {/* Checkbox: "I agree to the Terms & Conditions" (Register mode) */}
-              {authMode === 'register' && (
+              {authMode === 'register' && !isExternalEmail && (
                 <div className="pt-1 pb-1">
                   <label className="flex items-center gap-2.5 text-xs text-white/60 hover:text-white/80 cursor-pointer select-none">
                     <input
@@ -772,13 +807,25 @@ export const SSTAuthGate: React.FC = () => {
                 </div>
               )}
 
-              {/* Primary Action Button: Solid Vibrant Purple Button */}
+              {/* Primary Action Button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#6c5dd3] hover:bg-[#5e4fc4] active:bg-[#5344b4] text-white font-medium py-3.5 rounded-xl text-xs sm:text-sm shadow-lg shadow-[#6c5dd3]/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.008] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className={`w-full text-white font-medium py-3.5 rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 hover:scale-[1.008] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${
+                  isExternalEmail
+                    ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-600/30'
+                    : 'bg-[#6c5dd3] hover:bg-[#5e4fc4] active:bg-[#5344b4] shadow-lg shadow-[#6c5dd3]/25'
+                }`}
               >
-                <span>{isLoading ? 'Verifying with Cohort Database...' : authMode === 'register' ? 'Create account' : 'Sign in'}</span>
+                <span>
+                  {isLoading
+                    ? (isExternalEmail ? 'Connecting to Showcase Preview...' : 'Verifying with Cohort Database...')
+                    : isExternalEmail
+                    ? 'Enter as Guest Visitor'
+                    : authMode === 'register'
+                    ? 'Create account'
+                    : 'Sign in'}
+                </span>
               </button>
             </form>
 
@@ -789,7 +836,7 @@ export const SSTAuthGate: React.FC = () => {
               </div>
               <div className="relative flex justify-center text-[11px]">
                 <span className="bg-[#231e36] px-3 text-white/40 font-medium">
-                  {authMode === 'register' ? 'Or register with' : 'Or sign in with'}
+                  {isExternalEmail ? 'Or explore with Google' : authMode === 'register' ? 'Or register with' : 'Or sign in with'}
                 </span>
               </div>
             </div>
@@ -806,7 +853,7 @@ export const SSTAuthGate: React.FC = () => {
                 className="w-full bg-[#322c4d] hover:bg-[#3d365e] active:bg-[#2c2644] text-white border border-white/10 hover:border-indigo-400/30 rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 text-xs font-semibold transition cursor-pointer shadow-sm hover:scale-[1.01]"
               >
                 <GoogleGIcon className="w-4 h-4 shrink-0" />
-                <span>Continue with Google (@sst.scaler.com)</span>
+                <span>{isExternalEmail ? 'Continue with Google as Guest' : 'Continue with Google (@sst.scaler.com)'}</span>
               </button>
             </div>
 

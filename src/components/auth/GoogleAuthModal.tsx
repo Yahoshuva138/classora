@@ -13,12 +13,14 @@ interface GoogleAuthModalProps {
 }
 
 export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClose }) => {
-  const { signInWithGoogle, currentUser, signOutGoogle, students } = useApp();
+  const { signInWithGoogle, loginAsGuest, currentUser, signOutGoogle, students } = useApp();
   const [customName, setCustomName] = useState('');
   const [customEmail, setCustomEmail] = useState('');
   const [customRole, setCustomRole] = useState<UserRole>('Student');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isExternalEmail = Boolean(customEmail.trim() && !isSstEmail(customEmail.trim().toLowerCase()));
 
   if (!isOpen) return null;
 
@@ -45,10 +47,19 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
     const email = customEmail.trim().toLowerCase();
     if (!email) return;
 
-    // Strict Institutional Domain validation (@sst.scaler.com for students, @scaler.com for teachers)
+    // Any external email can enter as Guest Visitor!
     if (!isSstEmail(email)) {
-      soundFx.playPop();
-      setErrorMessage('Access Denied: Only official Scaler accounts (@sst.scaler.com for students, @scaler.com for faculty) are authorized.');
+      setIsLoading(true);
+      try {
+        soundFx.playSuccess();
+        fireGrandCelebration();
+        await loginAsGuest(customName.trim() || undefined, email);
+        onClose();
+      } catch (err: any) {
+        setErrorMessage(err.message || 'Failed to initialize guest preview session.');
+      } finally {
+        setIsLoading(false);
+      }
       return;
     }
 
@@ -210,9 +221,21 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                     setCustomRole('Teacher');
                   }
                 }}
-                placeholder={customRole === 'Teacher' ? 'faculty.name@scaler.com' : 'name.26bcs10xxx@sst.scaler.com'}
+                placeholder={
+                  isExternalEmail
+                    ? 'any.email@domain.com'
+                    : customRole === 'Teacher'
+                    ? 'faculty.name@scaler.com'
+                    : 'name.26bcs10xxx@sst.scaler.com'
+                }
                 className="w-full h-10 px-3.5 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
               />
+              {isExternalEmail && (
+                <div className="mt-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-medium flex items-center gap-1.5 animate-in fade-in">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>External email detected: You will enter as <strong>Guest Visitor</strong> (Read-Only Showcase)</span>
+                </div>
+              )}
             </div>
 
             <div>
@@ -228,37 +251,43 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
               />
             </div>
 
-            <div>
-              <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
-                Role / Capacity
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(['Student', 'CR', 'Teacher'] as UserRole[]).map(r => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => {
-                      soundFx.playPop();
-                      setCustomRole(r);
-                    }}
-                    className={`py-2 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
-                      customRole === r
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    {r}
-                  </button>
-                ))}
+            {!isExternalEmail && (
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1.5 text-xs">
+                  Role / Capacity
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['Student', 'CR', 'Teacher'] as UserRole[]).map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setCustomRole(r);
+                      }}
+                      className={`py-2 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+                        customRole === r
+                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900'
+                      }`}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               type="submit"
               disabled={isLoading || !customEmail.trim()}
-              className="w-full h-11 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-3 disabled:opacity-50 cursor-pointer"
+              className={`w-full h-11 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-3 disabled:opacity-50 cursor-pointer ${
+                isExternalEmail
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/25'
+                  : 'bg-slate-900 hover:bg-slate-800 active:bg-slate-950'
+              }`}
             >
-              <span>{isLoading ? 'Verifying...' : 'Sign In with SST Email'}</span>
+              <span>{isLoading ? 'Verifying...' : isExternalEmail ? 'Sign In as Guest Visitor' : 'Sign In with SST Email'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>

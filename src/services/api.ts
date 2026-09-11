@@ -354,7 +354,7 @@ export const api = {
   },
 
   // Guest Visitor & Read-Only Showcase
-  async recordGuestSession(payload?: { guestName?: string; deviceType?: string; userAgent?: string }): Promise<{ success: boolean; user: GoogleUser; visitor: GuestVisitor; message?: string }> {
+  async recordGuestSession(payload?: { guestName?: string; guestEmail?: string; deviceType?: string; userAgent?: string }): Promise<{ success: boolean; user: GoogleUser; visitor: GuestVisitor; message?: string }> {
     return await request<{ success: boolean; user: GoogleUser; visitor: GuestVisitor; message?: string }>('/auth/guest-session', {
       method: 'POST',
       body: JSON.stringify(payload || {})
