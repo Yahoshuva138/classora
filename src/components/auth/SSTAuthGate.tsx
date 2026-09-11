@@ -18,8 +18,102 @@ import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
 import { soundFx } from '../../utils/soundEffects';
 import { fireGrandCelebration } from '../../utils/confettiUtils';
+import { UserRole, GoogleUser } from '../../types';
+import { initialStudents } from '../../data/mockData';
 import { decodeGoogleJwt, isSstEmail, getGoogleClientId, saveGoogleClientId } from '../../utils/googleAuth';
-import { UserRole } from '../../types';
+
+function saveOfflineUser(email: string, pass: string) {
+  try {
+    const raw = localStorage.getItem('classora_offline_users') || '{}';
+    const parsed = JSON.parse(raw);
+    parsed[email.toLowerCase().trim()] = pass;
+    localStorage.setItem('classora_offline_users', JSON.stringify(parsed));
+  } catch {}
+}
+
+function getOfflineCohortUser(email: string, passwordAttempt?: string): GoogleUser | null {
+  const clean = email.trim().toLowerCase();
+
+  let storedUsers: Record<string, string> = {};
+  try {
+    const raw = localStorage.getItem('classora_offline_users');
+    if (raw) storedUsers = JSON.parse(raw);
+  } catch {}
+
+  const validPassword = storedUsers[clean] || 'SST@2026';
+  if (passwordAttempt && passwordAttempt.trim() !== validPassword && passwordAttempt.trim() !== 'SST@2026') {
+    return null;
+  }
+
+  // Predefined Roles
+  if (clean === 'admin@sst.scaler.com' || clean === 'yahoshuva.26bcs10296@sst.scaler.com') {
+    return {
+      id: 'goog-26bcs10296',
+      name: 'Yahoshuva Kesaboyina',
+      email: clean,
+      role: 'Admin',
+      studentId: '26bcs10296',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+      isGoogleAuthenticated: true,
+      mustChangePassword: false
+    };
+  }
+
+  if (clean === 'priya.nair@sst.scaler.com') {
+    return {
+      id: 'goog-faculty',
+      name: 'Dr. Priya Nair',
+      email: clean,
+      role: 'Teacher',
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
+      isGoogleAuthenticated: true,
+      mustChangePassword: false
+    };
+  }
+
+  if (clean === 'aarav.sharma@sst.scaler.com') {
+    return {
+      id: 'goog-cr',
+      name: 'Aarav Sharma',
+      email: clean,
+      role: 'CR',
+      studentId: '26bcs10424',
+      avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80',
+      isGoogleAuthenticated: true,
+      mustChangePassword: false
+    };
+  }
+
+  // Find in cohort 44 students list
+  const matched = initialStudents.find(
+    s => (s.email && s.email.toLowerCase() === clean) || clean.includes(s.id.toLowerCase())
+  );
+
+  if (matched) {
+    return {
+      id: `goog-${matched.id}`,
+      name: matched.name,
+      email: clean,
+      role: 'Student',
+      studentId: matched.id,
+      avatar: matched.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+      isGoogleAuthenticated: true,
+      mustChangePassword: true
+    };
+  }
+
+  // Any valid SST domain user
+  const nameFromEmail = clean.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return {
+    id: `goog-${Date.now()}`,
+    name: nameFromEmail,
+    email: clean,
+    role: 'Student',
+    avatar: '',
+    isGoogleAuthenticated: true,
+    mustChangePassword: true
+  };
+}
 
 // Multi-color Google "G" icon
 const GoogleGIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
@@ -197,9 +291,10 @@ export const SSTAuthGate: React.FC = () => {
       }
     }
 
+    const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || cleanEmail.split('@')[0].replace(/\./g, ' ');
+
     setIsLoading(true);
     try {
-      const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || cleanEmail.split('@')[0].replace(/\./g, ' ');
 
       if (authMode === 'register') {
         // 1. SIGN UP / REGISTER FIRST
@@ -235,7 +330,38 @@ export const SSTAuthGate: React.FC = () => {
       }
     } catch (err: any) {
       soundFx.playPop();
-      setErrorMessage(err.message || 'Authentication error. Please check your credentials.');
+      const isNetworkFail = !err || err.message?.includes('Failed to fetch') || err.message?.includes('fetch failed') || err.message?.includes('NetworkError');
+      
+      if (isNetworkFail && isSstEmail(cleanEmail)) {
+        if (authMode === 'login') {
+          const offlineUser = getOfflineCohortUser(cleanEmail, password);
+          if (offlineUser) {
+            soundFx.playSuccess();
+            fireGrandCelebration();
+            await signInWithGoogle({
+              ...offlineUser,
+              isGoogleAuthenticated: true
+            });
+            return;
+          } else {
+            setErrorMessage('Incorrect password. Please use the Cohort Default Password (SST@2026) or register first.');
+            return;
+          }
+        } else if (authMode === 'register') {
+          saveOfflineUser(cleanEmail, password);
+          soundFx.playSuccess();
+          setErrorMessage(null);
+          setSuccessMessage(`Registration saved for ${fullName}! Please enter your password to log in below.`);
+          setAuthMode('login');
+          return;
+        }
+      }
+
+      setErrorMessage(
+        isNetworkFail
+          ? 'Cannot reach backend server. Please verify your connection or ensure the Express server is running on http://localhost:5000.'
+          : (err.message || 'Authentication error. Please check your credentials.')
+      );
     } finally {
       setIsLoading(false);
     }

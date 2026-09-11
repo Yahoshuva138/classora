@@ -285,7 +285,7 @@
     {
       "_id": "mem_1789129320100_3_31xa2x87y",
       "createdAt": "2026-09-11T12:22:00.100Z",
-      "updatedAt": "2026-09-11T12:22:50.725Z",
+      "updatedAt": "2026-09-11T12:41:05.161Z",
       "id": "26bcs10424",
       "rollNo": "26bcs10424",
       "name": "Aditya Shaw",
@@ -1037,7 +1037,7 @@
     {
       "_id": "mem_1789129320100_11_9mm5q6ubn",
       "createdAt": "2026-09-11T12:22:00.100Z",
-      "updatedAt": "2026-09-11T12:24:02.497Z",
+      "updatedAt": "2026-09-11T12:41:05.134Z",
       "id": "26bcs10093",
       "rollNo": "26bcs10093",
       "name": "Divyanshika Sharma",
@@ -4179,6 +4179,50 @@
       "assignments": [],
       "crRemarks": [],
       "historicalScores": []
+    },
+    {
+      "_id": "mem_1789130465057_28edauvvv",
+      "createdAt": "2026-09-11T12:41:05.057Z",
+      "updatedAt": "2026-09-11T12:41:05.057Z",
+      "name": "Teacher Added Student",
+      "email": "teacher.student.1789130465052@sst.scaler.com",
+      "batch": "Batch A - Morning",
+      "rollNo": "ENG-2026-860",
+      "id": "ENG-2026-860",
+      "skills": {
+        "communication": 75,
+        "grammar": 75,
+        "vocabulary": 75,
+        "pronunciation": 75,
+        "participation": 75,
+        "assignments": 75,
+        "assessments": 75
+      },
+      "assignments": [],
+      "crRemarks": [],
+      "historicalScores": []
+    },
+    {
+      "_id": "mem_1789130465067_sbhudrp7g",
+      "createdAt": "2026-09-11T12:41:05.067Z",
+      "updatedAt": "2026-09-11T12:41:05.067Z",
+      "name": "Admin Added Student",
+      "email": "admin.student.1789130465059@sst.scaler.com",
+      "batch": "Batch A - Morning",
+      "rollNo": "ENG-2026-576",
+      "id": "ENG-2026-576",
+      "skills": {
+        "communication": 75,
+        "grammar": 75,
+        "vocabulary": 75,
+        "pronunciation": 75,
+        "participation": 75,
+        "assignments": 75,
+        "assessments": 75
+      },
+      "assignments": [],
+      "crRemarks": [],
+      "historicalScores": []
     }
   ],
   "sessions": [
@@ -4791,12 +4835,12 @@
     {
       "_id": "mem_1789129320100_40_83xdo05cr",
       "createdAt": "2026-09-11T12:22:00.100Z",
-      "updatedAt": "2026-09-11T12:22:50.627Z",
+      "updatedAt": "2026-09-11T12:41:05.043Z",
       "sessionId": "SES-101",
       "studentId": "26bcs10296",
       "status": "Present",
       "remarks": "",
-      "timestamp": "2026-09-11T12:22:50.627Z"
+      "timestamp": "2026-09-11T12:41:05.043Z"
     },
     {
       "_id": "mem_1789129320100_41_4zcgleppm",
@@ -7141,12 +7185,12 @@
     {
       "_id": "mem_1789129320101_275_x6cfwdtfu",
       "createdAt": "2026-09-11T12:22:00.101Z",
-      "updatedAt": "2026-09-11T12:24:02.834Z",
+      "updatedAt": "2026-09-11T12:41:00.422Z",
       "sessionId": "SES-107",
       "studentId": "26bcs10093",
       "status": "Present",
       "remarks": "Active participant in GD",
-      "timestamp": "2026-09-11T12:24:02.834Z"
+      "timestamp": "2026-09-11T12:41:00.421Z"
     },
     {
       "_id": "mem_1789129320101_276_3w9qcwf1e",
@@ -9083,7 +9127,7 @@
     {
       "_id": "mem_1789129320102_4_ty51ipa0v",
       "createdAt": "2026-09-11T12:22:00.102Z",
-      "updatedAt": "2026-09-11T12:22:50.706Z",
+      "updatedAt": "2026-09-11T12:41:05.134Z",
       "id": "goog-26bcs10093",
       "name": "Divyanshika Sharma",
       "email": "divyanshika.26bcs10093@sst.scaler.com",
@@ -9099,7 +9143,7 @@
     {
       "_id": "mem_1789129320102_5_yfg6nv2ch",
       "createdAt": "2026-09-11T12:22:00.102Z",
-      "updatedAt": "2026-09-11T12:22:50.725Z",
+      "updatedAt": "2026-09-11T12:41:05.161Z",
       "id": "goog-26bcs10424",
       "name": "Aditya Shaw",
       "email": "aditya.26bcs10424@sst.scaler.com",
@@ -9834,6 +9878,32 @@
       "password": "SST@2026",
       "isRegistered": true,
       "mustChangePassword": true
+    },
+    {
+      "_id": "mem_1789130465058_iwfn9vr4p",
+      "createdAt": "2026-09-11T12:41:05.058Z",
+      "updatedAt": "2026-09-11T12:41:05.058Z",
+      "email": "teacher.student.1789130465052@sst.scaler.com",
+      "id": "usr_ENG-2026-860",
+      "name": "Teacher Added Student",
+      "role": "Student",
+      "studentId": "ENG-2026-860",
+      "password": "SST@2026",
+      "isRegistered": true,
+      "mustChangePassword": true
+    },
+    {
+      "_id": "mem_1789130465067_rkbcej98r",
+      "createdAt": "2026-09-11T12:41:05.067Z",
+      "updatedAt": "2026-09-11T12:41:05.067Z",
+      "email": "admin.student.1789130465059@sst.scaler.com",
+      "id": "usr_ENG-2026-576",
+      "name": "Admin Added Student",
+      "role": "Student",
+      "studentId": "ENG-2026-576",
+      "password": "SST@2026",
+      "isRegistered": true,
+      "mustChangePassword": true
     }
   ],
   "activity_logs": [
@@ -9969,6 +10039,90 @@
       "updatedAt": "2026-09-11T12:22:50.725Z",
       "id": "act_1789129370725_mqw6b",
       "timestamp": "2026-09-11T12:22:50.725Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Teacher to Student.",
+      "category": "security",
+      "targetId": "goog-26bcs10424",
+      "targetName": "Aditya Shaw"
+    },
+    {
+      "_id": "mem_1789130409796_6b3vymwmh",
+      "createdAt": "2026-09-11T12:40:09.796Z",
+      "updatedAt": "2026-09-11T12:40:09.796Z",
+      "id": "act_1789130409796_s0ih3",
+      "timestamp": "2026-09-11T12:40:09.796Z",
+      "actorName": "Yahoshuva Kesaboyina",
+      "actorRole": "Admin",
+      "action": "Account Login",
+      "details": "Yahoshuva Kesaboyina (yahoshuva.26bcs10296@sst.scaler.com) successfully logged into Classora Academic OS. [Needs password update: true]",
+      "category": "security",
+      "targetId": "26bcs10296",
+      "targetName": "Yahoshuva Kesaboyina"
+    },
+    {
+      "_id": "mem_1789130465037_70rrif83s",
+      "createdAt": "2026-09-11T12:41:05.037Z",
+      "updatedAt": "2026-09-11T12:41:05.037Z",
+      "id": "act_1789130465037_84ddq",
+      "timestamp": "2026-09-11T12:41:05.037Z",
+      "actorName": "Dr. Priya Nair",
+      "actorRole": "Teacher",
+      "action": "Attendance Recorded",
+      "details": "Official attendance recorded for SES-101: 1 Present, 0 Absent, 0 Late, 0 Excused.",
+      "category": "attendance",
+      "targetId": "SES-101",
+      "targetName": "Session SES-101"
+    },
+    {
+      "_id": "mem_1789130465122_4b8d35aq3",
+      "createdAt": "2026-09-11T12:41:05.122Z",
+      "updatedAt": "2026-09-11T12:41:05.122Z",
+      "id": "act_1789130465122_8kac2",
+      "timestamp": "2026-09-11T12:41:05.122Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from Student to CR.",
+      "category": "security",
+      "targetId": "goog-26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789130465134_pn9cd5411",
+      "createdAt": "2026-09-11T12:41:05.134Z",
+      "updatedAt": "2026-09-11T12:41:05.134Z",
+      "id": "act_1789130465134_nauy3",
+      "timestamp": "2026-09-11T12:41:05.134Z",
+      "actorName": "Course Authority",
+      "actorRole": "Teacher",
+      "action": "Role Updated",
+      "details": "Teacher changed role of Divyanshika Sharma (divyanshika.26bcs10093@sst.scaler.com) from CR to Student.",
+      "category": "security",
+      "targetId": "goog-26bcs10093",
+      "targetName": "Divyanshika Sharma"
+    },
+    {
+      "_id": "mem_1789130465149_vvck5wt2b",
+      "createdAt": "2026-09-11T12:41:05.149Z",
+      "updatedAt": "2026-09-11T12:41:05.149Z",
+      "id": "act_1789130465149_376uk",
+      "timestamp": "2026-09-11T12:41:05.149Z",
+      "actorName": "Course Authority",
+      "actorRole": "Admin",
+      "action": "Role Updated",
+      "details": "Admin changed role of Aditya Shaw (aditya.26bcs10424@sst.scaler.com) from Student to Teacher.",
+      "category": "security",
+      "targetId": "goog-26bcs10424",
+      "targetName": "Aditya Shaw"
+    },
+    {
+      "_id": "mem_1789130465161_os7m92zfo",
+      "createdAt": "2026-09-11T12:41:05.161Z",
+      "updatedAt": "2026-09-11T12:41:05.161Z",
+      "id": "act_1789130465161_88r7q",
+      "timestamp": "2026-09-11T12:41:05.161Z",
       "actorName": "Course Authority",
       "actorRole": "Admin",
       "action": "Role Updated",
