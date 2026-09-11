@@ -4,19 +4,40 @@ import { memoryStore } from '../services/memoryStore.js';
 let currentDbTier = 'NONE';
 let memoryServerInstance = null;
 
-export async function connectDB() {
-  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/classora';
+// Global cache for Vercel Serverless Function instances
+let cached = global._mongooseCache;
+if (!cached) {
+  cached = global._mongooseCache = { conn: null, promise: null };
+}
 
-  // --- Tier 1: Try Local or Cloud MongoDB URI ---
-  try {
-    console.log(`[Classora DB] Attempting connection to MongoDB (${uri})...`);
-    await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 2000, // Fast 2s fail if mongod is not running
-    });
+export async function connectDB() {
+  // Return cached Mongoose connection if already connected (Serverless optimization)
+  if (cached.conn && mongoose.connection.readyState === 1) {
     currentDbTier = 'TIER_1_MONGODB';
-    console.log(`✅ [Classora DB] Tier 1 Active: Successfully connected to MongoDB at ${uri}`);
-    return { tier: currentDbTier, uri };
+    return { tier: currentDbTier, uri: 'cached://mongodb' };
+  }
+
+  const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/classora';
+  const isCloudUri = uri.startsWith('mongodb+srv://') || uri.includes('@');
+
+  // --- Tier 1: Try Cloud or Local MongoDB URI ---
+  try {
+    console.log(`[Classora DB] Connecting to MongoDB (${isCloudUri ? 'Cloud Atlas' : 'Local'})...`);
+    
+    if (!cached.promise) {
+      const timeoutMs = isCloudUri ? 10000 : 2000;
+      cached.promise = mongoose.connect(uri, {
+        serverSelectionTimeoutMS: timeoutMs,
+        maxPoolSize: 10, // Recommended for serverless
+      }).then((m) => m);
+    }
+
+    cached.conn = await cached.promise;
+    currentDbTier = 'TIER_1_MONGODB';
+    console.log(`✅ [Classora DB] Tier 1 Active: Successfully connected to MongoDB`);
+    return { tier: currentDbTier, uri: isCloudUri ? 'mongodb+srv://[cloud-cluster]' : uri };
   } catch (err) {
+    cached.promise = null;
     console.warn(`⚠️ [Classora DB] Native MongoDB not reachable (${err.message}).`);
   }
 
