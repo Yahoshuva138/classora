@@ -315,7 +315,7 @@ export const TeacherPortalView: React.FC = () => {
         </div>
 
         {/* Sub Navigation Bar */}
-        <div className="flex space-x-2 mt-6 pt-4 border-t border-white/10 overflow-x-auto">
+        <div className="flex space-x-2 mt-6 pt-4 border-t border-white/10 overflow-x-auto no-scrollbar pb-1">
           {[
             { id: 'overview', label: 'Faculty Overview', icon: GraduationCap },
             { id: 'gradebook', label: 'Assessment Gradebook', icon: Award },

@@ -230,18 +230,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
   const profile = getProfileDetails();
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/90 px-3 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-subtle gap-2">
-      {/* Left: Mobile hamburger & Page Title */}
-      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+    <header className="h-16 bg-white border-b border-slate-200/90 px-3 sm:px-5 lg:px-7 flex items-center justify-between sticky top-0 z-30 shadow-subtle gap-2">
+      {/* Left: Mobile hamburger, Logo, & Page Title */}
+      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1 md:flex-initial">
         <button
           onClick={onToggleMobileMenu}
-          className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors shrink-0"
+          className="lg:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors shrink-0 cursor-pointer"
           aria-label="Toggle menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+        <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
           <div className="lg:hidden shrink-0">
             <Classora3DLogo size="sm" showText={false} />
           </div>
@@ -250,11 +250,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               <span className="lg:hidden font-black text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 shrink-0">
                 Classora
               </span>
-              <h2 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900 tracking-tight truncate">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight truncate">
                 {getPageTitle()}
               </h2>
             </div>
-            <div className="hidden sm:flex items-center space-x-2 text-[11px] text-slate-500 truncate">
+            <div className="hidden md:flex items-center space-x-2 text-[11px] text-slate-500 truncate">
               <span className="font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200 shrink-0">
                 Subject - 2 • 4 Weeks
               </span>
@@ -266,14 +266,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         </div>
       </div>
 
-      {/* Center: Position Badge & Authority Action (Strict Position Indicator - No arbitrary switching) */}
-      <div className="flex items-center space-x-2 shrink-0">
+      {/* Center: Position Indicator (Concise & uncluttered on medium/large screens) */}
+      <div className="hidden md:flex items-center space-x-2 shrink-0">
         {userRole === 'Admin' ? (
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/15 text-amber-800 border border-amber-300 shadow-2xs">
-              <span className="text-sm">👑</span>
+            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-2xl bg-amber-500/15 text-amber-800 border border-amber-300 shadow-2xs">
+              <span className="text-xs">👑</span>
               <span className="text-xs font-extrabold tracking-tight">Super Admin</span>
-              <span className="hidden md:inline text-[10px] font-semibold text-amber-700 bg-amber-200/60 px-1.5 py-0.2 rounded-md">
+              <span className="hidden 2xl:inline text-[10px] font-semibold text-amber-700 bg-amber-200/60 px-1.5 py-0.2 rounded-md">
                 Full Authority
               </span>
             </div>
@@ -282,19 +282,19 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                 soundFx.playPop();
                 setIsRoleManagementModalOpen(true);
               }}
-              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-2xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-all cursor-pointer"
               title="Appoint Teachers, CRs, and manage institutional staff"
             >
               <Crown className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Role Manager</span>
+              <span>Role Manager</span>
             </button>
           </div>
         ) : userRole === 'Teacher' ? (
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-indigo-50 text-indigo-800 border border-indigo-200 shadow-2xs">
-              <span className="text-sm">👨‍🏫</span>
-              <span className="text-xs font-extrabold tracking-tight">Faculty Teacher</span>
-              <span className="hidden md:inline text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-1.5 py-0.2 rounded-md">
+            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-2xl bg-indigo-50 text-indigo-800 border border-indigo-200 shadow-2xs">
+              <span className="text-xs">👨‍🏫</span>
+              <span className="text-xs font-extrabold tracking-tight">Faculty</span>
+              <span className="hidden 2xl:inline text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-1.5 py-0.2 rounded-md">
                 Attendance & CR Authority
               </span>
             </div>
@@ -303,35 +303,35 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
                 soundFx.playPop();
                 setIsRoleManagementModalOpen(true);
               }}
-              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-2xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all cursor-pointer"
               title="Appoint or remove Class Representatives (CR)"
             >
               <Users className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Manage CRs</span>
+              <span>Manage CRs</span>
             </button>
           </div>
         ) : userRole === 'CR' ? (
-          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs">
-            <span className="text-sm">🎓</span>
+          <div className="flex items-center space-x-1.5 px-3 py-1 rounded-2xl bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs">
+            <span className="text-xs">🎓</span>
             <span className="text-xs font-extrabold tracking-tight">Class Rep (CR)</span>
-            <span className="hidden md:inline text-[10px] font-semibold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded-md">
-              Peer Lead • Read-Only Attendance
+            <span className="hidden 2xl:inline text-[10px] font-semibold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded-md">
+              Peer Lead
             </span>
           </div>
         ) : (
-          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
-            <span className="text-sm">👨‍🎓</span>
+          <div className="flex items-center space-x-1.5 px-3 py-1 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+            <span className="text-xs">👨‍🎓</span>
             <span className="text-xs font-extrabold tracking-tight">Student Portal</span>
-            <span className="hidden md:inline text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-md">
+            <span className="hidden 2xl:inline text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-md">
               Verified SST Cohort
             </span>
           </div>
         )}
       </div>
 
-      {/* Right: Sync Status, Search, Shortcuts, Sound, Tour, Google Auth, Notifications, Profile */}
-      <div className="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
-        {/* Live Database Sync Badge & Ping (Responsive & Interactive) */}
+      {/* Right: Sync Status, Search, Shortcuts, Audio, Notifications, Profile */}
+      <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+        {/* Live Database Sync Badge & Ping */}
         <button
           onClick={() => refreshData()}
           disabled={isSyncing}
@@ -348,54 +348,62 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
             <span className={`w-2 h-2 rounded-full shrink-0 ${isBackendConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
           )}
           <span className="text-[10px] sm:text-[11px]">
-            {isSyncing
-              ? 'Syncing...'
-              : isBackendConnected
-              ? (
-                <>
-                  <span className="hidden xl:inline">{latencyMs !== null ? `${latencyMs}ms • ` : ''}Express Live</span>
-                  <span className="xl:hidden">Live DB</span>
-                </>
-              )
-              : (
-                <span className="font-bold text-amber-900">Offline • Retry</span>
-              )}
+            {isSyncing ? (
+              'Syncing...'
+            ) : isBackendConnected ? (
+              <>
+                <span className="hidden xl:inline">{latencyMs !== null ? `${latencyMs}ms • ` : ''}Live DB</span>
+                <span className="xl:hidden">Live</span>
+              </>
+            ) : (
+              <span className="font-bold text-amber-900">Offline</span>
+            )}
           </span>
         </button>
 
-        {/* Global Search & Command Palette Trigger (⌘K) */}
+        {/* Global Search Button / Trigger */}
         <button
           onClick={() => setIsSearchOpen(true)}
-          className="hidden sm:flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 bg-slate-100/80 hover:bg-slate-200/70 text-slate-600 rounded-xl text-xs font-medium transition-colors border border-slate-200/60 shadow-2xs"
+          className="sm:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
+          title="Search (⌘K)"
+          aria-label="Search"
+        >
+          <Search className="w-4 h-4 text-slate-600" />
+        </button>
+
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="hidden sm:flex items-center space-x-2 px-2.5 sm:px-3 py-1.5 bg-slate-100/80 hover:bg-slate-200/70 text-slate-600 rounded-xl text-xs font-medium transition-colors border border-slate-200/60 shadow-2xs cursor-pointer"
           title="Command Palette & Quick Search (Ctrl+K or /)"
         >
           <Search className="w-3.5 h-3.5 text-slate-400" />
-          <span className="hidden md:inline">Command Palette</span>
+          <span className="hidden lg:inline">Command Palette</span>
+          <span className="lg:hidden">Search</span>
           <kbd className="px-1.5 py-0.5 text-[10px] font-bold text-slate-500 bg-white rounded border border-slate-300 shadow-2xs">
             ⌘K
           </kbd>
         </button>
 
-        {/* Keyboard Shortcuts Cheat Sheet Button (?) */}
+        {/* Keyboard Shortcuts Button */}
         <button
           onClick={() => {
             soundFx.playPop();
             setIsShortcutsOpen(true);
           }}
-          className="hidden md:flex items-center space-x-1 p-2 bg-slate-100/80 hover:bg-slate-200/70 text-slate-600 rounded-xl transition-all border border-slate-200/60 shadow-2xs"
+          className="hidden xl:flex items-center space-x-1 p-2 bg-slate-100/80 hover:bg-slate-200/70 text-slate-600 rounded-xl transition-all border border-slate-200/60 shadow-2xs cursor-pointer"
           title="Keyboard Shortcuts Cheat Sheet (Press ?)"
           aria-label="Keyboard Shortcuts"
         >
-          <Keyboard className="w-4 h-4 text-slate-500" />
+          <Keyboard className="w-3.5 h-3.5 text-slate-500" />
         </button>
 
-        {/* Guided Tour Trigger Button */}
+        {/* Guided Tour Button */}
         <button
           onClick={() => {
             soundFx.playPop();
             setIsOnboardingOpen(true);
           }}
-          className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition-all border border-indigo-200/80 shadow-2xs hover:scale-105 active:scale-95"
+          className="hidden xl:flex items-center space-x-1 px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition-all border border-indigo-200/80 shadow-2xs cursor-pointer"
           title="Interactive Feature Walkthrough"
         >
           <span>🚀</span>
@@ -405,7 +413,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         {/* Sound FX Audio Toggle */}
         <button
           onClick={() => toggleSound()}
-          className={`p-2 rounded-xl transition-all ${
+          className={`p-2 rounded-xl transition-all cursor-pointer ${
             soundEnabled
               ? 'text-blue-600 hover:bg-blue-50 bg-blue-50/60'
               : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
@@ -416,47 +424,18 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
         </button>
 
-        {/* Google Authentication Pill / Sign-in */}
-        {currentUser.isGoogleAuthenticated ? (
+        {/* Google Sign In button if not signed in */}
+        {!currentUser.isGoogleAuthenticated && (
           <button
             onClick={() => {
               soundFx.playPop();
               setIsGoogleAuthModalOpen(true);
             }}
-            className="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-xs font-semibold text-slate-700 transition-all shadow-2xs group"
-            title="Google Verified Account • Click to switch persona"
-          >
-            <div className="relative shrink-0">
-              {currentUser.avatar ? (
-                <img
-                  src={currentUser.avatar}
-                  alt={currentUser.name}
-                  className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200"
-                />
-              ) : (
-                <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
-                  {currentUser.name.charAt(0)}
-                </div>
-              )}
-              <div className="absolute -bottom-0.5 -right-0.5 bg-white rounded-full p-0.5 shadow-2xs">
-                <GoogleIcon className="w-2 h-2" />
-              </div>
-            </div>
-            <span className="hidden xl:inline max-w-[85px] truncate font-medium text-slate-700">
-              {currentUser.name.split(' ')[0]}
-            </span>
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              soundFx.playPop();
-              setIsGoogleAuthModalOpen(true);
-            }}
-            className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-xs font-bold text-slate-700 shadow-2xs hover:shadow-xs transition-all hover:scale-105 active:scale-95"
+            className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-xs font-bold text-slate-700 shadow-2xs transition-all cursor-pointer"
             title="Sign in with Google"
           >
             <GoogleIcon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Sign In</span>
+            <span>Sign In</span>
           </button>
         )}
 
@@ -464,7 +443,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         <div className="relative" ref={notificationRef}>
           <button
             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors relative"
+            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors relative cursor-pointer"
             aria-label="Notifications"
           >
             <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -529,20 +508,32 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
           )}
         </div>
 
-        {/* Profile / Role Menu */}
+        {/* Profile / Role Menu (Unified with Google Persona & unclipped name) */}
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center space-x-2 p-1 sm:pl-2 sm:pr-2.5 sm:py-1.5 rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
+            className="flex items-center space-x-2 p-1 sm:pl-1.5 sm:pr-2.5 sm:py-1 rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200 cursor-pointer"
+            title={`${profile.name} (${profile.roleTitle})`}
           >
-            <div className={`w-8 h-8 rounded-xl ${profile.bg} text-white font-bold flex items-center justify-center text-xs shadow-sm`}>
-              {profile.initials}
+            <div className="relative shrink-0">
+              <div className={`w-8 h-8 rounded-xl ${profile.bg} text-white font-bold flex items-center justify-center text-xs shadow-xs overflow-hidden`}>
+                {currentUser.isGoogleAuthenticated && currentUser.avatar ? (
+                  <img src={currentUser.avatar} alt={currentUser.name} className="w-8 h-8 rounded-xl object-cover" />
+                ) : (
+                  profile.initials
+                )}
+              </div>
+              {currentUser.isGoogleAuthenticated && (
+                <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-2xs ring-1 ring-slate-100">
+                  <GoogleIcon className="w-2.5 h-2.5" />
+                </div>
+              )}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[110px]">{profile.name}</p>
-              <p className="text-[10px] text-slate-500 font-medium truncate max-w-[110px]">{profile.roleTitle}</p>
+            <div className="hidden sm:block text-left min-w-0">
+              <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[130px]">{profile.name}</p>
+              <p className="text-[10px] text-slate-500 font-medium truncate max-w-[130px] hidden lg:block">{profile.roleTitle}</p>
             </div>
-            <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block shrink-0" />
           </button>
 
           {isProfileOpen && (

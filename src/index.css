@@ -25,6 +25,15 @@
   background: #94a3b8;
 }
 
+/* Hide scrollbar utility for clean mobile horizontal tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @media print {
   aside, header, .no-print {
     display: none !important;
