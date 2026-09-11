@@ -143,9 +143,9 @@ router.post('/auth/google', async (req, res) => {
       userName = userName || 'Aarav Sharma';
     } 
     // Check if Faculty / Course Coordinator
-    else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail === 'priya.nair@sst.scaler.com') {
+    else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty') || cleanEmail === 'noor.nigar@scaler.com' || cleanEmail === 'noor.nigar@sst.scaler.com' || cleanEmail === 'priya.nair@sst.scaler.com') {
       role = 'Teacher';
-      userName = userName || 'Dr. Priya Nair';
+      userName = userName || (cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar');
     } 
     // Match Student from official 44 students
     else {
@@ -294,6 +294,33 @@ router.post('/students', async (req, res) => {
     }
 
     res.status(201).json({ success: true, data: created });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/students/:id', async (req, res) => {
+  try {
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole;
+    if (callerRole && callerRole !== 'Admin' && callerRole !== 'Teacher') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Faculty Teachers and Course Admins can remove students.'
+      });
+    }
+
+    const { id } = req.params;
+    const student = await model('students', Student).findOne({ $or: [{ id }, { rollNo: id }] });
+    if (!student) {
+      return res.status(404).json({ success: false, error: 'Student not found' });
+    }
+
+    await model('students', Student).deleteOne({ $or: [{ id }, { rollNo: id }] });
+    if (student.email) {
+      await model('users', User).deleteOne({ email: student.email.toLowerCase() });
+    }
+
+    res.json({ success: true, message: `Student ${student.name} removed successfully` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -500,7 +527,7 @@ router.post('/attendance/bulk', async (req, res) => {
       });
     }
 
-    const { sessionId, records, actorName = 'Dr. Priya Nair', actorRole = 'Teacher' } = req.body;
+    const { sessionId, records, actorName = 'Noor Nigar', actorRole = 'Teacher' } = req.body;
     const timestamp = new Date().toISOString();
     for (const r of records) {
       await model('attendance', AttendanceRecord).updateOne(
@@ -705,7 +732,7 @@ router.post('/requests', async (req, res) => {
 router.patch('/requests/:id/resolve', async (req, res) => {
   try {
     const id = req.params.id;
-    const { response, newStatus = 'Approved', actorName = 'Dr. Priya Nair', actorRole = 'Teacher' } = req.body;
+    const { response, newStatus = 'Approved', actorName = 'Noor Nigar', actorRole = 'Teacher' } = req.body;
     const requestDoc = await model('requests', StudentRequest).findOne({ id });
     if (!requestDoc) {
       return res.status(404).json({ success: false, error: 'Student request not found' });
@@ -963,9 +990,9 @@ router.post('/auth/register', async (req, res) => {
     if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
       role = 'CR';
       userName = 'Aarav Sharma';
-    } else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+    } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
       role = 'Teacher';
-      userName = 'Dr. Priya Nair';
+      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar';
     } else {
       role = 'Student';
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -1063,7 +1090,7 @@ router.post('/auth/login', async (req, res) => {
 
     // Admin & Staff hierarchy validation
     const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
-    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
     let student = null;
     if (!isStaff) {
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -1088,13 +1115,13 @@ router.post('/auth/login', async (req, res) => {
     // Auto-provision any cohort member who doesn't have an existing user document yet
     if (!user) {
       const studentId = student ? (student.id || student.rollNo) : (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com' ? '26bcs10296' : null);
-      let userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0]);
+      let userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : (cleanEmail.includes('noor') || cleanEmail.includes('nigar')) ? 'Noor Nigar' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0]);
       if (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com') userName = 'Yahoshuva Kesaboyina';
 
       let role = 'Student';
       if (isAdmin) {
         role = 'Admin';
-      } else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+      } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
         role = 'Teacher';
       } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
         role = 'CR';
@@ -1254,7 +1281,7 @@ router.post('/auth/google', async (req, res) => {
 
     // Cohort & Staff validation
     const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
-    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
     let studentId = null;
     let userName = name || cleanEmail.split('@')[0].replace(/\./g, ' ');
     let role = 'Student';
@@ -1266,9 +1293,9 @@ router.post('/auth/google', async (req, res) => {
     } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
       role = 'CR';
       userName = 'Aarav Sharma';
-    } else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+    } else if (cleanEmail.includes('noor') || cleanEmail.includes('nigar') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
       role = 'Teacher';
-      userName = 'Dr. Priya Nair';
+      userName = cleanEmail.includes('priya') ? 'Dr. Priya Nair' : 'Noor Nigar';
     } else {
       role = 'Student';
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -1432,7 +1459,7 @@ router.patch('/auth/users/:id/role', async (req, res) => {
     );
 
     await logActivity({
-      actorName: callerEmail || (effectiveCallerRole === 'Teacher' ? 'Dr. Priya Nair' : 'Course Admin'),
+      actorName: callerEmail || (effectiveCallerRole === 'Teacher' ? 'Noor Nigar' : 'Course Admin'),
       actorRole: effectiveCallerRole,
       action: 'Role Modified',
       details: `${effectiveCallerRole} updated ${user.name} (${user.email}) position from ${previousRole} to ${newRole}.`,

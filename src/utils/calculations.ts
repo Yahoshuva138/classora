@@ -146,7 +146,7 @@ export function calculateDashboardMetrics(
     });
   }
 
-  // If no sessions marked today yet, calculate fallback from latest completed session for meaningful demo numbers
+  // Pure Real-Time metrics for today
   let presentToday = todayPresentCount;
   let absentToday = todayAbsentCount;
   let presentPercentage = 0;
@@ -155,28 +155,19 @@ export function calculateDashboardMetrics(
   if (todayTotalMarked > 0) {
     presentPercentage = Math.round((todayPresentCount / todayTotalMarked) * 100);
     absentPercentage = Math.round((todayAbsentCount / todayTotalMarked) * 100);
-  } else {
-    // Look at most recent completed session
-    const lastSession = [...conductedSessions].sort((a, b) => b.date.localeCompare(a.date))[0];
-    if (lastSession) {
-      const records = attendanceRecords.filter(r => r.sessionId === lastSession.id);
-      records.forEach(r => {
-        if (r.status === 'Present' || r.status === 'Late') presentToday++;
-        else if (r.status === 'Absent') absentToday++;
-      });
-      const total = presentToday + absentToday;
-      if (total > 0) {
-        presentPercentage = Math.round((presentToday / total) * 100);
-        absentPercentage = Math.round((absentToday / total) * 100);
-      }
-    }
   }
 
-  // Average class attendance %
-  const totalAttendanceSum = studentStats.reduce((acc, curr) => acc + curr.attendancePercentage, 0);
-  const averageAttendance = studentStats.length > 0
-    ? Math.round(totalAttendanceSum / studentStats.length)
-    : 0;
+  // Real-time sessions with recorded attendance
+  const sessionsWithRecords = sessions.filter(session =>
+    attendanceRecords.some(r => r.sessionId === session.id)
+  );
+
+  // Average class attendance % (only when sessions have been recorded)
+  let averageAttendance = 0;
+  if (sessionsWithRecords.length > 0 && studentStats.length > 0) {
+    const totalAttendanceSum = studentStats.reduce((acc, curr) => acc + curr.attendancePercentage, 0);
+    averageAttendance = Math.round(totalAttendanceSum / studentStats.length);
+  }
 
   // Status Distribution
   const onTrackCount = studentStats.filter(s => s.status === 'On Track').length;
@@ -193,8 +184,9 @@ export function calculateDashboardMetrics(
     .sort((a, b) => (b.overallScore * 0.6 + b.attendancePercentage * 0.4) - (a.overallScore * 0.6 + a.attendancePercentage * 0.4))
     .slice(0, 5);
 
-  // Attendance Trend (Chronological completed sessions)
-  const attendanceTrend = conductedSessions
+  // Real-Time Attendance Trend (Chronological sessions with recorded attendance)
+  const attendanceTrend = sessionsWithRecords
+    .slice()
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(-8)
     .map(session => {
@@ -212,8 +204,10 @@ export function calculateDashboardMetrics(
       };
     });
 
-  // Recent Sessions Bar Chart Data
-  const recentSessionsData = conductedSessions
+  // Real-Time Recent Sessions Bar Chart Data
+  const recentSessionsData = sessionsWithRecords
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date))
     .slice(-5)
     .map(session => {
       const records = attendanceRecords.filter(r => r.sessionId === session.id);

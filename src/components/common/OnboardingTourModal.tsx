@@ -104,7 +104,7 @@ export const OnboardingTourModal: React.FC<OnboardingTourModalProps> = ({
                 👨‍🏫
               </div>
               <div className="text-left text-xs">
-                <strong className="text-slate-900 block font-bold">Faculty Coordinator (Dr. Priya Nair)</strong>
+                <strong className="text-slate-900 block font-bold">Faculty Coordinator (Noor Nigar)</strong>
                 <span className="text-slate-500 text-[11px]">Interactive marks gradebook, syllabus timeline, and medical excuse approvals.</span>
               </div>
             </div>

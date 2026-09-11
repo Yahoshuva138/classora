@@ -211,7 +211,7 @@ export const PerformanceScreen: React.FC = () => {
             <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">CR Action Tip for Pronunciation:</span> Schedule a 20-minute
-              minimal-pairs drill with Dr. Priya Nair to address tongue placement and word stress issues before the viva.
+              minimal-pairs drill with Noor Nigar to address tongue placement and word stress issues before the viva.
             </div>
           </div>
         </div>

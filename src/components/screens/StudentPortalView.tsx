@@ -806,7 +806,7 @@ export const StudentPortalView: React.FC = () => {
                 Graded Course Assessments
               </h3>
               <p className="text-xs text-slate-500 mb-4">
-                Scores awarded by Dr. Priya Nair & faculty evaluators
+                Scores awarded by {activeTeacher.name} & faculty evaluators
               </p>
 
               <div className="space-y-3">
@@ -908,7 +908,7 @@ export const StudentPortalView: React.FC = () => {
                   Submit Request or Excuse
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Direct message to Lead CR Aarav Sharma & Dr. Priya Nair
+                  Direct message to Lead CR Aarav Sharma & {activeTeacher.name}
                 </p>
               </div>
             </div>

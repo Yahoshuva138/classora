@@ -61,9 +61,9 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
       if (email.includes('aarav') || email.includes('cr')) {
         role = 'CR';
         userName = customName.trim() || 'Aarav Sharma';
-      } else if (email.includes('priya') || email.includes('nair') || email.includes('faculty')) {
+      } else if (email.includes('noor') || email.includes('nigar') || email.includes('priya') || email.includes('faculty') || email.includes('teacher')) {
         role = 'Teacher';
-        userName = customName.trim() || 'Dr. Priya Nair';
+        userName = customName.trim() || 'Noor Nigar';
       } else {
         const rollMatch = email.match(/26bcs\d+/i);
         const rollNo = rollMatch ? rollMatch[0].toLowerCase() : null;

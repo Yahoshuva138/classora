@@ -19,59 +19,15 @@ const seedFilePath = path.join(__dirname, '../data/seedData.json');
 
 export const presetActivityLogs = [
   {
-    id: 'act-001',
-    timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-    actorName: 'Aarav Sharma',
-    actorRole: 'CR',
-    action: 'Attendance Recorded',
-    details: 'Marked 41 Present, 2 Late, 1 Excused for SES-110 (Group Discussion 1 & Debate)',
-    category: 'attendance',
-    targetId: 'SES-110',
-    targetName: 'Group Discussion 1 & Debate'
-  },
-  {
-    id: 'act-002',
-    timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    actorName: 'Dr. Priya Nair',
-    actorRole: 'Teacher',
-    action: 'Rubric Evaluated',
-    details: 'Awarded 92/100 Content and 94/100 Teamwork to Group 5 (Autonomous Agents & Language Models)',
-    category: 'academic',
-    targetId: 'Group 5',
-    targetName: 'Group 5'
-  },
-  {
-    id: 'act-003',
-    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    actorName: 'Aarav Sharma',
-    actorRole: 'CR',
-    action: 'Leave Request Approved',
-    details: 'Approved absence excuse for Harshit Raj on 2026-09-08 (Hackathon participation) -> Synced to Excused',
-    category: 'academic',
-    targetId: 'REQ-101',
-    targetName: 'Harshit Raj'
-  },
-  {
-    id: 'act-004',
-    timestamp: new Date(Date.now() - 1000 * 60 * 150).toISOString(),
-    actorName: 'Dr. Priya Nair',
-    actorRole: 'Teacher',
-    action: 'CR Remark Added',
-    details: 'Commended Divyanshika Sharma for eloquent rebuttal articulation during Session 10',
-    category: 'academic',
-    targetId: '26bcs10093',
-    targetName: 'Divyanshika Sharma'
-  },
-  {
-    id: 'act-005',
-    timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+    id: 'act-live-init',
+    timestamp: new Date().toISOString(),
     actorName: 'Classora OS',
     actorRole: 'System',
-    action: 'Institutional Sync Verified',
-    details: 'All 44 SST official cohort students and 7 discussion groups synced with 12 lecture schedules',
+    action: 'Real-Time Database Active',
+    details: 'Institutional cohort connected: 44 SST students, 12 syllabus modules, Teacher Noor Nigar active.',
     category: 'system',
-    targetId: 'English C - Term 1',
-    targetName: 'English C - Term 1'
+    targetId: 'ENG-101',
+    targetName: 'English Language & Communication Skills'
   }
 ];
 
@@ -87,11 +43,20 @@ export const presetUsers = [
   },
   {
     id: 'goog-faculty',
-    name: 'Dr. Priya Nair',
-    email: 'priya.nair@sst.scaler.com',
+    name: 'Noor Nigar',
+    email: 'noor.nigar@scaler.com',
     role: 'Teacher',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
     personaKey: 'coordinator_faculty',
+    isGoogleAuthenticated: true
+  },
+  {
+    id: 'goog-faculty-sst',
+    name: 'Noor Nigar',
+    email: 'noor.nigar@sst.scaler.com',
+    role: 'Teacher',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
+    personaKey: 'coordinator_faculty_sst',
     isGoogleAuthenticated: true
   },
   {

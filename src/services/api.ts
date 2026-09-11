@@ -109,7 +109,7 @@ export const api = {
   },
 
   async addFacultyFeedback(studentId: string, text: string): Promise<any> {
-    return this.addCRRemark(studentId, text, 'Dr. Priya Nair (Faculty)');
+    return this.addCRRemark(studentId, text, 'Noor Nigar (Faculty)');
   },
 
   async updateStudentSkill(studentId: string, skill: keyof StudentSkillScores, score: number): Promise<any> {

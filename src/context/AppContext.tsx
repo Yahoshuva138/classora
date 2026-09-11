@@ -66,6 +66,8 @@ interface AppContextType {
     name: string;
     designation: string;
     email: string;
+    company?: string;
+    rating?: number;
     cabin: string;
     phone: string;
   };
@@ -163,6 +165,7 @@ interface AppContextType {
 
   // Settings & System
   updateSettings: (updates: Partial<AppSettings>) => void;
+  refreshRealTimeData: () => void;
   resetToDemoData: () => void;
 }
 
@@ -179,6 +182,11 @@ const STORAGE_KEYS = {
   CURRENT_STUDENT: 'classora_curr_student_v2',
   STUDENT_REQUESTS: 'classora_requests_v2',
   GOOGLE_USER: 'classora_goog_user_v2',
+  ACTIVE_TAB: 'classora_active_tab_v2',
+  SELECTED_SESSION: 'classora_selected_session_v2',
+  SELECTED_STUDENT: 'classora_selected_student_v2',
+  USER_MODIFIED_SCORES: 'classora_user_modified_scores_v2',
+  USER_MODIFIED_ATTENDANCE: 'classora_user_modified_attendance_v2',
 };
 
 // Academic Marking Criteria Column Max Limits
@@ -206,58 +214,186 @@ function reconcileStudents(localList: Student[], serverList: Student[]): Student
   if (!serverList || serverList.length === 0) return localList;
   if (!localList || localList.length === 0) return serverList;
 
-  const localMap = new Map(localList.map(s => [s.id, s]));
+  let modifiedScores: Record<string, { score: number; updatedAt: number }> = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_SCORES);
+    if (raw) modifiedScores = JSON.parse(raw);
+  } catch {}
 
-  return serverList.map(serverStudent => {
+  const localMap = new Map(localList.map(s => [s.id, s]));
+  const processedStudentIds = new Set<string>();
+
+  const mergedServerStudents = serverList.map(serverStudent => {
+    processedStudentIds.add(serverStudent.id);
     const localStudent = localMap.get(serverStudent.id);
     if (!localStudent) return serverStudent;
 
+    // Merge assignments
     const mergedAssignments = (serverStudent.assignments || []).map(serverAsg => {
       const localAsg = localStudent.assignments?.find(a => a.id === serverAsg.id);
       if (!localAsg) return serverAsg;
-      // If local has a score and server doesn't, or local was evaluated, preserve local score
-      if (localAsg.score !== null && localAsg.score !== undefined && (serverAsg.score === null || serverAsg.score === undefined)) {
+
+      const modKey = `${serverStudent.id}_${serverAsg.id}`;
+      const userMod = modifiedScores[modKey];
+
+      // Priority 1: User explicitly modified this score in the current or previous session
+      if (userMod !== undefined && userMod.score !== undefined) {
         return {
           ...serverAsg,
-          score: localAsg.score,
-          status: localAsg.status || 'Graded'
+          score: userMod.score,
+          status: 'Graded' as const
         };
       }
-      return serverAsg;
-    });
 
-    const serverRemarkIds = new Set((serverStudent.crRemarks || []).map(r => r.id));
-    const extraLocalRemarks = (localStudent.crRemarks || []).filter(r => !serverRemarkIds.has(r.id));
-    const mergedRemarks = [...extraLocalRemarks, ...(serverStudent.crRemarks || [])];
-
-    return {
-      ...serverStudent,
-      assignments: mergedAssignments,
-      crRemarks: mergedRemarks
-    };
+    // Priority 2: Server assignment score is authoritative (real-time live database)
+    return serverAsg;
   });
+
+  // Real-time skills from server with user modifications applied
+  const mergedSkills: StudentSkillScores = {
+    ...(serverStudent.skills || {
+      communication: 0,
+      grammar: 0,
+      vocabulary: 0,
+      pronunciation: 0,
+      participation: 0,
+      assignments: 0,
+      assessments: 0,
+    })
+  };
+
+  const skillKeys: Array<keyof StudentSkillScores> = [
+    'communication', 'grammar', 'vocabulary', 'pronunciation', 'participation', 'assignments', 'assessments'
+  ];
+  for (const sk of skillKeys) {
+    const modKey = `${serverStudent.id}_${sk}`;
+    if (modifiedScores[modKey]?.score !== undefined) {
+      mergedSkills[sk] = modifiedScores[modKey].score;
+    }
+  }
+
+  // Merge remarks (union without duplicates)
+  const serverRemarkIds = new Set((serverStudent.crRemarks || []).map(r => r.id));
+  const extraLocalRemarks = (localStudent.crRemarks || []).filter(r => !serverRemarkIds.has(r.id));
+  const mergedRemarks = [...extraLocalRemarks, ...(serverStudent.crRemarks || [])];
+
+  return {
+    ...serverStudent,
+    skills: mergedSkills,
+    assignments: mergedAssignments,
+    crRemarks: mergedRemarks,
+    phone: localStudent.phone || serverStudent.phone,
+    batch: localStudent.batch || serverStudent.batch,
+    currentLevel: localStudent.currentLevel || serverStudent.currentLevel,
+  };
+});
+
+// Keep any newly added local students that weren't in serverList
+const extraLocalStudents = localList.filter(ls => !processedStudentIds.has(ls.id));
+
+const result = [...mergedServerStudents, ...extraLocalStudents];
+try {
+  localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(result));
+} catch {}
+return result;
 }
 
 function reconcileAttendance(localRecs: AttendanceRecord[], serverRecs: AttendanceRecord[]): AttendanceRecord[] {
-  if (!serverRecs || serverRecs.length === 0) return localRecs;
-  if (!localRecs || localRecs.length === 0) return serverRecs;
+  let modifiedAttendance: Record<string, { status: AttendanceStatus; updatedAt: number; remarks?: string }> = {};
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE);
+    if (raw) modifiedAttendance = JSON.parse(raw);
+  } catch {}
 
   const map = new Map<string, AttendanceRecord>();
-  for (const r of serverRecs) {
+  // 1. Authoritative real-time server records
+  for (const r of (serverRecs || [])) {
     map.set(`${r.sessionId}_${r.studentId}`, r);
   }
-  for (const lr of localRecs) {
-    const key = `${lr.sessionId}_${lr.studentId}`;
-    const sr = map.get(key);
-    if (!sr) {
-      map.set(key, lr);
-    } else if (lr.timestamp && sr.timestamp) {
-      if (new Date(lr.timestamp).getTime() > new Date(sr.timestamp).getTime()) {
-        map.set(key, lr);
-      }
+
+  // 2. User's explicit real-time modifications take precedence or add records
+  for (const [key, userMod] of Object.entries(modifiedAttendance)) {
+    const [sessionId, studentId] = key.split('_');
+    if (sessionId && studentId && userMod?.status) {
+      const sr = map.get(key);
+      map.set(key, {
+        sessionId,
+        studentId,
+        status: userMod.status,
+        remarks: userMod.remarks ?? sr?.remarks,
+        timestamp: new Date(userMod.updatedAt || Date.now()).toISOString()
+      });
     }
   }
-  return Array.from(map.values());
+
+  const result = Array.from(map.values());
+  try {
+    localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(result));
+  } catch {}
+  return result;
+}
+
+function reconcileSessions(localList: Session[], serverList: Session[]): Session[] {
+  if (!serverList || serverList.length === 0) return localList;
+  if (!localList || localList.length === 0) return serverList;
+
+  const serverMap = new Map(serverList.map(s => [s.id, s]));
+  const merged: Session[] = [...serverList];
+
+  for (const ls of localList) {
+    if (!serverMap.has(ls.id)) {
+      merged.push(ls);
+    }
+  }
+  return merged;
+}
+
+function reconcileFollowUps(localList: FollowUp[], serverList: FollowUp[]): FollowUp[] {
+  if (!serverList) return (localList || []).filter(lf => !/^fu-\d+$/i.test(lf.id));
+  const serverIds = new Set(serverList.map(f => f.id));
+  const isDemoId = (id: string) => /^fu-\d+$/i.test(id);
+  const extraLocal = (localList || []).filter(lf => !serverIds.has(lf.id) && !isDemoId(lf.id));
+  const result = [...serverList, ...extraLocal];
+  try {
+    localStorage.setItem(STORAGE_KEYS.FOLLOWUPS, JSON.stringify(result));
+  } catch {}
+  return result;
+}
+
+function reconcileTasks(localList: CRTask[], serverList: CRTask[]): CRTask[] {
+  if (!serverList) return (localList || []).filter(lt => !/^task-\d+$/i.test(lt.id));
+  const serverIds = new Set(serverList.map(t => t.id));
+  const isDemoId = (id: string) => /^task-\d+$/i.test(id);
+  const extraLocal = (localList || []).filter(lt => !serverIds.has(lt.id) && !isDemoId(lt.id));
+  const result = [...serverList, ...extraLocal];
+  try {
+    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(result));
+  } catch {}
+  return result;
+}
+
+function reconcileRequests(localList: StudentRequest[], serverList: StudentRequest[]): StudentRequest[] {
+  if (!serverList) return (localList || []).filter(lr => !/^req-\d+$/i.test(lr.id));
+  const serverIds = new Set(serverList.map(r => r.id));
+  const isDemoId = (id: string) => /^req-\d+$/i.test(id);
+  const extraLocal = (localList || []).filter(lr => !serverIds.has(lr.id) && !isDemoId(lr.id));
+  const result = [...serverList, ...extraLocal];
+  try {
+    localStorage.setItem(STORAGE_KEYS.STUDENT_REQUESTS, JSON.stringify(result));
+  } catch {}
+  return result;
+}
+
+function reconcileSettings(localSettings: AppSettings, serverSettings?: AppSettings | null): AppSettings {
+  if (!serverSettings) return localSettings;
+  if (!localSettings) return serverSettings;
+  return {
+    ...localSettings,
+    ...serverSettings,
+    onTrackThreshold: localSettings.onTrackThreshold ?? serverSettings.onTrackThreshold,
+    needsAttentionThreshold: localSettings.needsAttentionThreshold ?? serverSettings.needsAttentionThreshold,
+    atRiskThreshold: localSettings.atRiskThreshold ?? serverSettings.atRiskThreshold,
+  };
 }
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -319,15 +455,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [studentRequests, setStudentRequests] = useState<StudentRequest[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.STUDENT_REQUESTS);
-    return saved ? JSON.parse(saved) : initialStudentRequests;
+    if (saved) {
+      try {
+        const parsed: StudentRequest[] = JSON.parse(saved);
+        return parsed.filter(r => !/^req-\d+$/i.test(r.id));
+      } catch {}
+    }
+    return initialStudentRequests;
   });
 
-  // Fixed Faculty Coordinator info
+  // Official Course Instructor info (Scaler++)
   const activeTeacher = {
-    name: 'Dr. Priya Nair',
-    designation: 'Course Coordinator & Associate Professor (Phonetics & Linguistics)',
-    email: 'priya.nair@sst.scaler.com',
-    cabin: 'Faculty Block 3, Room 304',
+    name: 'Noor Nigar',
+    designation: 'Course Instructor (English & Communication Skills)',
+    email: 'noor.nigar@scaler.com',
+    company: 'Scaler',
+    rating: 4.4,
+    cabin: 'Scaler Faculty Studio, Floor 4',
     phone: '+91 98450 11223'
   };
 
@@ -343,18 +487,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   });
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.ATTENDANCE);
-    return saved ? JSON.parse(saved) : initialAttendanceRecords;
+    try {
+      const userModRaw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE);
+      if (userModRaw) {
+        const userMod = JSON.parse(userModRaw);
+        if (Object.keys(userMod).length > 0) {
+          const saved = localStorage.getItem(STORAGE_KEYS.ATTENDANCE);
+          if (saved) return JSON.parse(saved);
+        }
+      }
+    } catch {}
+    return initialAttendanceRecords;
   });
 
   const [followUps, setFollowUps] = useState<FollowUp[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.FOLLOWUPS);
-    return saved ? JSON.parse(saved) : initialFollowUps;
+    if (saved) {
+      try {
+        const parsed: FollowUp[] = JSON.parse(saved);
+        return parsed.filter(f => !/^fu-\d+$/i.test(f.id));
+      } catch {}
+    }
+    return initialFollowUps;
   });
 
   const [tasks, setTasks] = useState<CRTask[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.TASKS);
-    return saved ? JSON.parse(saved) : initialTasks;
+    if (saved) {
+      try {
+        const parsed: CRTask[] = JSON.parse(saved);
+        return parsed.filter(t => !/^task-\d+$/i.test(t.id));
+      } catch {}
+    }
+    return initialTasks;
   });
 
   const [settings, setSettings] = useState<AppSettings>(() => {
@@ -376,10 +541,52 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setSoundVolumeState(soundFx.volume);
   }, []);
 
-  // UI Navigation states
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>('SES-107');
+  // UI Navigation states with LocalStorage persistence across reloads
+  const [activeTab, setActiveTabState] = useState<string>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.ACTIVE_TAB);
+    if (saved) return saved;
+    const savedUser = localStorage.getItem(STORAGE_KEYS.GOOGLE_USER);
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.role === 'Student') return 'student-overview';
+        if (parsed?.role === 'Teacher') return 'teacher-overview';
+      } catch {}
+    }
+    return 'dashboard';
+  });
+
+  const setActiveTab = useCallback((tab: string) => {
+    setActiveTabState(tab);
+    localStorage.setItem(STORAGE_KEYS.ACTIVE_TAB, tab);
+  }, []);
+
+  const [selectedStudentId, setSelectedStudentIdState] = useState<string | null>(() => {
+    return localStorage.getItem(STORAGE_KEYS.SELECTED_STUDENT) || null;
+  });
+
+  const setSelectedStudentId = useCallback((id: string | null) => {
+    setSelectedStudentIdState(id);
+    if (id) {
+      localStorage.setItem(STORAGE_KEYS.SELECTED_STUDENT, id);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.SELECTED_STUDENT);
+    }
+  }, []);
+
+  const [selectedSessionId, setSelectedSessionIdState] = useState<string | null>(() => {
+    return localStorage.getItem(STORAGE_KEYS.SELECTED_SESSION) || 'SES-107';
+  });
+
+  const setSelectedSessionId = useCallback((id: string | null) => {
+    setSelectedSessionIdState(id);
+    if (id) {
+      localStorage.setItem(STORAGE_KEYS.SELECTED_SESSION, id);
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.SELECTED_SESSION);
+    }
+  }, []);
+
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
 
@@ -392,14 +599,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (data.students && data.students.length > 0) {
           setStudents(prev => reconcileStudents(prev, data.students));
         }
-        if (data.sessions && data.sessions.length > 0) setSessions(data.sessions);
+        if (data.sessions && data.sessions.length > 0) {
+          setSessions(prev => reconcileSessions(prev, data.sessions));
+        }
         if (data.attendanceRecords) {
           setAttendanceRecords(prev => reconcileAttendance(prev, data.attendanceRecords));
         }
-        if (data.followUps) setFollowUps(data.followUps);
-        if (data.tasks) setTasks(data.tasks);
-        if (data.studentRequests) setStudentRequests(data.studentRequests);
-        if (data.settings) setSettings(data.settings);
+        if (data.followUps) {
+          setFollowUps(prev => reconcileFollowUps(prev, data.followUps));
+        }
+        if (data.tasks) {
+          setTasks(prev => reconcileTasks(prev, data.tasks));
+        }
+        if (data.studentRequests) {
+          setStudentRequests(prev => reconcileRequests(prev, data.studentRequests));
+        }
+        if (data.settings) {
+          setSettings(prev => reconcileSettings(prev, data.settings));
+        }
         if (data.activityLogs) setActivityLogs(data.activityLogs);
         setIsBackendConnected(true);
         if (!isSilent) addToast('Database synchronized with live Express backend', 'success');
@@ -435,24 +652,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [currentUser.name, userRole, refreshActivityLogs]);
 
-  // Auto-reconnect listeners and 15s health check polling when offline
+  // Auto-reconnect listeners and 5s real-time heartbeat synchronization with Express backend
   useEffect(() => {
     const handleOnline = () => {
       refreshData(true);
     };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refreshData(true);
+      }
+    };
     window.addEventListener('online', handleOnline);
     window.addEventListener('focus', handleOnline);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Continuous 15s real-time heartbeat synchronization with Express backend
+    // Continuous 5s real-time heartbeat synchronization with Express backend
     const timer = setInterval(() => {
       if (!isSyncing) {
         refreshData(true);
       }
-    }, 15000);
+    }, 5000);
 
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('focus', handleOnline);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(timer);
     };
   }, [isBackendConnected, isSyncing, refreshData]);
@@ -468,14 +692,24 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           if (data.students && data.students.length > 0) {
             setStudents(prev => reconcileStudents(prev, data.students));
           }
-          if (data.sessions && data.sessions.length > 0) setSessions(data.sessions);
+          if (data.sessions && data.sessions.length > 0) {
+            setSessions(prev => reconcileSessions(prev, data.sessions));
+          }
           if (data.attendanceRecords) {
             setAttendanceRecords(prev => reconcileAttendance(prev, data.attendanceRecords));
           }
-          if (data.followUps) setFollowUps(data.followUps);
-          if (data.tasks) setTasks(data.tasks);
-          if (data.studentRequests) setStudentRequests(data.studentRequests);
-          if (data.settings) setSettings(data.settings);
+          if (data.followUps) {
+            setFollowUps(prev => reconcileFollowUps(prev, data.followUps));
+          }
+          if (data.tasks) {
+            setTasks(prev => reconcileTasks(prev, data.tasks));
+          }
+          if (data.studentRequests) {
+            setStudentRequests(prev => reconcileRequests(prev, data.studentRequests));
+          }
+          if (data.settings) {
+            setSettings(prev => reconcileSettings(prev, data.settings));
+          }
           if (data.activityLogs) setActivityLogs(data.activityLogs);
           setIsBackendConnected(true);
         }
@@ -707,8 +941,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const timestamp = new Date().toISOString();
     setAttendanceRecords(prev => {
       const filtered = prev.filter(r => !(r.sessionId === sessionId && r.studentId === studentId));
-      return [...filtered, { sessionId, studentId, status, remarks, timestamp }];
+      const updated = [...filtered, { sessionId, studentId, status, remarks, timestamp }];
+      localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(updated));
+      return updated;
     });
+
+    // Save to userModifiedAttendance registry to protect against serverless resets
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE) || '{}';
+      const parsed = JSON.parse(raw);
+      parsed[`${sessionId}_${studentId}`] = { status, timestamp, remarks, updatedAt: Date.now() };
+      localStorage.setItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE, JSON.stringify(parsed));
+    } catch {}
 
     api.markAttendance(sessionId, studentId, status, remarks).catch(err => {
       console.warn('[Classora Backend] markAttendance failed:', err);
@@ -733,8 +977,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         status: r.status,
         timestamp,
       }));
-      return [...filtered, ...newRecords];
+      const updated = [...filtered, ...newRecords];
+      localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(updated));
+      return updated;
     });
+
+    // Save to userModifiedAttendance registry
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE) || '{}';
+      const parsed = JSON.parse(raw);
+      records.forEach(r => {
+        parsed[`${sessionId}_${r.studentId}`] = { status: r.status, timestamp, updatedAt: Date.now() };
+      });
+      localStorage.setItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE, JSON.stringify(parsed));
+    } catch {}
 
     api.bulkMarkAttendance(sessionId, records).catch(err => {
       console.warn('[Classora Backend] bulkMarkAttendance failed:', err);
@@ -748,7 +1004,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       addToast('Permission Denied: Only faculty teachers and course admins have permission to reset attendance.', 'error');
       return;
     }
-    setAttendanceRecords(prev => prev.filter(r => r.sessionId !== sessionId));
+    setAttendanceRecords(prev => {
+      const updated = prev.filter(r => r.sessionId !== sessionId);
+      localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify(updated));
+      return updated;
+    });
+
+    // Clean userModifiedAttendance registry for this session
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE) || '{}';
+      const parsed = JSON.parse(raw);
+      Object.keys(parsed).forEach(k => {
+        if (k.startsWith(`${sessionId}_`)) delete parsed[k];
+      });
+      localStorage.setItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE, JSON.stringify(parsed));
+    } catch {}
+
     api.resetSessionAttendance(sessionId).catch(err => {
       console.warn('[Classora Backend] resetSessionAttendance failed:', err);
     });
@@ -1009,7 +1280,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] submitStudentRequest failed:', err);
     });
 
-    addToast(`Request "${req.subject}" submitted to Lead CR & Dr. Priya Nair.`, 'success');
+    addToast(`Request "${req.subject}" submitted to Lead CR & Noor Nigar.`, 'success');
   }, [currentStudentId, students, addToast]);
 
   const resolveStudentRequest = useCallback((id: string, responseText: string, newStatus: 'Approved' | 'Resolved' = 'Resolved') => {
@@ -1049,7 +1320,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   }, [studentRequests, selectedSessionId, addToast, refreshData, refreshActivityLogs]);
 
-  // Teacher grading & feedback methods with strict column limit enforcement
+  // Teacher grading & feedback methods with strict column limit enforcement and persistent tracking
   const updateStudentSkillScore = useCallback((studentId: string, skill: keyof StudentSkillScores, rawScore: number) => {
     const clampedScore = Math.max(0, Math.min(100, Math.round(Number(rawScore) || 0)));
     setStudents(prev => {
@@ -1066,6 +1337,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(updated));
       return updated;
     });
+
+    // Save to userModifiedScores registry to preserve across all reloads
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_SCORES) || '{}';
+      const parsed = JSON.parse(raw);
+      parsed[`${studentId}_${skill}`] = { score: clampedScore, updatedAt: Date.now() };
+      localStorage.setItem(STORAGE_KEYS.USER_MODIFIED_SCORES, JSON.stringify(parsed));
+    } catch {}
+
     api.updateStudentSkill(studentId, skill, clampedScore).catch(err => {
       console.warn('[Classora Backend] updateStudentSkill failed:', err);
     });
@@ -1100,6 +1380,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       return updated;
     });
 
+    // Save to userModifiedScores registry to preserve across all reloads
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.USER_MODIFIED_SCORES) || '{}';
+      const parsed = JSON.parse(raw);
+      parsed[`${studentId}_${assignmentId}`] = { score: finalClampedScore, updatedAt: Date.now() };
+      localStorage.setItem(STORAGE_KEYS.USER_MODIFIED_SCORES, JSON.stringify(parsed));
+    } catch {}
+
     api.updateStudentAssignment(studentId, assignmentId, finalClampedScore).catch(err => {
       console.warn('[Classora Backend] updateStudentAssignment failed:', err);
     });
@@ -1117,7 +1405,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const remark: CRRemark = {
       id: `FCT-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
-      author: 'Dr. Priya Nair (Faculty)',
+      author: 'Noor Nigar (Instructor)',
       text: remarkText
     };
     setStudents(prev => prev.map(s => {
@@ -1211,12 +1499,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addToast(isEnabled ? 'Sound effects enabled' : 'Sound effects muted', 'info');
   }, [addToast]);
 
-  const resetToDemoData = useCallback(async () => {
+  const refreshRealTimeData = useCallback(async () => {
     try {
       setIsSyncing(true);
       await api.resyncOfficial();
       await refreshData(true);
-      addToast('Classora database re-synchronized with official SST 2026 registry', 'success');
+      addToast('Classora database re-synchronized with live official SST 2026 registry', 'success');
     } catch (err: any) {
       console.warn('[Classora Backend] resyncOfficial fallback:', err);
       localStorage.removeItem(STORAGE_KEYS.STUDENTS);
@@ -1228,6 +1516,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       localStorage.removeItem(STORAGE_KEYS.ROLE);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_STUDENT);
       localStorage.removeItem(STORAGE_KEYS.STUDENT_REQUESTS);
+      localStorage.removeItem(STORAGE_KEYS.USER_MODIFIED_SCORES);
+      localStorage.removeItem(STORAGE_KEYS.USER_MODIFIED_ATTENDANCE);
 
       setStudents(initialStudents);
       setSessions(initialSessions);
@@ -1239,11 +1529,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setUserRoleState('CR');
       setCurrentStudentIdState('26bcs10296');
       setStudentRequests(initialStudentRequests);
-      addToast('Local SST 2026 dataset refreshed', 'info');
+      addToast('Live SST 2026 dataset refreshed', 'info');
     } finally {
       setIsSyncing(false);
     }
   }, [refreshData, addToast]);
+
+  const resetToDemoData = refreshRealTimeData;
 
   return (
     <AppContext.Provider
@@ -1332,6 +1624,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         deleteTask,
 
         updateSettings,
+        refreshRealTimeData,
         resetToDemoData,
         activityLogs,
         refreshActivityLogs,

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Student, StudentCalculatedStats } from '../../types';
 import { useBodyScrollLock } from '../../hooks/useBodyScrollLock';
+import { useApp } from '../../context/AppContext';
 
 interface PrintableStudentDocumentProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ export const PrintableStudentDocument: React.FC<PrintableStudentDocumentProps> =
   defaultView = 'transcript'
 }) => {
   useBodyScrollLock(isOpen);
+  const { activeTeacher } = useApp();
   const [docType, setDocType] = useState<'transcript' | 'certificate'>(defaultView);
 
   useEffect(() => {
@@ -249,11 +251,11 @@ export const PrintableStudentDocument: React.FC<PrintableStudentDocumentProps> =
               {/* Dual Signatures */}
               <div className="mt-12 pt-8 border-t border-slate-300 grid grid-cols-2 gap-8 text-center text-xs">
                 <div>
-                  <div className="font-serif italic text-base text-slate-800 mb-1">Dr. Priya Nair</div>
+                  <div className="font-serif italic text-base text-slate-800 mb-1">{activeTeacher.name}</div>
                   <div className="border-t border-slate-400 pt-1 font-bold text-slate-900">
-                    Dr. Priya Nair, Ph.D.
+                    {activeTeacher.name}
                   </div>
-                  <div className="text-slate-500 text-[11px]">Course Coordinator &amp; Faculty Lead</div>
+                  <div className="text-slate-500 text-[11px]">{activeTeacher.designation}</div>
                 </div>
                 <div>
                   <div className="font-serif italic text-base text-slate-800 mb-1">Aarav Sharma</div>
@@ -337,11 +339,11 @@ export const PrintableStudentDocument: React.FC<PrintableStudentDocumentProps> =
                 {/* Signatures & Seal */}
                 <div className="mt-12 pt-8 border-t border-amber-200/80 grid grid-cols-2 gap-8 text-center text-xs">
                   <div>
-                    <div className="font-serif italic text-base text-slate-800 mb-1">Dr. Priya Nair</div>
+                    <div className="font-serif italic text-base text-slate-800 mb-1">{activeTeacher.name}</div>
                     <div className="border-t border-slate-400/60 pt-1 font-bold text-slate-900">
-                      Dr. Priya Nair, Ph.D.
+                      {activeTeacher.name}
                     </div>
-                    <div className="text-slate-500 text-[11px]">Course Coordinator</div>
+                    <div className="text-slate-500 text-[11px]">{activeTeacher.designation}</div>
                   </div>
                   <div>
                     <div className="font-serif italic text-base text-slate-800 mb-1">Aarav Sharma</div>

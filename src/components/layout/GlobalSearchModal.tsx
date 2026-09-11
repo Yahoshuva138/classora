@@ -46,7 +46,8 @@ export const GlobalSearchModal: React.FC = () => {
     setUserRole,
     setIsShortcutsOpen,
     setIsOnboardingOpen,
-    settings
+    settings,
+    activeTeacher
   } = useApp();
 
   const [query, setQuery] = useState('');
@@ -175,7 +176,7 @@ export const GlobalSearchModal: React.FC = () => {
     {
       id: 'cmd-teacher-portal',
       type: 'command',
-      title: 'Switch to Faculty Portal (Dr. Priya Nair)',
+      title: `Switch to Faculty Portal (${activeTeacher.name})`,
       subtitle: 'Gradebook, team broadcast & academic audit trail',
       icon: <GraduationCap className="w-4 h-4 text-violet-500" />,
       action: () => { setUserRole('Teacher'); setIsSearchOpen(false); }

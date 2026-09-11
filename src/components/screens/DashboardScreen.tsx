@@ -317,32 +317,46 @@ export const DashboardScreen: React.FC = () => {
               Target: 85%+
             </span>
           </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={attendanceTrend} margin={{ top: 10, right: 20, left: -10, bottom: 25 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="sessionName"
-                  tick={{ fontSize: 10, fill: '#64748b' }}
-                  angle={-15}
-                  textAnchor="end"
-                />
-                <YAxis domain={[50, 100]} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
-                <Tooltip
-                  formatter={(val: any) => [`${val}%`, 'Attendance']}
-                  labelFormatter={label => `Topic: ${label}`}
-                  contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="attendancePct"
-                  stroke="#2563EB"
-                  strokeWidth={3}
-                  dot={{ r: 5, fill: '#2563EB', strokeWidth: 2, stroke: '#ffffff' }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="h-64 w-full flex items-center justify-center">
+            {attendanceTrend.length === 0 ? (
+              <div className="text-center p-6 text-slate-400">
+                <CalendarCheck2 className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+                <p className="font-bold text-slate-600 text-sm">Real-time attendance tracking ready</p>
+                <p className="text-xs text-slate-400 mt-1">Attendance trajectory will plot automatically as faculty records live attendance.</p>
+                <button
+                  onClick={() => setActiveTab('attendance')}
+                  className="mt-3 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1"
+                >
+                  Go to Live Attendance Console <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={attendanceTrend} margin={{ top: 10, right: 20, left: -10, bottom: 25 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="sessionName"
+                    tick={{ fontSize: 10, fill: '#64748b' }}
+                    angle={-15}
+                    textAnchor="end"
+                  />
+                  <YAxis domain={[50, 100]} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
+                  <Tooltip
+                    formatter={(val: any) => [`${val}%`, 'Attendance']}
+                    labelFormatter={label => `Topic: ${label}`}
+                    contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="attendancePct"
+                    stroke="#2563EB"
+                    strokeWidth={3}
+                    dot={{ r: 5, fill: '#2563EB', strokeWidth: 2, stroke: '#ffffff' }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -418,19 +432,27 @@ export const DashboardScreen: React.FC = () => {
             Marking Console <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
-        <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={recentSessionsData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
-              <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} />
-              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 10 }} />
-              <Bar dataKey="Present" fill="#10B981" radius={[4, 4, 0, 0]} stackId="a" />
-              <Bar dataKey="Late" fill="#F59E0B" radius={[4, 4, 0, 0]} stackId="a" />
-              <Bar dataKey="Absent" fill="#EF4444" radius={[4, 4, 0, 0]} stackId="a" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="h-64 w-full flex items-center justify-center">
+          {recentSessionsData.length === 0 ? (
+            <div className="text-center p-6 text-slate-400">
+              <Activity className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+              <p className="font-bold text-slate-600 text-sm">No live session records yet</p>
+              <p className="text-xs text-slate-400 mt-1">Headcount distribution (Present / Late / Absent) will update dynamically in real time.</p>
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={recentSessionsData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} />
+                <Legend wrapperStyle={{ fontSize: 11, paddingTop: 10 }} />
+                <Bar dataKey="Present" fill="#10B981" radius={[4, 4, 0, 0]} stackId="a" />
+                <Bar dataKey="Late" fill="#F59E0B" radius={[4, 4, 0, 0]} stackId="a" />
+                <Bar dataKey="Absent" fill="#EF4444" radius={[4, 4, 0, 0]} stackId="a" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 
@@ -518,47 +540,55 @@ export const DashboardScreen: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              {pendingTasksToday.map(task => {
-                const isDone = task.status === 'Completed';
-                return (
-                  <div
-                    key={task.id}
-                    onClick={() => {
-                      if (!isDone) {
-                        soundFx.playSuccess();
-                        fireStarConfetti();
-                      } else {
-                        soundFx.playPop();
-                      }
-                      toggleTask(task.id);
-                    }}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
-                      isDone
-                        ? 'bg-slate-50 border-slate-200/80 text-slate-400'
-                        : 'bg-white border-slate-200 hover:border-blue-300 text-slate-800'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3 min-w-0">
-                      <div
-                        className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors shrink-0 ${
-                          isDone
-                            ? 'bg-emerald-600 border-emerald-600 text-white'
-                            : 'border-slate-300 hover:border-blue-500 bg-white'
-                        }`}
-                      >
-                        {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
+              {pendingTasksToday.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400 mb-1.5" />
+                  <p className="font-bold text-slate-700 text-xs">No pending operational tasks</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">CR Aarav Sharma or Teacher Noor Nigar can log tasks in real time.</p>
+                </div>
+              ) : (
+                pendingTasksToday.map(task => {
+                  const isDone = task.status === 'Completed';
+                  return (
+                    <div
+                      key={task.id}
+                      onClick={() => {
+                        if (!isDone) {
+                          soundFx.playSuccess();
+                          fireStarConfetti();
+                        } else {
+                          soundFx.playPop();
+                        }
+                        toggleTask(task.id);
+                      }}
+                      className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 select-none ${
+                        isDone
+                          ? 'bg-slate-50 border-slate-200/80 text-slate-400'
+                          : 'bg-white border-slate-200 hover:border-blue-300 text-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-3 min-w-0">
+                        <div
+                          className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors shrink-0 ${
+                            isDone
+                              ? 'bg-emerald-600 border-emerald-600 text-white'
+                              : 'border-slate-300 hover:border-blue-500 bg-white'
+                          }`}
+                        >
+                          {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
+                        </div>
+                        <span className={`text-xs font-medium truncate ${isDone ? 'line-through' : ''}`}>
+                          {task.task}
+                        </span>
                       </div>
-                      <span className={`text-xs font-medium truncate ${isDone ? 'line-through' : ''}`}>
-                        {task.task}
-                      </span>
-                    </div>
 
-                    <div className="flex items-center space-x-2 shrink-0">
-                      <PriorityBadge priority={task.priority} />
+                      <div className="flex items-center space-x-2 shrink-0">
+                        <PriorityBadge priority={task.priority} />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -704,39 +734,49 @@ export const DashboardScreen: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {studentsNeedingAttention.slice(0, 5).map(stat => (
-                  <tr
-                    key={stat.student.id}
-                    onClick={() => openStudentProfile(stat.student.id)}
-                    className="hover:bg-slate-50/80 transition-colors cursor-pointer"
-                  >
-                    <td className="py-3 px-3">
-                      <div className="font-bold text-slate-900">{stat.student.name}</div>
-                      <div className="text-[11px] text-slate-400">{stat.student.id} • {stat.student.batch}</div>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="font-bold text-rose-600 text-sm">
-                        {stat.attendancePercentage}%
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 font-semibold text-slate-700">
-                      {stat.missedSessions} sessions
-                    </td>
-                    <td className="py-3 px-3">
-                      <RiskBadge status={stat.status} />
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">
-                        {stat.attendancePercentage < 70 ? 'Emergency Call & Parent Alert' : 'Log Attendance Follow-up'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <button className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 ml-auto">
-                        View <ExternalLink className="w-3 h-3" />
-                      </button>
+                {studentsNeedingAttention.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-slate-400">
+                      <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400 mb-1" />
+                      <p className="font-bold text-slate-700 text-xs">All 44 students are currently in good standing</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Real-time alerts will trigger automatically if attendance drops below thresholds.</p>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  studentsNeedingAttention.slice(0, 5).map(stat => (
+                    <tr
+                      key={stat.student.id}
+                      onClick={() => openStudentProfile(stat.student.id)}
+                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                    >
+                      <td className="py-3 px-3">
+                        <div className="font-bold text-slate-900">{stat.student.name}</div>
+                        <div className="text-[11px] text-slate-400">{stat.student.id} • {stat.student.batch}</div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="font-bold text-rose-600 text-sm">
+                          {stat.attendancePercentage}%
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 font-semibold text-slate-700">
+                        {stat.missedSessions} sessions
+                      </td>
+                      <td className="py-3 px-3">
+                        <RiskBadge status={stat.status} />
+                      </td>
+                      <td className="py-3 px-3">
+                        <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-1 rounded-md border border-rose-200">
+                          {stat.attendancePercentage < 70 ? 'Emergency Call & Parent Alert' : 'Log Attendance Follow-up'}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right">
+                        <button className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 ml-auto">
+                          View <ExternalLink className="w-3 h-3" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

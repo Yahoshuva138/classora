@@ -92,6 +92,7 @@ async function testRbac() {
     assert.strictEqual(res.status, 403, `Expected status 403, got ${res.status}`);
   });
 
+  let teacherCreatedStudentId = null;
   await testCase('Teacher CAN enroll a new student (HTTP 201)', async () => {
     const testEmail = `teacher.student.${Date.now()}@sst.scaler.com`;
     const res = await fetch(`${BASE_URL}/students`, {
@@ -100,8 +101,11 @@ async function testRbac() {
       body: JSON.stringify({ name: 'Teacher Added Student', email: testEmail, batch: 'Batch A - Morning' })
     });
     assert.strictEqual(res.status, 201, `Expected status 201, got ${res.status}`);
+    const data = await res.json();
+    teacherCreatedStudentId = data.data.id;
   });
 
+  let adminCreatedStudentId = null;
   await testCase('Admin CAN enroll a new student (HTTP 201)', async () => {
     const testEmail = `admin.student.${Date.now()}@sst.scaler.com`;
     const res = await fetch(`${BASE_URL}/students`, {
@@ -110,7 +114,23 @@ async function testRbac() {
       body: JSON.stringify({ name: 'Admin Added Student', email: testEmail, batch: 'Batch A - Morning' })
     });
     assert.strictEqual(res.status, 201, `Expected status 201, got ${res.status}`);
+    const data = await res.json();
+    adminCreatedStudentId = data.data.id;
   });
+
+  // Clean up test students immediately to keep cohort at exactly 44
+  if (teacherCreatedStudentId) {
+    await fetch(`${BASE_URL}/students/${teacherCreatedStudentId}`, {
+      method: 'DELETE',
+      headers: { 'x-user-role': 'Teacher' }
+    });
+  }
+  if (adminCreatedStudentId) {
+    await fetch(`${BASE_URL}/students/${adminCreatedStudentId}`, {
+      method: 'DELETE',
+      headers: { 'x-user-role': 'Admin' }
+    });
+  }
 
   // 3. Role Authority & Appointment tests
   await testCase('GET /auth/users returns user roster', async () => {

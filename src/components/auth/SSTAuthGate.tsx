@@ -59,10 +59,10 @@ function getOfflineCohortUser(email: string, passwordAttempt?: string): GoogleUs
     };
   }
 
-  if (clean === 'priya.nair@sst.scaler.com') {
+  if (clean === 'noor.nigar@scaler.com' || clean === 'noor.nigar@sst.scaler.com' || clean === 'priya.nair@sst.scaler.com') {
     return {
       id: 'goog-faculty',
-      name: 'Dr. Priya Nair',
+      name: 'Noor Nigar',
       email: clean,
       role: 'Teacher',
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',

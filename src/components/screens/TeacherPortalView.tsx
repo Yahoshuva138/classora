@@ -171,7 +171,7 @@ export const TeacherPortalView: React.FC = () => {
     }
 
     if (matchedSession) {
-      markAttendance(matchedSession.id, studentId, 'Excused', 'Approved by Dr. Priya Nair (Medical Documentation Verified)');
+      markAttendance(matchedSession.id, studentId, 'Excused', `Approved by ${activeTeacher.name} (Medical Documentation Verified)`);
     }
 
     soundFx.playSuccess();
@@ -218,10 +218,25 @@ export const TeacherPortalView: React.FC = () => {
                 </span>
                 <span className="text-xs text-indigo-200">{activeTeacher.cabin}</span>
               </div>
-              <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white mt-1">
-                {activeTeacher.name}
-              </h1>
-              <p className="text-xs text-indigo-200/90 font-medium">
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white">
+                  {activeTeacher.name}
+                </h1>
+                {activeTeacher.company && (
+                  <span className="text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30 px-2 py-0.5 rounded-full">
+                    {activeTeacher.company}
+                  </span>
+                )}
+                {activeTeacher.rating && (
+                  <span className="text-[11px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ★ {activeTeacher.rating}
+                  </span>
+                )}
+                <span className="text-xs text-indigo-300 font-mono bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
+                  {activeTeacher.email}
+                </span>
+              </div>
+              <p className="text-xs text-indigo-200/90 font-medium mt-1">
                 {activeTeacher.designation} • <span className="text-white font-semibold">English Language & Communication Skills (Subject - 2 • 4 Weeks)</span>
               </p>
             </div>
@@ -832,7 +847,7 @@ export const TeacherPortalView: React.FC = () => {
               Recent Student Observation Log
             </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Past remarks given by Dr. Priya Nair & Lead CR
+              Past remarks given by {activeTeacher.name} & Lead CR
             </p>
 
             <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
