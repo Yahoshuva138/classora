@@ -16,7 +16,6 @@ import {
   AppSettings,
   AttendanceStatus,
   StudentCalculatedStats,
-  RiskStatus,
   UserRole,
   StudentRequest,
   StudentSkillScores,

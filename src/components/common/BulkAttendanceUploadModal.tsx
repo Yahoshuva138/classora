@@ -4,19 +4,15 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   AlertTriangle,
-  XCircle,
-  Clock,
   Download,
   X,
-  FileText,
   Search,
-  Users,
   ShieldCheck,
   RotateCcw
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useApp } from '../../context/AppContext';
-import { Student, Session, AttendanceStatus } from '../../types';
+import { Student, AttendanceStatus } from '../../types';
 import { downloadCSV, generateBulkAttendanceTemplateCSV } from '../../utils/exportUtils';
 import { soundFx } from '../../utils/soundEffects';
 import { fireGrandCelebration, fireQuickConfetti } from '../../utils/confettiUtils';
@@ -45,7 +41,7 @@ export const BulkAttendanceUploadModal: React.FC<BulkAttendanceUploadModalProps>
   onClose,
   defaultSessionId
 }) => {
-  const { students, sessions, bulkMarkAttendance, userRole } = useApp();
+  const { students, sessions, bulkMarkAttendance } = useApp();
   const { addToast } = useToast();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -546,9 +542,16 @@ export const BulkAttendanceUploadModal: React.FC<BulkAttendanceUploadModalProps>
             {fileName && availableColumns.length > 0 && (
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                    Attendance Column to Import
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                      Attendance Column to Import
+                    </label>
+                    {isMultiSessionFile && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                        Multi-Session File
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[11px] text-slate-500">
                     Select which column in your file contains the attendance marks (P/A/L/E)
                   </p>

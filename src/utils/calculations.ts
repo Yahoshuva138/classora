@@ -16,8 +16,40 @@ export function calculateStudentStats(
   attendanceRecords: AttendanceRecord[],
   settings: AppSettings
 ): StudentCalculatedStats {
+  if (!student) {
+    return {
+      student: {
+        id: 'unknown',
+        name: 'Unknown',
+        phone: '',
+        email: '',
+        batch: 'All Batches',
+        joiningDate: '2026-08-01',
+        lastActivity: 'Never',
+        currentLevel: 'B1',
+        initialRemarks: '',
+        skills: { communication: 75, grammar: 75, vocabulary: 75, pronunciation: 75, participation: 75, assignments: 75, assessments: 75 },
+        previousOverallScore: 75,
+        assignments: [],
+        crRemarks: [],
+        historicalScores: []
+      },
+      totalApplicableSessions: 0,
+      presentCount: 0,
+      absentCount: 0,
+      lateCount: 0,
+      excusedCount: 0,
+      attendedSessions: 0,
+      missedSessions: 0,
+      attendancePercentage: 0,
+      status: 'On Track',
+      overallScore: 75,
+      scoreImprovement: 0
+    };
+  }
+
   // Find sessions that belong to this student's batch or all batches, and are conducted (Completed or In Progress)
-  const studentSessions = sessions.filter(
+  const studentSessions = (sessions || []).filter(
     s => (s.batch === 'All Batches' || s.batch === student.batch) &&
          (s.status === 'Completed' || s.status === 'In Progress')
   );
