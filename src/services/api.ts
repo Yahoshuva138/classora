@@ -17,9 +17,24 @@ const API_BASE = '/api';
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
   try {
+    let callerRole = 'CR';
+    let callerEmail = '';
+    const savedUser = localStorage.getItem('classora_goog_user_v2');
+    const savedRole = localStorage.getItem('classora_role_v2');
+    if (savedRole) callerRole = savedRole;
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.role) callerRole = parsed.role;
+        if (parsed?.email) callerEmail = parsed.email;
+      } catch {}
+    }
+
     const res = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        'x-user-role': callerRole,
+        ...(callerEmail ? { 'x-user-email': callerEmail } : {}),
         ...options?.headers,
       },
       ...options,
@@ -314,6 +329,14 @@ export const api = {
     await request('/broadcast/log', {
       method: 'POST',
       body: JSON.stringify(payload)
+    });
+  },
+
+  // User Role Management
+  async updateUserRole(userId: string, newRole: string, callerEmail?: string, callerRole?: string): Promise<{ success: boolean; user: any; message?: string }> {
+    return await request<{ success: boolean; user: any; message?: string }>(`/auth/users/${userId}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ newRole, callerEmail, callerRole })
     });
   }
 };

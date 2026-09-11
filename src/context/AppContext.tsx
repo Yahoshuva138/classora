@@ -156,6 +156,10 @@ interface AppContextType {
   addTask: (taskData: Omit<CRTask, 'id'>) => void;
   updateTask: (id: string, updates: Partial<CRTask>) => void;
   deleteTask: (id: string) => void;
+  // Role Management Modal & Actions
+  isRoleManagementModalOpen: boolean;
+  setIsRoleManagementModalOpen: (open: boolean) => void;
+  updateUserRole: (userId: string, newRole: UserRole) => Promise<boolean>;
 
   // Settings & System
   updateSettings: (updates: Partial<AppSettings>) => void;
@@ -206,15 +210,30 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isGoogleAuthModalOpen, setIsGoogleAuthModalOpen] = useState<boolean>(false);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
+  const [isRoleManagementModalOpen, setIsRoleManagementModalOpen] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => soundFx.enabled);
 
   // Role & Current Student State
   const [userRole, setUserRoleState] = useState<UserRole>(() => {
+    const savedUser = localStorage.getItem(STORAGE_KEYS.GOOGLE_USER);
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.role) return parsed.role as UserRole;
+      } catch {}
+    }
     const saved = localStorage.getItem(STORAGE_KEYS.ROLE);
     return (saved as UserRole) || 'CR';
   });
 
   const [currentStudentId, setCurrentStudentIdState] = useState<string>(() => {
+    const savedUser = localStorage.getItem(STORAGE_KEYS.GOOGLE_USER);
+    if (savedUser) {
+      try {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.studentId) return parsed.studentId;
+      } catch {}
+    }
     const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_STUDENT);
     return saved || '26bcs10296'; // Yahoshuva Kesaboyina (Group 5)
   });
@@ -594,6 +613,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     status: AttendanceStatus,
     remarks?: string
   ) => {
+    if (userRole !== 'Teacher' && userRole !== 'Admin') {
+      addToast('Permission Denied: Only faculty teachers and course admins have permission to record attendance.', 'error');
+      return;
+    }
     const timestamp = new Date().toISOString();
     setAttendanceRecords(prev => {
       const filtered = prev.filter(r => !(r.sessionId === sessionId && r.studentId === studentId));
@@ -603,12 +626,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     api.markAttendance(sessionId, studentId, status, remarks).catch(err => {
       console.warn('[Classora Backend] markAttendance failed:', err);
     });
-  }, []);
+  }, [userRole, addToast]);
 
   const bulkMarkAttendance = useCallback((
     sessionId: string,
     records: Array<{ studentId: string; status: AttendanceStatus }>
   ) => {
+    if (userRole !== 'Teacher' && userRole !== 'Admin') {
+      addToast('Permission Denied: Only faculty teachers and course admins have permission to record attendance.', 'error');
+      return;
+    }
     const timestamp = new Date().toISOString();
     setAttendanceRecords(prev => {
       const studentIds = new Set(records.map(r => r.studentId));
@@ -627,17 +654,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
 
     addToast(`Saved attendance for ${records.length} students!`, 'success');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const resetSessionAttendance = useCallback((sessionId: string) => {
+    if (userRole !== 'Teacher' && userRole !== 'Admin') {
+      addToast('Permission Denied: Only faculty teachers and course admins have permission to reset attendance.', 'error');
+      return;
+    }
     setAttendanceRecords(prev => prev.filter(r => r.sessionId !== sessionId));
     api.resetSessionAttendance(sessionId).catch(err => {
       console.warn('[Classora Backend] resetSessionAttendance failed:', err);
     });
     addToast('Attendance reset for session', 'info');
-  }, [addToast]);
+  }, [userRole, addToast]);
 
   const addStudent = useCallback((studentData: Partial<Student> & { name: string; email: string; phone: string; batch: string }) => {
+    if (userRole !== 'Teacher' && userRole !== 'Admin') {
+      addToast('Permission Denied: Only faculty teachers and course admins have authority to enroll students.', 'error');
+      return;
+    }
     const count = students.length + 1;
     const newId = `ENG-2026-${count.toString().padStart(3, '0')}`;
     const newStudent: Student = {
@@ -672,7 +707,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       console.warn('[Classora Backend] createStudent failed:', err);
     });
     addToast(`Student "${newStudent.name}" enrolled successfully!`, 'success');
-  }, [students.length, addToast]);
+  }, [userRole, students.length, addToast]);
+
+  const updateUserRole = useCallback(async (userId: string, newRole: UserRole): Promise<boolean> => {
+    try {
+      const res = await api.updateUserRole(userId, newRole);
+      if (res && res.user) {
+        // If the updated user is the currently logged in user, update active role
+        if (currentUser.id === userId || currentUser.email === res.user.email) {
+          setUserRoleState(newRole);
+          localStorage.setItem(STORAGE_KEYS.ROLE, newRole);
+          setCurrentUser(prev => ({ ...prev, role: newRole }));
+        }
+        addToast(`Position updated to ${newRole} for ${res.user.name}`, 'success');
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Failed to update user role:', err);
+      addToast(err?.message || 'Failed to update user role', 'error');
+      return false;
+    }
+  }, [currentUser.id, currentUser.email, addToast]);
 
   const updateStudent = useCallback((id: string, updates: Partial<Student>) => {
     setStudents(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
@@ -1168,6 +1224,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         activityLogs,
         refreshActivityLogs,
         logBroadcast,
+        isRoleManagementModalOpen,
+        setIsRoleManagementModalOpen,
+        updateUserRole,
       }}
     >
       {children}

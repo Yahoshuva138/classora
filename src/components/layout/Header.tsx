@@ -15,7 +15,9 @@ import {
   LogOut,
   RefreshCw,
   Keyboard,
-  Key
+  Key,
+  Crown,
+  Users
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Classora3DLogo, GoogleIcon } from '../common/Classora3DLogo';
@@ -47,9 +49,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
     signOutGoogle,
     setIsGoogleAuthModalOpen,
     setIsChangePasswordModalOpen,
+    isOnboardingOpen,
     setIsOnboardingOpen,
     isShortcutsOpen,
     setIsShortcutsOpen,
+    isRoleManagementModalOpen,
+    setIsRoleManagementModalOpen,
     soundEnabled,
     toggleSound,
     soundVolume,
@@ -149,13 +154,47 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
 
   const getProfileDetails = () => {
     if (currentUser.isGoogleAuthenticated) {
+      const isUserAdmin = currentUser.role === 'Admin';
+      const isUserTeacher = currentUser.role === 'Teacher';
+      const isUserCR = currentUser.role === 'CR';
+
       return {
         initials: currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'SST',
         name: currentUser.name,
-        roleTitle: currentUser.role === 'CR' ? 'Lead English CR' : currentUser.role === 'Teacher' ? 'Course Coordinator & Faculty' : 'Enrolled Student',
+        roleTitle: isUserAdmin
+          ? 'Course Super Administrator'
+          : isUserTeacher
+          ? 'Course Coordinator & Faculty'
+          : isUserCR
+          ? 'Lead English CR'
+          : 'Enrolled Student',
         email: currentUser.email,
-        badgeText: currentUser.role === 'CR' ? 'Lead CR' : currentUser.role === 'Teacher' ? 'Faculty' : currentStudentStats ? `${currentStudentStats.attendancePercentage}% Attendance` : 'SST Student',
-        bg: currentUser.role === 'CR' ? 'bg-blue-600' : currentUser.role === 'Teacher' ? 'bg-indigo-600' : 'bg-emerald-600'
+        badgeText: isUserAdmin
+          ? '👑 Super Admin'
+          : isUserTeacher
+          ? 'Faculty Coordinator'
+          : isUserCR
+          ? 'Lead CR'
+          : currentStudentStats
+          ? `${currentStudentStats.attendancePercentage}% Attendance`
+          : 'SST Student',
+        bg: isUserAdmin
+          ? 'bg-amber-600'
+          : isUserTeacher
+          ? 'bg-indigo-600'
+          : isUserCR
+          ? 'bg-blue-600'
+          : 'bg-emerald-600'
+      };
+    }
+    if (userRole === 'Admin') {
+      return {
+        initials: 'YK',
+        name: 'Yahoshuva Kesaboyina',
+        roleTitle: 'Course Super Administrator',
+        email: 'yahoshuva.26bcs10296@sst.scaler.com',
+        badgeText: '👑 Super Admin',
+        bg: 'bg-amber-600'
       };
     }
     if (userRole === 'Student' && currentStudent) {
@@ -227,58 +266,67 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
         </div>
       </div>
 
-      {/* Center: Role Switcher Segmented Control */}
-      <div className="flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80 shadow-2xs shrink-0">
-        <button
-          onClick={() => {
-            soundFx.playPop();
-            setUserRole('CR');
-          }}
-          className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-            userRole === 'CR'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-          title="Switch to Class Representative Mode"
-        >
-          <span>🎓</span>
-          <span className="hidden md:inline">Class Rep (CR)</span>
-          <span className="md:hidden">CR</span>
-        </button>
-
-        <button
-          onClick={() => {
-            soundFx.playPop();
-            setUserRole('Teacher');
-          }}
-          className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-            userRole === 'Teacher'
-              ? 'bg-indigo-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-          title="Switch to Faculty / Teacher Mode"
-        >
-          <span>👨‍🏫</span>
-          <span className="hidden md:inline">Teacher</span>
-          <span className="md:hidden">Faculty</span>
-        </button>
-
-        <button
-          onClick={() => {
-            soundFx.playPop();
-            setUserRole('Student');
-          }}
-          className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-            userRole === 'Student'
-              ? 'bg-emerald-600 text-white shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-          }`}
-          title="Switch to Student Portal Mode"
-        >
-          <span>👨‍🎓</span>
-          <span className="hidden md:inline">Student</span>
-          <span className="md:hidden">Student</span>
-        </button>
+      {/* Center: Position Badge & Authority Action (Strict Position Indicator - No arbitrary switching) */}
+      <div className="flex items-center space-x-2 shrink-0">
+        {userRole === 'Admin' ? (
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/15 text-amber-800 border border-amber-300 shadow-2xs">
+              <span className="text-sm">👑</span>
+              <span className="text-xs font-extrabold tracking-tight">Super Admin</span>
+              <span className="hidden md:inline text-[10px] font-semibold text-amber-700 bg-amber-200/60 px-1.5 py-0.2 rounded-md">
+                Full Authority
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                soundFx.playPop();
+                setIsRoleManagementModalOpen(true);
+              }}
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              title="Appoint Teachers, CRs, and manage institutional staff"
+            >
+              <Crown className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Role Manager</span>
+            </button>
+          </div>
+        ) : userRole === 'Teacher' ? (
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-indigo-50 text-indigo-800 border border-indigo-200 shadow-2xs">
+              <span className="text-sm">👨‍🏫</span>
+              <span className="text-xs font-extrabold tracking-tight">Faculty Teacher</span>
+              <span className="hidden md:inline text-[10px] font-semibold text-indigo-700 bg-indigo-100 px-1.5 py-0.2 rounded-md">
+                Attendance & CR Authority
+              </span>
+            </div>
+            <button
+              onClick={() => {
+                soundFx.playPop();
+                setIsRoleManagementModalOpen(true);
+              }}
+              className="flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-2xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              title="Appoint or remove Class Representatives (CR)"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Manage CRs</span>
+            </button>
+          </div>
+        ) : userRole === 'CR' ? (
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs">
+            <span className="text-sm">🎓</span>
+            <span className="text-xs font-extrabold tracking-tight">Class Rep (CR)</span>
+            <span className="hidden md:inline text-[10px] font-semibold text-blue-700 bg-blue-100 px-1.5 py-0.2 rounded-md">
+              Peer Lead • Read-Only Attendance
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+            <span className="text-sm">👨‍🎓</span>
+            <span className="text-xs font-extrabold tracking-tight">Student Portal</span>
+            <span className="hidden md:inline text-[10px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-md">
+              Verified SST Cohort
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Right: Sync Status, Search, Shortcuts, Sound, Tour, Google Auth, Notifications, Profile */}
@@ -515,45 +563,24 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileMenu }) => {
               </div>
 
               <div className="py-1">
-                <div className="px-4 py-1 text-[10px] uppercase font-bold text-slate-400">Switch Active Role</div>
-                <button
-                  onClick={() => {
-                    setUserRole('CR');
-                    setIsProfileOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-1.5 text-xs flex items-center space-x-2 ${
-                    userRole === 'CR' ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>🎓</span>
-                  <span>Class Representative (CR)</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setUserRole('Teacher');
-                    setIsProfileOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-1.5 text-xs flex items-center space-x-2 ${
-                    userRole === 'Teacher' ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>👨‍🏫</span>
-                  <span>Teacher / Faculty Coordinator</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setUserRole('Student');
-                    setIsProfileOpen(false);
-                  }}
-                  className={`w-full text-left px-4 py-1.5 text-xs flex items-center space-x-2 ${
-                    userRole === 'Student' ? 'bg-emerald-50 text-emerald-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>👨‍🎓</span>
-                  <span>Student Portal View</span>
-                </button>
-
-                <div className="border-t border-slate-100 my-1"></div>
+                {(userRole === 'Admin' || userRole === 'Teacher') && (
+                  <>
+                    <div className="px-4 py-1 text-[10px] uppercase font-bold text-slate-400">Authority Controls</div>
+                    <button
+                      onClick={() => {
+                        setIsProfileOpen(false);
+                        setIsRoleManagementModalOpen(true);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-xs flex items-center space-x-2 font-bold ${
+                        userRole === 'Admin' ? 'text-amber-700 hover:bg-amber-50' : 'text-indigo-700 hover:bg-indigo-50'
+                      }`}
+                    >
+                      {userRole === 'Admin' ? <Crown className="w-4 h-4 text-amber-600" /> : <Users className="w-4 h-4 text-indigo-600" />}
+                      <span>{userRole === 'Admin' ? 'Appoint Teachers & Staff' : 'Appoint Class Reps (CR)'}</span>
+                    </button>
+                    <div className="border-t border-slate-100 my-1"></div>
+                  </>
+                )}
 
                 <div className="px-4 py-1 text-[10px] uppercase font-bold text-slate-400">Google Authentication</div>
                 <button

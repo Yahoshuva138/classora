@@ -20,6 +20,7 @@ import { SettingsScreen } from './components/screens/SettingsScreen';
 import { StudentPortalView } from './components/screens/StudentPortalView';
 import { TeacherPortalView } from './components/screens/TeacherPortalView';
 import { DiscussionGroupsScreen } from './components/screens/DiscussionGroupsScreen';
+import { RoleManagementModal } from './components/admin/RoleManagementModal';
 
 import { SSTAuthGate } from './components/auth/SSTAuthGate';
 import { GoogleAuthModal } from './components/auth/GoogleAuthModal';
@@ -33,7 +34,6 @@ const AuthenticatedApp: React.FC = () => {
   const {
     activeTab,
     userRole,
-    setUserRole,
     currentUser,
     isGoogleAuthModalOpen,
     setIsGoogleAuthModalOpen,
@@ -45,7 +45,7 @@ const AuthenticatedApp: React.FC = () => {
   } = useApp();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  // Global Keyboard Shortcuts (Shift+1/2/3 for roles, ? for shortcuts cheat sheet)
+  // Global Keyboard Shortcuts (? for shortcuts cheat sheet, no role switching)
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input/textarea
@@ -54,13 +54,7 @@ const AuthenticatedApp: React.FC = () => {
         return;
       }
 
-      if ((e.shiftKey || e.altKey) && (e.code === 'Digit1' || e.key === '1' || e.key === '!')) {
-        setUserRole('CR');
-      } else if ((e.shiftKey || e.altKey) && (e.code === 'Digit2' || e.key === '2' || e.key === '@')) {
-        setUserRole('Teacher');
-      } else if ((e.shiftKey || e.altKey) && (e.code === 'Digit3' || e.key === '3' || e.key === '#')) {
-        setUserRole('Student');
-      } else if (e.key === '?' || (e.shiftKey && e.key === '?')) {
+      if (e.key === '?' || (e.shiftKey && e.key === '?')) {
         e.preventDefault();
         setIsShortcutsOpen(true);
       }
@@ -68,11 +62,13 @@ const AuthenticatedApp: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setUserRole, setIsShortcutsOpen]);
+  }, [setIsShortcutsOpen]);
 
   const renderActiveScreen = () => {
-    // Student Portal tab routes
-    if (activeTab.startsWith('student-')) {
+    // If student, strictly confine to personal student portal and allowed student views
+    if (userRole === 'Student') {
+      if (activeTab === 'groups') return <DiscussionGroupsScreen />;
+      if (activeTab === 'sessions') return <SessionsScreen />;
       return <StudentPortalView />;
     }
 
@@ -81,10 +77,12 @@ const AuthenticatedApp: React.FC = () => {
       return <TeacherPortalView />;
     }
 
-    // Role-dependent dashboard fallback
-    if (userRole === 'Student' && activeTab === 'dashboard') {
+    // Student Portal tab routes (if previewed by teacher/admin)
+    if (activeTab.startsWith('student-')) {
       return <StudentPortalView />;
     }
+
+    // Role-dependent dashboard fallback
     if (userRole === 'Teacher' && activeTab === 'dashboard') {
       return <TeacherPortalView />;
     }
@@ -111,7 +109,6 @@ const AuthenticatedApp: React.FC = () => {
       case 'settings':
         return <SettingsScreen />;
       default:
-        if (userRole === 'Student') return <StudentPortalView />;
         if (userRole === 'Teacher') return <TeacherPortalView />;
         return <DashboardScreen />;
     }
@@ -176,12 +173,13 @@ const AuthenticatedApp: React.FC = () => {
       <OnboardingTourModal
         isOpen={isOnboardingOpen}
         onClose={() => setIsOnboardingOpen(false)}
-        onSelectRole={(role) => setUserRole(role)}
+        onSelectRole={() => {}}
       />
       <KeyboardShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
       />
+      <RoleManagementModal />
     </div>
   );
 };

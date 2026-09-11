@@ -32,8 +32,12 @@ export const StudentsScreen: React.FC = () => {
     addStudent,
     updateStudent,
     deleteStudent,
-    addFollowUp
+    addFollowUp,
+    userRole,
+    setIsRoleManagementModalOpen
   } = useApp();
+
+  const canManageStudents = userRole === 'Teacher' || userRole === 'Admin';
 
   // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
@@ -204,15 +208,26 @@ export const StudentsScreen: React.FC = () => {
             >
               <Download className="w-3.5 h-3.5 text-slate-500" /> Export CSV
             </button>
-            <button
-              onClick={() => {
-                resetForm();
-                setIsAddModalOpen(true);
-              }}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-1.5"
-            >
-              <UserPlus className="w-4 h-4" /> Add Student
-            </button>
+            {canManageStudents && (
+              <>
+                <button
+                  onClick={() => setIsRoleManagementModalOpen(true)}
+                  className="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl transition-colors border border-indigo-200 flex items-center gap-1.5"
+                  title="Appoint Class Representatives and manage roles"
+                >
+                  <Users className="w-4 h-4" /> Manage Positions
+                </button>
+                <button
+                  onClick={() => {
+                    resetForm();
+                    setIsAddModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center gap-1.5"
+                >
+                  <UserPlus className="w-4 h-4" /> Add Student
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -420,20 +435,24 @@ export const StudentsScreen: React.FC = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button
-                          onClick={() => openEditModal(stat.student)}
-                          className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-                          title="Edit Student"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => setStudentToDelete(stat.student)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                          title="Delete Student"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        {canManageStudents && (
+                          <>
+                            <button
+                              onClick={() => openEditModal(stat.student)}
+                              className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                              title="Edit Student"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setStudentToDelete(stat.student)}
+                              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                              title="Delete Student"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

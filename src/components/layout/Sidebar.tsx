@@ -41,7 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
     userRole,
     studentRequests,
     currentStudent,
-    activeTeacher
+    activeTeacher,
+    currentUser
   } = useApp();
 
   const pendingFollowUpCount = followUps.filter(f => f.status === 'Pending').length;
@@ -49,11 +50,37 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
   const pendingExcuseCount = studentRequests.filter(r => r.status === 'Pending').length;
 
   // Role-specific navigation sets
+  const adminNavItems: NavItem[] = [
+    { id: 'dashboard', label: 'Admin Command', icon: LayoutDashboard },
+    { id: 'students', label: 'Student Directory', icon: Users },
+    { id: 'sessions', label: 'Sessions & Schedule', icon: Calendar },
+    { id: 'attendance', label: 'Master Attendance', icon: CheckSquare },
+    { id: 'teacher-gradebook', label: 'Gradebook & Rubrics', icon: Award },
+    { id: 'groups', label: 'Discussion Groups', icon: Users, badge: 7, badgeColor: 'bg-purple-500 text-white' },
+    { id: 'performance', label: 'Performance Analytics', icon: TrendingUp },
+    {
+      id: 'follow-ups',
+      label: 'Follow-ups',
+      icon: AlertCircle,
+      badge: pendingFollowUpCount > 0 ? pendingFollowUpCount : null,
+      badgeColor: 'bg-rose-500 text-white',
+    },
+    {
+      id: 'cr-tasks',
+      label: 'CR Tasks',
+      icon: ListChecks,
+      badge: pendingTaskCount > 0 ? pendingTaskCount : null,
+      badgeColor: 'bg-blue-500 text-white',
+    },
+    { id: 'reports', label: 'Reports & Exports', icon: FileSpreadsheet },
+    { id: 'settings', label: 'System Settings', icon: Settings },
+  ];
+
   const crNavItems: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'students', label: 'Students', icon: Users },
     { id: 'sessions', label: 'Sessions', icon: Calendar },
-    { id: 'attendance', label: 'Attendance', icon: CheckSquare },
+    { id: 'attendance', label: 'Attendance (Read Only)', icon: CheckSquare },
     { id: 'groups', label: 'Discussion Groups', icon: Users, badge: 7, badgeColor: 'bg-purple-500 text-white' },
     { id: 'performance', label: 'Performance', icon: TrendingUp },
     {
@@ -102,21 +129,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
   ];
 
   const currentNavItems =
-    userRole === 'Student'
+    userRole === 'Admin'
+      ? adminNavItems
+      : userRole === 'Student'
       ? studentNavItems
       : userRole === 'Teacher'
       ? teacherNavItems
       : crNavItems;
 
   const roleAccentColor =
-    userRole === 'Student'
+    userRole === 'Admin'
+      ? 'bg-amber-600 shadow-amber-600/20'
+      : userRole === 'Student'
       ? 'bg-emerald-600 shadow-emerald-600/20'
       : userRole === 'Teacher'
       ? 'bg-indigo-600 shadow-indigo-600/20'
       : 'bg-blue-600 shadow-blue-600/20';
 
   const roleBadge =
-    userRole === 'Student'
+    userRole === 'Admin'
+      ? { text: 'Super Admin', color: 'bg-amber-500/20 text-amber-300 border-amber-500/30' }
+      : userRole === 'Student'
       ? { text: 'Student Portal', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
       : userRole === 'Teacher'
       ? { text: 'Teacher / Faculty', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' }
@@ -159,7 +192,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
       {/* Navigation List */}
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-          {userRole === 'Student' ? 'Student Workspace' : userRole === 'Teacher' ? 'Faculty Workspace' : 'CR Navigation'}
+          {userRole === 'Admin'
+            ? 'Super Admin Workspace'
+            : userRole === 'Student'
+            ? 'Student Workspace'
+            : userRole === 'Teacher'
+            ? 'Faculty Workspace'
+            : 'CR Navigation'}
         </div>
         {currentNavItems.map(item => {
           const Icon = item.icon;
@@ -203,7 +242,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onCloseMobile }) => {
         </div>
         <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400 px-1">
           <span className="truncate max-w-[150px]">
-            {userRole === 'Student' && currentStudent
+            {userRole === 'Admin'
+              ? `Admin: ${currentUser.name || 'Yahoshuva'}`
+              : userRole === 'Student' && currentStudent
               ? `Student: ${currentStudent.name}`
               : userRole === 'Teacher'
               ? `Faculty: ${activeTeacher.name}`

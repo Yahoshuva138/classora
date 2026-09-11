@@ -8,8 +8,6 @@ interface KeyboardShortcutsModalProps {
 }
 
 export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ isOpen, onClose }) => {
-  const { setUserRole } = useApp();
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -23,14 +21,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ 
   if (!isOpen) return null;
 
   const shortcutSections = [
-    {
-      title: 'Role Switching',
-      items: [
-        { keys: ['Shift', '1'], description: 'Switch to Class Representative (CR) console' },
-        { keys: ['Shift', '2'], description: 'Switch to Faculty / Teacher Portal (Dr. Priya Nair)' },
-        { keys: ['Shift', '3'], description: 'Switch to Student Portal View' },
-      ]
-    },
     {
       title: 'Navigation & Discovery',
       items: [
@@ -110,31 +100,6 @@ export const KeyboardShortcutsModal: React.FC<KeyboardShortcutsModalProps> = ({ 
               </div>
             </div>
           ))}
-
-          {/* Quick Role Switcher Buttons */}
-          <div className="pt-2 border-t border-slate-100">
-            <span className="text-[11px] font-semibold text-slate-500 block mb-2">Try Switching Role Right Now:</span>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => { setUserRole('CR'); onClose(); }}
-                className="p-2 rounded-xl text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-all text-center"
-              >
-                🎓 Class Rep
-              </button>
-              <button
-                onClick={() => { setUserRole('Teacher'); onClose(); }}
-                className="p-2 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all text-center"
-              >
-                👨‍🏫 Faculty
-              </button>
-              <button
-                onClick={() => { setUserRole('Student'); onClose(); }}
-                className="p-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all text-center"
-              >
-                👨‍🎓 Student
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

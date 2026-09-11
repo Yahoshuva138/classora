@@ -14,7 +14,8 @@ import {
   ArrowRight,
   TrendingDown,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  ShieldAlert
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { AttendanceStatus } from '../../types';
@@ -35,8 +36,11 @@ export const AttendanceScreen: React.FC = () => {
     markAttendance,
     bulkMarkAttendance,
     resetSessionAttendance,
-    openStudentProfile
+    openStudentProfile,
+    userRole
   } = useApp();
+
+  const canEditAttendance = userRole === 'Teacher' || userRole === 'Admin';
 
   const { addToast } = useToast();
 
@@ -154,31 +158,40 @@ export const AttendanceScreen: React.FC = () => {
             </select>
           </div>
 
-          {/* Quick Action Buttons */}
+          {/* Quick Action Buttons or Read-Only Notice */}
           <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={handleMarkAllPresent}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95"
-            >
-              <CheckCircle2 className="w-4 h-4" /> Mark All Present
-            </button>
-            <button
-              onClick={handleReset}
-              className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
-              title="Reset all marks for this session"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-500" /> Reset
-            </button>
-            <button
-              onClick={() => {
-                soundFx.playFanfare();
-                fireGrandCelebration();
-                addToast('Attendance records synced to tracker successfully!', 'success');
-              }}
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95"
-            >
-              <Save className="w-4 h-4" /> Save Attendance
-            </button>
+            {canEditAttendance ? (
+              <>
+                <button
+                  onClick={handleMarkAllPresent}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95"
+                >
+                  <CheckCircle2 className="w-4 h-4" /> Mark All Present
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95"
+                  title="Reset all marks for this session"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" /> Reset
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playFanfare();
+                    fireGrandCelebration();
+                    addToast('Attendance records synced to tracker successfully!', 'success');
+                  }}
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:scale-105 active:scale-95"
+                >
+                  <Save className="w-4 h-4" /> Save Attendance
+                </button>
+              </>
+            ) : (
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 text-xs font-semibold">
+                <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Read-Only Audit Mode: Only Faculty Teachers can record or edit attendance.</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -277,7 +290,7 @@ export const AttendanceScreen: React.FC = () => {
               <tr>
                 <th className="py-3.5 px-4">Student ID & Name</th>
                 <th className="py-3.5 px-4">Batch</th>
-                <th className="py-3.5 px-4 text-center">Mark Attendance for Session</th>
+                <th className="py-3.5 px-4">{canEditAttendance ? 'Mark Attendance for Session' : 'Official Attendance Status'}</th>
                 <th className="py-3.5 px-4 text-center">Cumulative %</th>
                 <th className="py-3.5 px-4">Risk Status</th>
               </tr>
@@ -329,73 +342,95 @@ export const AttendanceScreen: React.FC = () => {
                         </span>
                       </td>
 
-                      {/* Interactive Segmented Control */}
+                      {/* Interactive Segmented Control or Read-Only Status */}
                       <td className="py-3.5 px-4">
-                        <div className="flex items-center justify-center space-x-1 bg-slate-100/90 p-1 rounded-xl max-w-xs mx-auto border border-slate-200">
-                          {/* Present Button */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              soundFx.playPop();
-                              if (activeSession) markAttendance(activeSession.id, student.id, 'Present');
-                            }}
-                            className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                        {canEditAttendance ? (
+                          <div className="flex items-center justify-center space-x-1 bg-slate-100/90 p-1 rounded-xl max-w-xs mx-auto border border-slate-200">
+                            {/* Present Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                if (activeSession) markAttendance(activeSession.id, student.id, 'Present');
+                              }}
+                              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                                currentStatus === 'Present'
+                                  ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-500'
+                                  : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50'
+                              }`}
+                            >
+                              Present
+                            </button>
+
+                            {/* Absent Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                if (activeSession) markAttendance(activeSession.id, student.id, 'Absent');
+                              }}
+                              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                                currentStatus === 'Absent'
+                                  ? 'bg-rose-600 text-white shadow-sm ring-1 ring-rose-500'
+                                  : 'text-slate-600 hover:text-rose-700 hover:bg-rose-50'
+                              }`}
+                            >
+                              Absent
+                            </button>
+
+                            {/* Late Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                if (activeSession) markAttendance(activeSession.id, student.id, 'Late');
+                              }}
+                              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                                currentStatus === 'Late'
+                                  ? 'bg-amber-600 text-white shadow-sm ring-1 ring-amber-500'
+                                  : 'text-slate-600 hover:text-amber-700 hover:bg-amber-50'
+                              }`}
+                            >
+                              Late
+                            </button>
+
+                            {/* Excused Button */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                if (activeSession) markAttendance(activeSession.id, student.id, 'Excused');
+                              }}
+                              className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
+                                currentStatus === 'Excused'
+                                  ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-500'
+                                  : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50'
+                              }`}
+                            >
+                              Excused
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center">
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border ${
                               currentStatus === 'Present'
-                                ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-500'
-                                : 'text-slate-600 hover:text-emerald-700 hover:bg-emerald-50'
-                            }`}
-                          >
-                            Present
-                          </button>
-
-                          {/* Absent Button */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              soundFx.playPop();
-                              if (activeSession) markAttendance(activeSession.id, student.id, 'Absent');
-                            }}
-                            className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
-                              currentStatus === 'Absent'
-                                ? 'bg-rose-600 text-white shadow-sm ring-1 ring-rose-500'
-                                : 'text-slate-600 hover:text-rose-700 hover:bg-rose-50'
-                            }`}
-                          >
-                            Absent
-                          </button>
-
-                          {/* Late Button */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              soundFx.playPop();
-                              if (activeSession) markAttendance(activeSession.id, student.id, 'Late');
-                            }}
-                            className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
-                              currentStatus === 'Late'
-                                ? 'bg-amber-600 text-white shadow-sm ring-1 ring-amber-500'
-                                : 'text-slate-600 hover:text-amber-700 hover:bg-amber-50'
-                            }`}
-                          >
-                            Late
-                          </button>
-
-                          {/* Excused Button */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              soundFx.playPop();
-                              if (activeSession) markAttendance(activeSession.id, student.id, 'Excused');
-                            }}
-                            className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all ${
-                              currentStatus === 'Excused'
-                                ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-500'
-                                : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50'
-                            }`}
-                          >
-                            Excused
-                          </button>
-                        </div>
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                : currentStatus === 'Absent'
+                                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                : currentStatus === 'Late'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : 'bg-blue-50 text-blue-700 border-blue-200'
+                            }`}>
+                              <span className={`w-2 h-2 rounded-full ${
+                                currentStatus === 'Present' ? 'bg-emerald-500' :
+                                currentStatus === 'Absent' ? 'bg-rose-500' :
+                                currentStatus === 'Late' ? 'bg-amber-500' :
+                                'bg-blue-500'
+                              }`} />
+                              <span>{currentStatus}</span>
+                            </span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Cumulative % (Instantly calculated!) */}

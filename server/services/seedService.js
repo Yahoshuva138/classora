@@ -77,12 +77,12 @@ export const presetActivityLogs = [
 
 export const presetUsers = [
   {
-    id: 'goog-cr',
-    name: 'Aarav Sharma',
-    email: 'aarav.sharma@sst.scaler.com',
-    role: 'CR',
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80',
-    personaKey: 'lead_cr',
+    id: 'goog-admin',
+    name: 'Course Administrator',
+    email: 'admin@sst.scaler.com',
+    role: 'Admin',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&auto=format&fit=crop&q=80',
+    personaKey: 'super_admin',
     isGoogleAuthenticated: true
   },
   {
@@ -95,13 +95,22 @@ export const presetUsers = [
     isGoogleAuthenticated: true
   },
   {
+    id: 'goog-cr',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma@sst.scaler.com',
+    role: 'CR',
+    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&auto=format&fit=crop&q=80',
+    personaKey: 'lead_cr',
+    isGoogleAuthenticated: true
+  },
+  {
     id: 'goog-26bcs10296',
     name: 'Yahoshuva Kesaboyina',
     email: 'yahoshuva.26bcs10296@sst.scaler.com',
-    role: 'Student',
+    role: 'Admin',
     studentId: '26bcs10296',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    personaKey: 'sst_student_group5',
+    personaKey: 'course_owner_admin',
     isGoogleAuthenticated: true
   },
   {

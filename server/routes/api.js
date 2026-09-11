@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import { isUsingMongoose, getDbTier } from '../config/db.js';
 import { memoryStore } from '../services/memoryStore.js';
 import { executeFullSeed, presetUsers } from '../services/seedService.js';
@@ -249,6 +250,14 @@ router.get('/students/:id', async (req, res) => {
 
 router.post('/students', async (req, res) => {
   try {
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole;
+    if (callerRole && callerRole !== 'Admin' && callerRole !== 'Teacher') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Faculty Teachers and Course Admins can enroll new students.'
+      });
+    }
+
     const rollNo = req.body.rollNo || req.body.id || `ENG-2026-${Math.floor(Math.random() * 900 + 100)}`;
     const studentData = {
       ...req.body,
@@ -263,6 +272,27 @@ router.post('/students', async (req, res) => {
       historicalScores: req.body.historicalScores || []
     };
     const created = await model('students', Student).create(studentData);
+
+    // Auto-create user account
+    if (created.email) {
+      await model('users', User).updateOne(
+        { email: created.email.toLowerCase() },
+        {
+          $set: {
+            id: `usr_${created.id}`,
+            name: created.name,
+            email: created.email.toLowerCase(),
+            role: 'Student',
+            studentId: created.id,
+            password: DEFAULT_COHORT_PASSWORD,
+            isRegistered: true,
+            mustChangePassword: true
+          }
+        },
+        { upsert: true }
+      );
+    }
+
     res.status(201).json({ success: true, data: created });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -272,8 +302,8 @@ router.post('/students', async (req, res) => {
 router.put('/students/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: req.body });
-    const updated = await model('students', Student).findOne({ $or: [{ rollNo: id }, { id }] });
+    await model('students', Student).updateOne({ id }, { $set: req.body });
+    const updated = await model('students', Student).findOne({ id });
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -283,7 +313,7 @@ router.put('/students/:id', async (req, res) => {
 router.delete('/students/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    await model('students', Student).updateOne({ $or: [{ rollNo: id }, { id }] }, { $set: { isArchived: true } });
+    await model('students', Student).updateOne({ id }, { $set: { isArchived: true } });
     res.json({ success: true, message: 'Student archived' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -389,7 +419,7 @@ router.delete('/sessions/:id', async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 4. ATTENDANCE API
+// 4. ATTENDANCE API (TEACHER & ADMIN PERMISSION RESTRICTED)
 // -------------------------------------------------------------
 
 router.get('/attendance', async (req, res) => {
@@ -406,6 +436,14 @@ router.get('/attendance', async (req, res) => {
 
 router.post(['/attendance', '/attendance/mark'], async (req, res) => {
   try {
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
+    if (callerRole === 'CR' || callerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to record or modify official attendance.'
+      });
+    }
+
     const { sessionId, studentId, status, remarks } = req.body;
     const timestamp = new Date().toISOString();
     await model('attendance', AttendanceRecord).updateOne(
@@ -421,7 +459,15 @@ router.post(['/attendance', '/attendance/mark'], async (req, res) => {
 
 router.post('/attendance/bulk', async (req, res) => {
   try {
-    const { sessionId, records, actorName = 'Aarav Sharma', actorRole = 'CR' } = req.body;
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
+    if (callerRole === 'CR' || callerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to record or modify official attendance.'
+      });
+    }
+
+    const { sessionId, records, actorName = 'Dr. Priya Nair', actorRole = 'Teacher' } = req.body;
     const timestamp = new Date().toISOString();
     for (const r of records) {
       await model('attendance', AttendanceRecord).updateOne(
@@ -437,9 +483,9 @@ router.post('/attendance/bulk', async (req, res) => {
 
     await logActivity({
       actorName,
-      actorRole,
-      action: 'Attendance Saved',
-      details: `Saved attendance for ${sessionId}: ${pCount} Present, ${aCount} Absent, ${lCount} Late, ${eCount} Excused.`,
+      actorRole: actorRole || 'Teacher',
+      action: 'Attendance Recorded',
+      details: `Official attendance recorded for ${sessionId}: ${pCount} Present, ${aCount} Absent, ${lCount} Late, ${eCount} Excused.`,
       category: 'attendance',
       targetId: sessionId,
       targetName: `Session ${sessionId}`
@@ -453,6 +499,14 @@ router.post('/attendance/bulk', async (req, res) => {
 
 router.delete('/attendance/session/:sessionId', async (req, res) => {
   try {
+    const callerRole = req.headers['x-user-role'] || req.body.actorRole || req.query.role;
+    if (callerRole === 'CR' || callerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Faculty Teachers and Course Admins have permission to reset attendance.'
+      });
+    }
+
     const { sessionId } = req.params;
     await model('attendance', AttendanceRecord).deleteMany({ sessionId });
     res.json({ success: true, message: `Attendance reset for session ${sessionId}` });
@@ -744,6 +798,101 @@ router.get('/auth/users', async (req, res) => {
   }
 });
 
+// -------------------------------------------------------------
+// USER ROLE MANAGEMENT (ADMIN & TEACHER HIERARCHY)
+// -------------------------------------------------------------
+router.patch('/auth/users/:id/role', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newRole, callerEmail, callerRole } = req.body;
+
+    if (!newRole || !['Admin', 'Teacher', 'CR', 'Student'].includes(newRole)) {
+      return res.status(400).json({ success: false, error: 'Valid role (Admin, Teacher, CR, Student) is required.' });
+    }
+
+    // Verify caller permission
+    let verifiedCallerRole = req.headers['x-user-role'] || callerRole;
+    if (callerEmail) {
+      const callerUser = await model('users', User).findOne({ email: callerEmail.trim().toLowerCase() });
+      if (callerUser) verifiedCallerRole = callerUser.role;
+    }
+
+    // Permissions check:
+    // Admin: Can set anyone to Admin, Teacher, CR, or Student
+    // Teacher: Can appoint student as CR or revert CR to Student. CANNOT make Teachers or Admins.
+    // CR / Student: Cannot change any roles.
+    if (verifiedCallerRole !== 'Admin' && verifiedCallerRole !== 'Teacher') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Course Admins and Faculty Teachers have authority to manage user roles.'
+      });
+    }
+
+    if (verifiedCallerRole === 'Teacher') {
+      if (newRole === 'Admin' || newRole === 'Teacher') {
+        return res.status(403).json({
+          success: false,
+          error: 'Access Denied: Teachers can only appoint Class Representatives (CR) or students. Only Admins can appoint Teachers.'
+        });
+      }
+    }
+
+    // Find target user
+    const targetUser = await model('users', User).findOne({
+      $or: [{ id }, { studentId: id }, { email: id.toLowerCase() }]
+    });
+
+    if (!targetUser) {
+      return res.status(404).json({ success: false, error: 'Target user not found.' });
+    }
+
+    // Prevent demoting the primary admin
+    if (targetUser.email === 'admin@sst.scaler.com' && newRole !== 'Admin') {
+      return res.status(403).json({ success: false, error: 'Cannot demote the primary system administrator.' });
+    }
+
+    await model('users', User).updateOne(
+      { email: targetUser.email },
+      { $set: { role: newRole } }
+    );
+
+    // If target has a student record, update remarks
+    if (targetUser.studentId) {
+      const remark = newRole === 'CR'
+        ? `Official SST 2026 Cohort • Appointed Class Representative (CR).`
+        : `Official SST 2026 Cohort • Role: ${newRole}.`;
+      await model('students', Student).updateOne(
+        { id: targetUser.studentId },
+        { $set: { initialRemarks: remark } }
+      );
+    }
+
+    await logActivity({
+      actorName: callerEmail || 'Course Authority',
+      actorRole: verifiedCallerRole || 'Authority',
+      action: 'Role Updated',
+      details: `${verifiedCallerRole} changed role of ${targetUser.name} (${targetUser.email}) from ${targetUser.role} to ${newRole}.`,
+      category: 'security',
+      targetId: targetUser.id,
+      targetName: targetUser.name
+    });
+
+    res.json({
+      success: true,
+      message: `Successfully updated ${targetUser.name}'s position to ${newRole}.`,
+      user: {
+        id: targetUser.id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: newRole,
+        studentId: targetUser.studentId
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 const DEFAULT_COHORT_PASSWORD = 'SST@2026';
 
 // -------------------------------------------------------------
@@ -879,8 +1028,9 @@ router.post('/auth/login', async (req, res) => {
       });
     }
 
-    // Cohort validation
-    const isStaff = cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    // Admin & Staff hierarchy validation
+    const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
     let student = null;
     if (!isStaff) {
       const rollMatch = cleanEmail.match(/26bcs\d+/i);
@@ -904,9 +1054,18 @@ router.post('/auth/login', async (req, res) => {
 
     // Auto-provision any cohort member who doesn't have an existing user document yet
     if (!user) {
-      const studentId = student ? (student.id || student.rollNo) : null;
-      const userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0]);
-      const role = isStaff ? (cleanEmail.includes('priya') ? 'Teacher' : 'CR') : 'Student';
+      const studentId = student ? (student.id || student.rollNo) : (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com' ? '26bcs10296' : null);
+      let userName = student ? student.name : (cleanEmail.includes('aarav') ? 'Aarav Sharma' : cleanEmail.includes('priya') ? 'Dr. Priya Nair' : cleanEmail.split('@')[0]);
+      if (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com') userName = 'Yahoshuva Kesaboyina';
+
+      let role = 'Student';
+      if (isAdmin) {
+        role = 'Admin';
+      } else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
+        role = 'Teacher';
+      } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
+        role = 'CR';
+      }
 
       user = {
         id: `usr_${studentId || cleanEmail.replace(/[^a-zA-Z0-9]/g, '_')}`,
@@ -1060,13 +1219,18 @@ router.post('/auth/google', async (req, res) => {
       });
     }
 
-    // Cohort validation
-    const isStaff = cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
+    // Cohort & Staff validation
+    const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com';
+    const isStaff = isAdmin || cleanEmail.includes('aarav') || cleanEmail.includes('cr') || cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty');
     let studentId = null;
     let userName = name || cleanEmail.split('@')[0].replace(/\./g, ' ');
     let role = 'Student';
 
-    if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
+    if (isAdmin) {
+      role = 'Admin';
+      userName = cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com' ? 'Yahoshuva Kesaboyina' : (name || 'Course Administrator');
+      if (cleanEmail === 'yahoshuva.26bcs10296@sst.scaler.com') studentId = '26bcs10296';
+    } else if (cleanEmail.includes('aarav') || cleanEmail.includes('cr')) {
       role = 'CR';
       userName = 'Aarav Sharma';
     } else if (cleanEmail.includes('priya') || cleanEmail.includes('nair') || cleanEmail.includes('faculty')) {
@@ -1103,12 +1267,14 @@ router.post('/auth/google', async (req, res) => {
       });
     }
 
+    const effectiveRole = existing.role || role;
+
     // Activity log
     await logActivity({
       actorName: userName,
-      actorRole: role,
+      actorRole: effectiveRole,
       action: 'Google SST Authentication',
-      details: `Official SST account authenticated: ${userName} (${cleanEmail}) signed in as ${role}.`,
+      details: `Official SST account authenticated: ${userName} (${cleanEmail}) signed in as ${effectiveRole}.`,
       category: 'security',
       targetId: studentId,
       targetName: userName
@@ -1120,7 +1286,7 @@ router.post('/auth/google', async (req, res) => {
         id: existing.id,
         name: existing.name,
         email: existing.email,
-        role: existing.role,
+        role: effectiveRole,
         studentId: existing.studentId,
         avatar: avatar || existing.avatar || '',
         isGoogleAuthenticated: true
@@ -1154,6 +1320,108 @@ router.get('/auth/me', async (req, res) => {
     res.json({ success: true, data: user });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 12. USER ROLE MANAGEMENT & HIERARCHY
+// Admin appoints Anyone (Admin, Teacher, CR, Student)
+// Teacher appoints CRs or demotes to Student
+// CR & Student are blocked
+// -------------------------------------------------------------
+router.get('/auth/users', async (req, res) => {
+  try {
+    const users = await model('users', User).find({}, { password: 0 });
+    res.json({ success: true, count: users.length, data: users });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.patch('/auth/users/:id/role', async (req, res) => {
+  try {
+    const targetIdentifier = req.params.id;
+    const { newRole, callerEmail, callerRole } = req.body;
+    const headerRole = req.headers['x-user-role'];
+    const effectiveCallerRole = callerRole || headerRole || 'Admin';
+
+    const validRoles = ['Admin', 'Teacher', 'CR', 'Student'];
+    if (!validRoles.includes(newRole)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid role: "${newRole}". Must be one of: ${validRoles.join(', ')}`
+      });
+    }
+
+    if (effectiveCallerRole === 'CR' || effectiveCallerRole === 'Student') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Only Course Admins and Faculty Teachers have authority to modify roles.'
+      });
+    }
+
+    // Teacher restrictions: Teachers can only appoint CRs or demote CRs back to Student
+    if (effectiveCallerRole === 'Teacher') {
+      if (newRole === 'Admin' || newRole === 'Teacher') {
+        return res.status(403).json({
+          success: false,
+          error: 'Access Denied: Faculty Teachers can only designate Class Representatives (CR) or Students. Only Course Admins can appoint Faculty and Admins.'
+        });
+      }
+    }
+
+    const user = await model('users', User).findOne({
+      $or: [
+        { id: targetIdentifier },
+        ...(mongoose.isValidObjectId(targetIdentifier) ? [{ _id: targetIdentifier }] : []),
+        { email: targetIdentifier.toLowerCase() },
+        { studentId: targetIdentifier }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: `User not found for identifier: ${targetIdentifier}` });
+    }
+
+    // Protect Admin accounts from being demoted/modified by non-admins
+    if (user.role === 'Admin' && effectiveCallerRole !== 'Admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access Denied: Cannot modify an Administrator account without Admin privileges.'
+      });
+    }
+
+    const previousRole = user.role;
+    user.role = newRole;
+    await model('users', User).updateOne(
+      { email: user.email },
+      { $set: { role: newRole } }
+    );
+
+    await logActivity({
+      actorName: callerEmail || (effectiveCallerRole === 'Teacher' ? 'Dr. Priya Nair' : 'Course Admin'),
+      actorRole: effectiveCallerRole,
+      action: 'Role Modified',
+      details: `${effectiveCallerRole} updated ${user.name} (${user.email}) position from ${previousRole} to ${newRole}.`,
+      category: 'security',
+      targetId: user.id || user.studentId,
+      targetName: user.name
+    });
+
+    res.json({
+      success: true,
+      message: `Successfully updated ${user.name} to ${newRole}`,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: newRole,
+        studentId: user.studentId,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

@@ -1,4 +1,4 @@
-export type UserRole = 'CR' | 'Teacher' | 'Student';
+export type UserRole = 'Admin' | 'Teacher' | 'CR' | 'Student';
 
 export type RiskStatus = 'On Track' | 'Needs Attention' | 'At Risk';
 
