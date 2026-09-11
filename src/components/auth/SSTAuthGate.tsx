@@ -12,7 +12,8 @@ import {
   Check,
   Users,
   Search,
-  CheckCircle2
+  CheckCircle2,
+  BookOpen
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
@@ -21,6 +22,7 @@ import { fireGrandCelebration } from '../../utils/confettiUtils';
 import { UserRole, GoogleUser } from '../../types';
 import { initialStudents } from '../../data/mockData';
 import { decodeGoogleJwt, isSstEmail, getGoogleClientId, saveGoogleClientId } from '../../utils/googleAuth';
+import { LibraryBookIntro } from './LibraryBookIntro';
 
 function saveOfflineUser(email: string, pass: string) {
   try {
@@ -155,13 +157,6 @@ const GoogleGIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }
   </svg>
 );
 
-// Apple Logo icon
-const AppleIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.36c.64-.78 1.08-1.86.96-2.95-1 .04-2.19.67-2.88 1.48-.6.69-1.12 1.79-.98 2.87 1.12.09 2.26-.62 2.9-1.4" />
-  </svg>
-);
-
 export const SSTAuthGate: React.FC = () => {
   const { signInWithGoogle } = useApp();
 
@@ -189,6 +184,22 @@ export const SSTAuthGate: React.FC = () => {
   const [isRosterModalOpen, setIsRosterModalOpen] = useState(false);
   const [cohortRoster, setCohortRoster] = useState<{ id: string; name: string; email: string; rollNo: string; group: string }[]>([]);
   const [rosterSearch, setRosterSearch] = useState('');
+
+  // 3D Library Book Intro for English / Library Lovers
+  const [showBookIntro, setShowBookIntro] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('classora_book_seen') !== 'true';
+    } catch {
+      return true;
+    }
+  });
+
+  const handleBookComplete = () => {
+    try {
+      sessionStorage.setItem('classora_book_seen', 'true');
+    } catch {}
+    setShowBookIntro(false);
+  };
 
   // Fetch cohort roster
   useEffect(() => {
@@ -379,9 +390,18 @@ export const SSTAuthGate: React.FC = () => {
       }
     } catch (err: any) {
       soundFx.playPop();
-      const isNetworkFail = !err || err.message?.includes('Failed to fetch') || err.message?.includes('fetch failed') || err.message?.includes('NetworkError');
+      const errMsg = err?.message || String(err || '');
+      const isNetworkOrDbFail = !err ||
+        errMsg.includes('Failed to fetch') ||
+        errMsg.includes('fetch failed') ||
+        errMsg.includes('NetworkError') ||
+        errMsg.includes('ENOTFOUND') ||
+        errMsg.includes('mongodb') ||
+        errMsg.includes('Mongo') ||
+        errMsg.includes('500') ||
+        errMsg.includes('Internal Server Error');
       
-      if (isNetworkFail && isSstEmail(cleanEmail)) {
+      if (isNetworkOrDbFail && isSstEmail(cleanEmail)) {
         if (authMode === 'login') {
           const offlineUser = getOfflineCohortUser(cleanEmail, password);
           if (offlineUser) {
@@ -407,8 +427,8 @@ export const SSTAuthGate: React.FC = () => {
       }
 
       setErrorMessage(
-        isNetworkFail
-          ? 'Cannot reach backend server. Please verify your connection or ensure the Express server is running on http://localhost:5000.'
+        isNetworkOrDbFail
+          ? 'Cannot reach backend database. Please check connection or log in with the Cohort Default Password (SST@2026).'
           : (err.message || 'Authentication error. Please check your credentials.')
       );
     } finally {
@@ -426,6 +446,10 @@ export const SSTAuthGate: React.FC = () => {
       window.location.reload();
     }, 1000);
   };
+
+  if (showBookIntro) {
+    return <LibraryBookIntro onComplete={handleBookComplete} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#1c182d] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans selection:bg-[#6c5dd3] selection:text-white">
@@ -755,9 +779,8 @@ export const SSTAuthGate: React.FC = () => {
               </div>
             </div>
 
-            {/* Two Equal Social / SSO Buttons: Google & Apple */}
-            <div className="grid grid-cols-2 gap-3">
-              {/* Google Button */}
+            {/* Institutional SSO Button: Google */}
+            <div>
               <button
                 type="button"
                 onClick={() => {
@@ -765,24 +788,10 @@ export const SSTAuthGate: React.FC = () => {
                   handleGoogleSSO();
                 }}
                 disabled={isLoading}
-                className="bg-[#322c4d] hover:bg-[#3d365e] active:bg-[#2c2644] text-white border border-white/5 rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 text-xs font-medium transition cursor-pointer hover:border-white/10"
+                className="w-full bg-[#322c4d] hover:bg-[#3d365e] active:bg-[#2c2644] text-white border border-white/10 hover:border-indigo-400/30 rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 text-xs font-semibold transition cursor-pointer shadow-sm hover:scale-[1.01]"
               >
                 <GoogleGIcon className="w-4 h-4 shrink-0" />
-                <span>Google</span>
-              </button>
-
-              {/* Apple Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playPop();
-                  handleGoogleSSO();
-                }}
-                disabled={isLoading}
-                className="bg-[#322c4d] hover:bg-[#3d365e] active:bg-[#2c2644] text-white border border-white/5 rounded-xl py-3 px-4 flex items-center justify-center gap-2.5 text-xs font-medium transition cursor-pointer hover:border-white/10"
-              >
-                <AppleIcon className="w-4 h-4 shrink-0" />
-                <span>Apple</span>
+                <span>Continue with Google (@sst.scaler.com)</span>
               </button>
             </div>
 
@@ -808,13 +817,28 @@ export const SSTAuthGate: React.FC = () => {
                 <span>SST Institutional Gateway</span>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsGcpModalOpen(true)}
-                className="hover:text-white/70 underline transition-colors cursor-pointer"
-              >
-                OAuth Settings
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playPop();
+                    setShowBookIntro(true);
+                  }}
+                  className="hover:text-amber-300 text-amber-400/80 transition-colors cursor-pointer flex items-center gap-1.5 font-serif"
+                  title="Replay English 3D Book Opening Animation"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                  <span>3D Book Intro</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsGcpModalOpen(true)}
+                  className="hover:text-white/70 underline transition-colors cursor-pointer"
+                >
+                  OAuth Settings
+                </button>
+              </div>
             </div>
           </div>
         </div>

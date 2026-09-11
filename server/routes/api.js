@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { isUsingMongoose, getDbTier } from '../config/db.js';
+import { isUsingMongoose, getDbTier, fallbackToMemoryStore } from '../config/db.js';
 import { memoryStore } from '../services/memoryStore.js';
 import { executeFullSeed, presetUsers } from '../services/seedService.js';
 import { Student } from '../models/Student.js';
@@ -16,12 +16,68 @@ import { presetActivityLogs } from '../services/seedService.js';
 
 const router = express.Router();
 
-// Helper to access model or memoryStore seamlessly
+function isMongoNetworkError(err) {
+  if (!err) return false;
+  const msg = err.message || '';
+  const name = err.name || '';
+  return (
+    name === 'MongoServerSelectionError' ||
+    name === 'MongoNetworkError' ||
+    name === 'MongoTimeoutError' ||
+    msg.includes('ENOTFOUND') ||
+    msg.includes('ECONNREFUSED') ||
+    msg.includes('ETIMEDOUT') ||
+    msg.includes('buffering timed out') ||
+    msg.includes('topology was destroyed') ||
+    msg.includes('connection timed out')
+  );
+}
+
+// Helper to access model or memoryStore seamlessly with zero-crash network fallback
 function model(name, MongooseModel) {
-  if (isUsingMongoose()) {
-    return MongooseModel;
+  if (!isUsingMongoose() || !MongooseModel) {
+    return memoryStore.collection(name);
   }
-  return memoryStore.collection(name);
+
+  // Resilient proxy over MongooseModel: on any network/DNS error, smoothly falls back to MemoryStore
+  return new Proxy(MongooseModel, {
+    get(target, prop, receiver) {
+      const orig = Reflect.get(target, prop, receiver);
+      if (typeof orig !== 'function') return orig;
+
+      return function (...args) {
+        try {
+          const result = orig.apply(target, args);
+          if (result && typeof result.then === 'function') {
+            return result.catch((err) => {
+              if (isMongoNetworkError(err)) {
+                console.warn(`🛡️ [Classora DB Resilience] Intercepted MongoDB network failure on ${name}.${String(prop)} (${err.message}). Seamlessly serving from MemoryStore.`);
+                fallbackToMemoryStore();
+                const memCol = memoryStore.collection(name);
+                const memMethod = memCol[prop];
+                if (typeof memMethod === 'function') {
+                  return memMethod.apply(memCol, args);
+                }
+              }
+              throw err;
+            });
+          }
+          return result;
+        } catch (err) {
+          if (isMongoNetworkError(err)) {
+            console.warn(`🛡️ [Classora DB Resilience] Synchronous MongoDB network failure on ${name}.${String(prop)} (${err.message}). Seamlessly serving from MemoryStore.`);
+            fallbackToMemoryStore();
+            const memCol = memoryStore.collection(name);
+            const memMethod = memCol[prop];
+            if (typeof memMethod === 'function') {
+              return memMethod.apply(memCol, args);
+            }
+          }
+          throw err;
+        }
+      };
+    }
+  });
 }
 
 // Enterprise Activity Logger helper

@@ -10,6 +10,17 @@ if (!cached) {
   cached = global._mongooseCache = { conn: null, promise: null };
 }
 
+// Attach connection event listeners to safeguard against runtime network drops
+mongoose.connection.on('error', (err) => {
+  console.warn(`⚠️ [Classora DB] MongoDB runtime error (${err.message}). Seamlessly serving from MemoryStore.`);
+  currentDbTier = 'TIER_3_MEMORY_STORE';
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn(`⚠️ [Classora DB] MongoDB disconnected. Seamlessly serving from MemoryStore.`);
+  currentDbTier = 'TIER_3_MEMORY_STORE';
+});
+
 export async function connectDB() {
   // Return cached Mongoose connection if already connected (Serverless optimization)
   if (cached.conn && mongoose.connection.readyState === 1) {
@@ -25,11 +36,15 @@ export async function connectDB() {
     console.log(`[Classora DB] Connecting to MongoDB (${isCloudUri ? 'Cloud Atlas' : 'Local'})...`);
     
     if (!cached.promise) {
-      const timeoutMs = isCloudUri ? 10000 : 2000;
+      const timeoutMs = isCloudUri ? 5000 : 2000;
       cached.promise = mongoose.connect(uri, {
         serverSelectionTimeoutMS: timeoutMs,
-        maxPoolSize: 10, // Recommended for serverless
-      }).then((m) => m);
+        maxPoolSize: 10,
+      }).then(async (m) => {
+        // Authenticate and verify real end-to-end socket responsiveness
+        await m.connection.db.admin().ping();
+        return m;
+      });
     }
 
     cached.conn = await cached.promise;
@@ -38,7 +53,13 @@ export async function connectDB() {
     return { tier: currentDbTier, uri: isCloudUri ? 'mongodb+srv://[cloud-cluster]' : uri };
   } catch (err) {
     cached.promise = null;
-    console.warn(`⚠️ [Classora DB] Native MongoDB not reachable (${err.message}).`);
+    cached.conn = null;
+    try {
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect();
+      }
+    } catch {}
+    console.warn(`⚠️ [Classora DB] Native MongoDB not reachable (${err.message}). Falling back to in-memory resilience.`);
   }
 
   // --- Tier 2: Try In-Memory MongoDB Server if explicitly enabled via USE_MEMORY_SERVER ---
@@ -68,8 +89,15 @@ export function getDbTier() {
   return currentDbTier;
 }
 
+export function fallbackToMemoryStore() {
+  currentDbTier = 'TIER_3_MEMORY_STORE';
+}
+
 export function isUsingMongoose() {
-  return currentDbTier === 'TIER_1_MONGODB' || currentDbTier === 'TIER_2_MEMORY_SERVER';
+  return (
+    (currentDbTier === 'TIER_1_MONGODB' || currentDbTier === 'TIER_2_MEMORY_SERVER') &&
+    mongoose.connection.readyState === 1
+  );
 }
 
 export function getCollection(name, MongooseModel) {
