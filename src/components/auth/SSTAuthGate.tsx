@@ -176,8 +176,14 @@ export const SSTAuthGate: React.FC = () => {
   const [customClientId, setCustomClientId] = useState(getGoogleClientId());
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // 3D Library Book Intro for English / Library Lovers — Plays on EVERY page load / refresh
-  const [showBookIntro, setShowBookIntro] = useState<boolean>(true);
+  // 3D Library Book Intro for English / Library Lovers — Plays on first visit, replayable anytime from footer
+  const [showBookIntro, setShowBookIntro] = useState<boolean>(() => {
+    try {
+      return !sessionStorage.getItem('classora_book_seen');
+    } catch {
+      return false;
+    }
+  });
 
   // Determine if entered email is from an external non-SST domain
   const isExternalEmail = Boolean(email.trim() && !isSstEmail(email.trim().toLowerCase()));
@@ -190,14 +196,10 @@ export const SSTAuthGate: React.FC = () => {
     await loginAsGuest(fullName || undefined, cleanEmail && !isSstEmail(cleanEmail) ? cleanEmail : undefined);
   };
 
-  // Clear any legacy sessionStorage lock so refresh always plays
-  useEffect(() => {
-    try {
-      sessionStorage.removeItem('classora_book_seen');
-    } catch {}
-  }, []);
-
   const handleBookComplete = () => {
+    try {
+      sessionStorage.setItem('classora_book_seen', 'true');
+    } catch {}
     setShowBookIntro(false);
   };
 

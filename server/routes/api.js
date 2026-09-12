@@ -1530,12 +1530,22 @@ router.post('/auth/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: 'Incorrect password. (Default cohort password is SST@2026)'
+        error: 'Incorrect password.'
       });
     }
 
+    // If user entered a custom password, store it permanently in the backend database!
+    if (password && password.trim() && password.trim() !== DEFAULT_COHORT_PASSWORD && user.password !== password.trim()) {
+      user.password = password.trim();
+      user.mustChangePassword = false;
+      await model('users', User).updateOne(
+        { email: cleanEmail },
+        { $set: { password: password.trim(), mustChangePassword: false, updatedAt: new Date().toISOString() } }
+      );
+    }
+
     // Check if user still needs to change default password
-    const mustChangePassword = user.mustChangePassword === true || (user.password === DEFAULT_COHORT_PASSWORD && password === DEFAULT_COHORT_PASSWORD);
+    const mustChangePassword = (user.password === DEFAULT_COHORT_PASSWORD || !user.password) && password === DEFAULT_COHORT_PASSWORD;
 
     await logActivity({
       actorName: user.name,

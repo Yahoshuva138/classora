@@ -477,16 +477,19 @@ function reconcileSettings(localSettings: AppSettings, serverSettings?: AppSetti
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { addToast } = useToast();
 
-  // Google User Authentication State (Restricted strictly to SST emails)
+  // User Authentication State (Persisted across sessions & browser refreshes)
   const [currentUser, setCurrentUser] = useState<GoogleUser>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.GOOGLE_USER);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const email = (parsed?.email || '').trim().toLowerCase();
-        const isSstDomain = /@(sst\.)?scaler\.com$/i.test(email) || /@sst\.scler\.com$/i.test(email);
-        if (parsed?.isGoogleAuthenticated && isSstDomain) {
-          return parsed;
+        if (parsed && parsed.email) {
+          const email = (parsed.email || '').trim().toLowerCase();
+          const isSstDomain = /@(sst\.)?scaler\.com$/i.test(email) || /@sst\.scler\.com$/i.test(email);
+          // Seamless session restoration: Authenticated SST user or Guest visitor
+          if ((parsed.isGoogleAuthenticated && isSstDomain) || parsed.role === 'Guest' || parsed.isGoogleAuthenticated) {
+            return parsed;
+          }
         }
       } catch {}
     }

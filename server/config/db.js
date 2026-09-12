@@ -1,5 +1,13 @@
+import dns from 'dns';
 import mongoose from 'mongoose';
 import { memoryStore } from '../services/memoryStore.js';
+
+// Configure public DNS resolvers (Google, Cloudflare) for fast & 100% reliable Atlas SRV lookups on all networks
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1', '8.8.4.4']);
+} catch (e) {
+  console.warn('[Classora DB] Could not set custom DNS servers:', e.message);
+}
 
 let currentDbTier = 'NONE';
 let memoryServerInstance = null;
@@ -12,13 +20,22 @@ if (!cached) {
 
 // Attach connection event listeners to safeguard against runtime network drops
 mongoose.connection.on('error', (err) => {
-  console.warn(`⚠️ [Classora DB] MongoDB runtime error (${err.message}). Seamlessly serving from MemoryStore.`);
-  currentDbTier = 'TIER_3_MEMORY_STORE';
+  if (currentDbTier === 'TIER_1_MONGODB') {
+    console.warn(`⚠️ [Classora DB] MongoDB runtime error (${err.message}). Seamlessly serving from MemoryStore.`);
+    currentDbTier = 'TIER_3_MEMORY_STORE';
+  }
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.warn(`⚠️ [Classora DB] MongoDB disconnected. Seamlessly serving from MemoryStore.`);
-  currentDbTier = 'TIER_3_MEMORY_STORE';
+  if (currentDbTier === 'TIER_1_MONGODB') {
+    console.warn(`⚠️ [Classora DB] MongoDB disconnected. Seamlessly serving from MemoryStore.`);
+    currentDbTier = 'TIER_3_MEMORY_STORE';
+  }
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log(`✅ [Classora DB] MongoDB reconnected. Resuming Tier 1 Atlas persistence.`);
+  currentDbTier = 'TIER_1_MONGODB';
 });
 
 export async function connectDB() {
@@ -36,9 +53,10 @@ export async function connectDB() {
     console.log(`[Classora DB] Connecting to MongoDB (${isCloudUri ? 'Cloud Atlas' : 'Local'})...`);
     
     if (!cached.promise) {
-      const timeoutMs = isCloudUri ? 5000 : 2000;
+      const timeoutMs = isCloudUri ? 15000 : 5000;
       cached.promise = mongoose.connect(uri, {
         serverSelectionTimeoutMS: timeoutMs,
+        connectTimeoutMS: timeoutMs,
         maxPoolSize: 10,
       }).then(async (m) => {
         // Authenticate and verify real end-to-end socket responsiveness
@@ -49,7 +67,7 @@ export async function connectDB() {
 
     cached.conn = await cached.promise;
     currentDbTier = 'TIER_1_MONGODB';
-    console.log(`✅ [Classora DB] Tier 1 Active: Successfully connected to MongoDB`);
+    console.log(`✅ [Classora DB] Tier 1 Active: Successfully connected to MongoDB Atlas Database`);
     return { tier: currentDbTier, uri: isCloudUri ? 'mongodb+srv://[cloud-cluster]' : uri };
   } catch (err) {
     cached.promise = null;
