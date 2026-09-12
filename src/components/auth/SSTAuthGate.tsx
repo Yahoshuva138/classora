@@ -10,8 +10,6 @@ import {
   HelpCircle,
   X,
   Check,
-  Users,
-  Search,
   CheckCircle2,
   BookOpen
 } from 'lucide-react';
@@ -178,11 +176,6 @@ export const SSTAuthGate: React.FC = () => {
   const [customClientId, setCustomClientId] = useState(getGoogleClientId());
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // 44 Cohort Roster Modal state
-  const [isRosterModalOpen, setIsRosterModalOpen] = useState(false);
-  const [cohortRoster, setCohortRoster] = useState<{ id: string; name: string; email: string; rollNo: string; group: string }[]>([]);
-  const [rosterSearch, setRosterSearch] = useState('');
-
   // 3D Library Book Intro for English / Library Lovers — Plays on EVERY page load / refresh
   const [showBookIntro, setShowBookIntro] = useState<boolean>(true);
 
@@ -207,13 +200,6 @@ export const SSTAuthGate: React.FC = () => {
   const handleBookComplete = () => {
     setShowBookIntro(false);
   };
-
-  // Fetch cohort roster
-  useEffect(() => {
-    api.getCohortRoster().then(list => {
-      if (list && list.length > 0) setCohortRoster(list);
-    }).catch(() => {});
-  }, []);
 
   // Carousel slides for left banner
   const slides = [
@@ -296,18 +282,6 @@ export const SSTAuthGate: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Select student from 44 cohort modal
-  const handleSelectCohortStudent = (student: { name: string; email: string }) => {
-    soundFx.playPop();
-    const parts = student.name.split(' ');
-    setFirstName(parts[0] || '');
-    setLastName(parts.slice(1).join(' ') || '');
-    setEmail(student.email);
-    setPassword('');
-    setIsRosterModalOpen(false);
-    setErrorMessage(null);
   };
 
   // Form submit handler (Real Registration or Login)
@@ -756,21 +730,6 @@ export const SSTAuthGate: React.FC = () => {
               </button>
             </div>
 
-            {/* Quick Cohort Roster Lookup */}
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playPop();
-                  setIsRosterModalOpen(true);
-                }}
-                className="w-full py-2.5 px-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] active:bg-white/[0.1] border border-white/10 text-white/70 hover:text-white text-xs flex items-center justify-center gap-2 transition cursor-pointer"
-              >
-                <Users className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Official SST 44-Student Cohort • View Roster</span>
-              </button>
-            </div>
-
             {/* Institutional Security Footnote & Client Setup Link */}
             <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-white/40">
               <div className="flex items-center gap-1.5">
@@ -896,100 +855,6 @@ export const SSTAuthGate: React.FC = () => {
         </div>
       )}
 
-      {/* Official 44 Cohort Roster Modal */}
-      {isRosterModalOpen && (
-        <div
-          className="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-4 md:p-6 bg-black/80 backdrop-blur-md flex items-center justify-center animate-in fade-in duration-200"
-          onClick={() => setIsRosterModalOpen(false)}
-        >
-          <div
-            className="bg-[#231e36] text-white rounded-2xl max-w-2xl w-full shadow-2xl border border-white/10 p-5 sm:p-6 relative my-auto max-h-[calc(100vh-1.5rem)] sm:max-h-[calc(100vh-2.5rem)] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => setIsRosterModalOpen(false)}
-              className="absolute top-4 right-4 text-white/40 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-white">Official SST ENG-101 Cohort Roster</h3>
-                <p className="text-xs text-white/50">Only these 44 students are eligible to register and log in</p>
-              </div>
-            </div>
-
-            {/* Search filter */}
-            <div className="relative mb-4">
-              <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={rosterSearch}
-                onChange={e => setRosterSearch(e.target.value)}
-                placeholder="Search by name, roll number, or group..."
-                className="w-full bg-[#1c182d] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-white/35 focus:outline-none focus:border-[#6c5dd3]"
-              />
-            </div>
-
-            {/* Student List */}
-            <div className="overflow-y-auto flex-1 space-y-2 pr-1 custom-scrollbar">
-              {cohortRoster
-                .filter(s => {
-                  const q = rosterSearch.toLowerCase();
-                  return s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.rollNo.toLowerCase().includes(q) || s.group.toLowerCase().includes(q);
-                })
-                .map(s => (
-                  <div
-                    key={s.id || s.rollNo}
-                    onClick={() => handleSelectCohortStudent(s)}
-                    className="p-3 rounded-xl bg-white/[0.03] hover:bg-indigo-600/20 active:bg-indigo-600/30 border border-white/5 hover:border-indigo-500/30 transition-all flex items-center justify-between cursor-pointer group"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-300 font-bold text-xs flex items-center justify-center">
-                        {s.name.charAt(0)}
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-white group-hover:text-indigo-200 flex items-center gap-2">
-                          <span>{s.name}</span>
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/10 text-white/70">
-                            {s.rollNo}
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-white/40 group-hover:text-white/60 font-mono">
-                          {s.email}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        {s.group}
-                      </span>
-                      <span className="text-xs text-indigo-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
-                        <span>Select</span> &rarr;
-                      </span>
-                    </div>
-                  </div>
-                ))}
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-white/10 flex justify-between items-center text-[11px] text-white/40">
-              <span>Showing {cohortRoster.length} verified Scaler School of Technology students</span>
-              <button
-                type="button"
-                onClick={() => setIsRosterModalOpen(false)}
-                className="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs font-medium cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
