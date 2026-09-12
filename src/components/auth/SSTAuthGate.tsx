@@ -305,44 +305,9 @@ export const SSTAuthGate: React.FC = () => {
     setFirstName(parts[0] || '');
     setLastName(parts.slice(1).join(' ') || '');
     setEmail(student.email);
-    setPassword('SST@2026');
+    setPassword('');
     setIsRosterModalOpen(false);
     setErrorMessage(null);
-  };
-
-  // 1-Click Quick Role Presets handler for instant test switching
-  const handleSelectRolePreset = (role: 'Admin' | 'Teacher' | 'CR' | 'Student' | 'Guest') => {
-    soundFx.playPop();
-    if (role === 'Guest') {
-      handleGuestLogin();
-      return;
-    }
-    setAuthMode('login');
-    setErrorMessage(null);
-    setSuccessMessage(null);
-    if (role === 'Admin') {
-      setEmail('yahoshuva.26bcs10296@sst.scaler.com');
-      setFirstName('Yahoshuva');
-      setLastName('Kesaboyina');
-      setPassword('SST@2026');
-    } else if (role === 'Teacher') {
-      setEmail('noor.nigar@scaler.com');
-      setFirstName('Noor');
-      setLastName('Nigar');
-      setPassword('SST@2026');
-    } else if (role === 'CR') {
-      setEmail('aarav.sharma@sst.scaler.com');
-      setFirstName('Aarav');
-      setLastName('Sharma');
-      setPassword('SST@2026');
-    } else {
-      const sample = cohortRoster[0] || { email: 'abhiram.26bcs10535@sst.scaler.com', name: 'Abhiram Wayakar' };
-      const parts = sample.name.split(' ');
-      setEmail(sample.email);
-      setFirstName(parts[0] || 'Abhiram');
-      setLastName(parts.slice(1).join(' ') || 'Wayakar');
-      setPassword('SST@2026');
-    }
   };
 
   // Form submit handler (Real Registration or Login)
@@ -574,79 +539,6 @@ export const SSTAuthGate: React.FC = () => {
         {/* ========================================================= */}
         <div className="md:w-[54%] lg:w-[52%] p-5 sm:p-8 lg:p-12 flex flex-col justify-center bg-[#231e36]">
           <div className="max-w-md w-full mx-auto">
-            {/* Quick 1-Click Role Presets Bar */}
-            <div className="mb-5 sm:mb-6 bg-white/[0.03] p-2.5 rounded-2xl border border-white/[0.07]">
-              <div className="flex items-center justify-between mb-2 px-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 flex items-center gap-1">
-                  <span>⚡</span> Quick Persona Select
-                </span>
-                <span className="text-[10px] text-indigo-300 font-medium">1-Click Fast Login</span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('Admin')}
-                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                    email === 'yahoshuva.26bcs10296@sst.scaler.com' || email === 'admin@sst.scaler.com'
-                      ? 'bg-amber-500/25 text-amber-300 border-amber-500/50 shadow-xs'
-                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
-                  }`}
-                  title="Super Admin (Course Administrator)"
-                >
-                  <span>👑</span>
-                  <span>Admin</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('Teacher')}
-                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                    email === 'noor.nigar@scaler.com'
-                      ? 'bg-indigo-500/25 text-indigo-300 border-indigo-500/50 shadow-xs'
-                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
-                  }`}
-                  title="Faculty: Noor Nigar"
-                >
-                  <span>👩‍🏫</span>
-                  <span>Teacher</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('CR')}
-                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                    email === 'aarav.sharma@sst.scaler.com'
-                      ? 'bg-blue-500/25 text-blue-300 border-blue-500/50 shadow-xs'
-                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
-                  }`}
-                  title="Lead CR: Aarav Sharma"
-                >
-                  <span>🎓</span>
-                  <span>Lead CR</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('Student')}
-                  className={`px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
-                    email.includes('26bcs') && email !== 'yahoshuva.26bcs10296@sst.scaler.com'
-                      ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/50 shadow-xs'
-                      : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
-                  }`}
-                  title="Enrolled Cohort Student"
-                >
-                  <span>👨‍🎓</span>
-                  <span>Student</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectRolePreset('Guest')}
-                  className="px-2 py-1.5 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer border bg-teal-500/15 text-teal-300 border-teal-500/30 hover:bg-teal-500/25 hover:border-teal-400/50"
-                  title="Explore as Guest Visitor (Read-Only Preview)"
-                >
-                  <span>👁️</span>
-                  <span>Guest</span>
-                </button>
-              </div>
-            </div>
-
             {/* Form Title & Mode Switcher */}
             <div className="mb-5 sm:mb-7">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white mb-2 font-sans">
@@ -708,19 +600,6 @@ export const SSTAuthGate: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/* Default Password Cohort Notice */}
-            <div className="mb-4 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/25 text-indigo-200 text-xs flex items-center justify-between gap-2 text-left">
-              <div className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span className="text-[11px] text-white/80">
-                  Cohort Default Password: <strong className="font-mono text-indigo-200 bg-white/10 px-1.5 py-0.5 rounded">SST@2026</strong>
-                </span>
-              </div>
-              <span className="text-[10px] text-indigo-300 bg-indigo-500/20 px-2 py-0.5 rounded-full font-medium shrink-0">
-                Change after login
-              </span>
-            </div>
 
             {/* The Main Input Form */}
             <form onSubmit={handleSubmit} className="space-y-3.5 text-left">
