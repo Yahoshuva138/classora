@@ -161,11 +161,11 @@ export const SSTAuthGate: React.FC = () => {
   // Mode: 'login' ("Log in to account") or 'register' ("Create an account")
   const [authMode, setAuthMode] = useState<'register' | 'login'>('login');
 
-  // Form inputs
-  const [firstName, setFirstName] = useState('Yahoshuva');
-  const [lastName, setLastName] = useState('Kesaboyina');
-  const [email, setEmail] = useState('yahoshuva.26bcs10296@sst.scaler.com');
-  const [password, setPassword] = useState('SST@2026');
+  // Form inputs (Empty by default for clean user login)
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
 
@@ -248,7 +248,13 @@ export const SSTAuthGate: React.FC = () => {
     setSuccessMessage(null);
     setIsLoading(true);
 
-    const targetEmail = email.trim().toLowerCase() || 'yahoshuva.26bcs10296@sst.scaler.com';
+    const targetEmail = email.trim().toLowerCase();
+    if (!targetEmail) {
+      soundFx.playPop();
+      setErrorMessage('Please enter your institutional email address above or explore as a Guest Visitor.');
+      setIsLoading(false);
+      return;
+    }
     const fullName = [firstName.trim(), lastName.trim()].filter(Boolean).join(' ') || targetEmail.split('@')[0].replace(/\./g, ' ');
 
     if (!isSstEmail(targetEmail)) {
@@ -585,7 +591,7 @@ export const SSTAuthGate: React.FC = () => {
                       ? 'bg-amber-500/25 text-amber-300 border-amber-500/50 shadow-xs'
                       : 'bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white'
                   }`}
-                  title="Super Admin: Yahoshuva Kesaboyina"
+                  title="Super Admin (Course Administrator)"
                 >
                   <span>👑</span>
                   <span>Admin</span>

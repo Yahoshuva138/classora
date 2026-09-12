@@ -252,7 +252,7 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
                 &ldquo;A craftsman of thought is first an architect of words. Welcome to your command center.&rdquo;
               </p>
               <div className="p-3 rounded-xl bg-amber-900/10 text-xs font-sans font-semibold text-amber-900 border border-amber-900/20">
-                Class Representative: Yahoshuva Kesaboyina
+                Official English Cohort Command Portal
               </div>
             </div>
 
@@ -313,7 +313,7 @@ export const LibraryBookIntro: React.FC<LibraryBookIntroProps> = ({ onComplete }
             {/* Bottom Book Inscription */}
             <div className="text-center relative z-10 font-sans">
               <span className="text-[11px] text-amber-300/70 font-semibold block">
-                Class Representative: Yahoshuva Kesaboyina
+                Class Representative &amp; Faculty Command Center
               </span>
               <span className="text-[10px] text-white/40 tracking-wider">
                 Volume I &bull; Academic Year 2026

@@ -246,7 +246,7 @@ export const GoogleAuthModal: React.FC<GoogleAuthModalProps> = ({ isOpen, onClos
                 type="text"
                 value={customName}
                 onChange={e => setCustomName(e.target.value)}
-                placeholder="e.g. Yahoshuva Kesaboyina"
+                placeholder="e.g. Enter full name"
                 className="w-full h-10 px-3.5 text-xs font-medium rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-slate-50/50 focus:bg-white transition-colors"
               />
             </div>
